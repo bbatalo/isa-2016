@@ -14,13 +14,7 @@ public class User implements Serializable {
 
 	@Id
 	@GeneratedValue
-	private Long id_user;
-	
-	@Column(nullable = false)
-	private String name;
-	
-	@Column(nullable = false)
-	private String surname;
+	private Long idUser;
 	
 	@Column(nullable = false)
 	private String email;
@@ -30,29 +24,13 @@ public class User implements Serializable {
 
 	protected User() {}
 	
-	public Long getId_user() {
-		return id_user;
+	public Long getIdUser() {
+		return idUser;
 	}
 
-	public void setId_user(Long id_user) {
-		this.id_user = id_user;
+	public void setIdUser(Long id_user) {
+		this.idUser = id_user;
 	}	
-	
-	public String getName() {
-		return name;
-	}
-
-	public void setName(String name) {
-		this.name = name;
-	}
-
-	public String getSurname() {
-		return surname;
-	}
-
-	public void setSurname(String surname) {
-		this.surname = surname;
-	}
 
 	public String getEmail() {
 		return email;
@@ -72,7 +50,7 @@ public class User implements Serializable {
 
 	@Override
 	public String toString() {
-		return "User [getId_user()=" + getId_user() + ", getEmail()=" + getEmail() + ", getPassword()=" + getPassword()
+		return "User [getId_user()=" + getIdUser() + ", getEmail()=" + getEmail() + ", getPassword()=" + getPassword()
 				+ "]";
 	}
 	

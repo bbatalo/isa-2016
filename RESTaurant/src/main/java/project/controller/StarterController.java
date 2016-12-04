@@ -16,6 +16,6 @@ public class StarterController {
 	@GetMapping("/user")
 	@ResponseBody
 	public String getUserEmail() {
-		return this.userService.getUser("bobi@bobinjo.com").getName();
+		return this.userService.getUser("bobi@bobinjo.com").getEmail();
 	}
 }
