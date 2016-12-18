@@ -59,12 +59,12 @@ public class WaiterRating {
          {
             Waiter oldWaiter = this.waiter;
             this.waiter = null;
-            oldWaiter.removeRatings(this);
+            //oldWaiter.removeRatings(this);
          }
          if (newWaiter != null)
          {
             this.waiter = newWaiter;
-            this.waiter.addRatings(this);
+            //this.waiter.addRatings(this);
          }
       }
    }

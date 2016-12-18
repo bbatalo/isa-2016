@@ -34,12 +34,12 @@ public class Request {
          {
             Customer oldCustomer = this.receiver;
             this.receiver = null;
-            oldCustomer.removeIncomingRequests(this);
+            //oldCustomer.removeIncomingRequests(this);
          }
          if (newCustomer != null)
          {
             this.receiver = newCustomer;
-            this.receiver.addIncomingRequests(this);
+            //this.receiver.addIncomingRequests(this);
          }
       }
    }
@@ -57,12 +57,12 @@ public class Request {
          {
             Customer oldCustomer = this.sender;
             this.sender = null;
-            oldCustomer.removeOutcomingRequests(this);
+            //oldCustomer.removeOutcomingRequests(this);
          }
          if (newCustomer != null)
          {
             this.sender = newCustomer;
-            this.sender.addOutcomingRequests(this);
+            //this.sender.addOutcomingRequests(this);
          }
       }
    }

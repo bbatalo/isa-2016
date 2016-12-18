@@ -116,7 +116,7 @@ public class DrinksOrder {
       if (!this.bartender.contains(newBartender))
       {
          this.bartender.add(newBartender);
-         newBartender.addDrinkOrder(this);      
+         //newBartender.addDrinkOrder(this);      
       }
    }
    
@@ -129,7 +129,7 @@ public class DrinksOrder {
          if (this.bartender.contains(oldBartender))
          {
             this.bartender.remove(oldBartender);
-            oldBartender.removeDrinkOrder(this);
+            //oldBartender.removeDrinkOrder(this);
          }
    }
    
@@ -142,7 +142,7 @@ public class DrinksOrder {
          {
             oldBartender = (Bartender)iter.next();
             iter.remove();
-            oldBartender.removeDrinkOrder(this);
+            //oldBartender.removeDrinkOrder(this);
          }
       }
    }

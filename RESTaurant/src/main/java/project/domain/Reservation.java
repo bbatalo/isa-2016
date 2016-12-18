@@ -166,12 +166,12 @@ public class Reservation {
          {
             Customer oldCustomer = this.customer;
             this.customer = null;
-            oldCustomer.removeReservations(this);
+            //oldCustomer.removeReservations(this);
          }
          if (newCustomer != null)
          {
             this.customer = newCustomer;
-            this.customer.addReservations(this);
+            //this.customer.addReservations(this);
          }
       }
    }

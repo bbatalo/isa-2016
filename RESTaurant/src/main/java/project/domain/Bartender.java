@@ -1,49 +1,54 @@
-/***********************************************************************
- * Module:  Bartender.java
- * Author:  Bojan
- * Purpose: Defines the Class Bartender
- ***********************************************************************/
 package project.domain;
 
-import java.util.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
 
-/** @pdOid 03c00f81-a9d8-4dd1-b30a-6dbbc3fb964f */
+@Entity
 public class Bartender extends Employee {
-   /** @pdOid c4205cb1-ca5a-46ed-8802-e259e037eae1 */
-   public boolean cocktails;
-   
-   /** @pdRoleInfo migr=no name=DrinksOrder assc=drinksPreparation coll=java.util.Collection impl=java.util.ArrayList mult=0..* */
+
+	private static final long serialVersionUID = -4567146652809235714L;
+	
+	@Column(name = "bar_cocktails", nullable = false)
+    private boolean cocktails = false;
+
+	protected Bartender() {}
+	
+	public boolean isCocktails() {
+		return cocktails;
+	}
+
+	public void setCocktails(boolean cocktails) {
+		this.cocktails = cocktails;
+	}
+    
+	
+   /*
    public java.util.Collection<DrinksOrder> drinkOrder;
-   /** @pdRoleInfo migr=no name=BartenderRating assc=bartenderRatings coll=java.util.Collection impl=java.util.ArrayList mult=0..* */
+
    public java.util.Collection<BartenderRating> ratings;
-   /** @pdRoleInfo migr=no name=Shift assc=bartendersInShifts coll=java.util.Collection impl=java.util.HashSet mult=0..* side=A */
+
    public java.util.Collection<Shift> shifts;
    
    
-   /** @pdGenerated default getter */
+
    public java.util.Collection<DrinksOrder> getDrinkOrder() {
       if (drinkOrder == null)
          drinkOrder = new java.util.ArrayList<DrinksOrder>();
       return drinkOrder;
    }
-   
-   /** @pdGenerated default iterator getter */
+
    public java.util.Iterator getIteratorDrinkOrder() {
       if (drinkOrder == null)
          drinkOrder = new java.util.ArrayList<DrinksOrder>();
       return drinkOrder.iterator();
    }
    
-   /** @pdGenerated default setter
-     * @param newDrinkOrder */
    public void setDrinkOrder(java.util.Collection<DrinksOrder> newDrinkOrder) {
       removeAllDrinkOrder();
       for (java.util.Iterator iter = newDrinkOrder.iterator(); iter.hasNext();)
          addDrinkOrder((DrinksOrder)iter.next());
    }
-   
-   /** @pdGenerated default add
-     * @param newDrinksOrder */
+
    public void addDrinkOrder(DrinksOrder newDrinksOrder) {
       if (newDrinksOrder == null)
          return;
@@ -55,9 +60,7 @@ public class Bartender extends Employee {
          newDrinksOrder.addBartender(this);      
       }
    }
-   
-   /** @pdGenerated default remove
-     * @param oldDrinksOrder */
+
    public void removeDrinkOrder(DrinksOrder oldDrinksOrder) {
       if (oldDrinksOrder == null)
          return;
@@ -69,7 +72,6 @@ public class Bartender extends Employee {
          }
    }
    
-   /** @pdGenerated default removeAll */
    public void removeAllDrinkOrder() {
       if (drinkOrder != null)
       {
@@ -82,30 +84,25 @@ public class Bartender extends Employee {
          }
       }
    }
-   /** @pdGenerated default getter */
+
    public java.util.Collection<BartenderRating> getRatings() {
       if (ratings == null)
          ratings = new java.util.ArrayList<BartenderRating>();
       return ratings;
    }
    
-   /** @pdGenerated default iterator getter */
    public java.util.Iterator getIteratorRatings() {
       if (ratings == null)
          ratings = new java.util.ArrayList<BartenderRating>();
       return ratings.iterator();
    }
    
-   /** @pdGenerated default setter
-     * @param newRatings */
    public void setRatings(java.util.Collection<BartenderRating> newRatings) {
       removeAllRatings();
       for (java.util.Iterator iter = newRatings.iterator(); iter.hasNext();)
          addRatings((BartenderRating)iter.next());
    }
-   
-   /** @pdGenerated default add
-     * @param newBartenderRating */
+
    public void addRatings(BartenderRating newBartenderRating) {
       if (newBartenderRating == null)
          return;
@@ -118,8 +115,6 @@ public class Bartender extends Employee {
       }
    }
    
-   /** @pdGenerated default remove
-     * @param oldBartenderRating */
    public void removeRatings(BartenderRating oldBartenderRating) {
       if (oldBartenderRating == null)
          return;
@@ -131,7 +126,6 @@ public class Bartender extends Employee {
          }
    }
    
-   /** @pdGenerated default removeAll */
    public void removeAllRatings() {
       if (ratings != null)
       {
@@ -144,30 +138,25 @@ public class Bartender extends Employee {
          }
       }
    }
-   /** @pdGenerated default getter */
+   
    public java.util.Collection<Shift> getShifts() {
       if (shifts == null)
          shifts = new java.util.HashSet<Shift>();
       return shifts;
    }
    
-   /** @pdGenerated default iterator getter */
    public java.util.Iterator getIteratorShifts() {
       if (shifts == null)
          shifts = new java.util.HashSet<Shift>();
       return shifts.iterator();
    }
    
-   /** @pdGenerated default setter
-     * @param newShifts */
    public void setShifts(java.util.Collection<Shift> newShifts) {
       removeAllShifts();
       for (java.util.Iterator iter = newShifts.iterator(); iter.hasNext();)
          addShifts((Shift)iter.next());
    }
    
-   /** @pdGenerated default add
-     * @param newShift */
    public void addShifts(Shift newShift) {
       if (newShift == null)
          return;
@@ -179,9 +168,7 @@ public class Bartender extends Employee {
          newShift.addBartenders(this);      
       }
    }
-   
-   /** @pdGenerated default remove
-     * @param oldShift */
+
    public void removeShifts(Shift oldShift) {
       if (oldShift == null)
          return;
@@ -192,8 +179,7 @@ public class Bartender extends Employee {
             oldShift.removeBartenders(this);
          }
    }
-   
-   /** @pdGenerated default removeAll */
+
    public void removeAllShifts() {
       if (shifts != null)
       {
@@ -206,5 +192,5 @@ public class Bartender extends Employee {
          }
       }
    }
-
+*/
 }

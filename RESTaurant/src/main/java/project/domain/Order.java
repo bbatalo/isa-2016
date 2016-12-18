@@ -161,12 +161,12 @@ public class Order {
          {
             Customer oldCustomer = this.customer;
             this.customer = null;
-            oldCustomer.removeOrders(this);
+            //oldCustomer.removeOrders(this);
          }
          if (newCustomer != null)
          {
             this.customer = newCustomer;
-            this.customer.addOrders(this);
+            //this.customer.addOrders(this);
          }
       }
    }

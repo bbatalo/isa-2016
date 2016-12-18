@@ -57,12 +57,12 @@ public class ChefRating {
          {
             Chef oldChef = this.chef;
             this.chef = null;
-            oldChef.removeRatings(this);
+            //oldChef.removeRatings(this);
          }
          if (newChef != null)
          {
             this.chef = newChef;
-            this.chef.addRatings(this);
+            //this.chef.addRatings(this);
          }
       }
    }

@@ -34,12 +34,12 @@ public class BartenderRating {
          {
             Bartender oldBartender = this.bartender;
             this.bartender = null;
-            oldBartender.removeRatings(this);
+            //oldBartender.removeRatings(this);
          }
          if (newBartender != null)
          {
             this.bartender = newBartender;
-            this.bartender.addRatings(this);
+            //this.bartender.addRatings(this);
          }
       }
    }

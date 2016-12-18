@@ -5,36 +5,108 @@
  ***********************************************************************/
 package project.domain;
 
-import java.util.*;
+import static javax.persistence.InheritanceType.JOINED;
 
-/** @pdOid bbf995ec-150d-488a-8a46-e18c3af07da3 */
+import java.util.Date;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Inheritance;
+
+@Entity
+@Inheritance(strategy = JOINED)
 public class Employee extends User {
-   /** @pdOid 10e7e8e9-bb32-4288-a775-dc2be782fe96 */
-   public java.lang.String name;
-   /** @pdOid 604a971e-f58c-4db8-b337-98826ee2e9c8 */
-   public java.lang.String surname;
-   /** @pdOid c3e2a211-03ee-43c5-ba18-51118a2b46b9 */
-   public short role;
-   /** @pdOid 001ea76d-4223-4397-afe8-dcf4b5dda3f0 */
-   public boolean passChanged;
-   /** @pdOid d6da1500-2003-43a8-ac57-d9effa40fffb */
-   public java.util.Date dateBirth;
-   /** @pdOid 3f2ae124-57b1-4f47-a632-21b0e486872b */
-   public int sizeCloth;
-   /** @pdOid 8c90a228-7855-49b1-986e-057fd8f232aa */
-   public int sizeShoes;
+
+	private static final long serialVersionUID = 2783766729722638856L;
+
+	@Column(name = "emp_name", nullable = false)
+    private String name;
+
+	@Column(name = "emp_surname", nullable = false)
+    private String surname;
+
+	@Column(name = "emp_role", nullable = false)
+    private EmployeeRole role;
+
+	@Column(name = "emp_pass_changed", nullable = false)
+    private boolean passChanged = false;
+
+	@Column(name = "emp_date_birth", nullable = false)
+    private Date dateBirth;
+
+	@Column(name = "emp_size_cloth", nullable = false)
+    private int sizeCloth;
+
+	@Column(name = "emp_size_shoes", nullable = false)
+    private int sizeShoes;
+
+	protected Employee() {}
+	
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public String getSurname() {
+		return surname;
+	}
+
+	public void setSurname(String surname) {
+		this.surname = surname;
+	}
+
+	public EmployeeRole getRole() {
+		return role;
+	}
+
+	public void setRole(EmployeeRole role) {
+		this.role = role;
+	}
+
+	public boolean isPassChanged() {
+		return passChanged;
+	}
+
+	public void setPassChanged(boolean passChanged) {
+		this.passChanged = passChanged;
+	}
+
+	public Date getDateBirth() {
+		return dateBirth;
+	}
+
+	public void setDateBirth(Date dateBirth) {
+		this.dateBirth = dateBirth;
+	}
+
+	public int getSizeCloth() {
+		return sizeCloth;
+	}
+
+	public void setSizeCloth(int sizeCloth) {
+		this.sizeCloth = sizeCloth;
+	}
+
+	public int getSizeShoes() {
+		return sizeShoes;
+	}
+
+	public void setSizeShoes(int sizeShoes) {
+		this.sizeShoes = sizeShoes;
+	}
+	
+	
    
-   /** @pdRoleInfo migr=no name=Restaurant assc=radnici mult=0..1 side=A */
-   public Restaurant restaurant;
+   //public Restaurant restaurant;
    
-   
-   /** @pdGenerated default parent getter */
+   /*
    public Restaurant getRestaurant() {
       return restaurant;
    }
    
-   /** @pdGenerated default parent setter
-     * @param newRestaurant */
    public void setRestaurant(Restaurant newRestaurant) {
       if (this.restaurant == null || !this.restaurant.equals(newRestaurant))
       {
@@ -51,5 +123,5 @@ public class Employee extends User {
          }
       }
    }
-
+	*/
 }

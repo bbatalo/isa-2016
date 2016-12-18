@@ -56,7 +56,7 @@ public class Shift {
       if (!this.bartenders.contains(newBartender))
       {
          this.bartenders.add(newBartender);
-         newBartender.addShifts(this);      
+         //newBartender.addShifts(this);      
       }
    }
    
@@ -69,7 +69,7 @@ public class Shift {
          if (this.bartenders.contains(oldBartender))
          {
             this.bartenders.remove(oldBartender);
-            oldBartender.removeShifts(this);
+            //oldBartender.removeShifts(this);
          }
    }
    
@@ -82,7 +82,7 @@ public class Shift {
          {
             oldBartender = (Bartender)iter.next();
             iter.remove();
-            oldBartender.removeShifts(this);
+            //oldBartender.removeShifts(this);
          }
       }
    }
@@ -118,7 +118,7 @@ public class Shift {
       if (!this.chefs.contains(newChef))
       {
          this.chefs.add(newChef);
-         newChef.addShifts(this);      
+         //newChef.addShifts(this);      
       }
    }
    
@@ -131,7 +131,7 @@ public class Shift {
          if (this.chefs.contains(oldChef))
          {
             this.chefs.remove(oldChef);
-            oldChef.removeShifts(this);
+            //oldChef.removeShifts(this);
          }
    }
    
@@ -144,7 +144,7 @@ public class Shift {
          {
             oldChef = (Chef)iter.next();
             iter.remove();
-            oldChef.removeShifts(this);
+            //oldChef.removeShifts(this);
          }
       }
    }

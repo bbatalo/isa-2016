@@ -54,7 +54,7 @@ public class DishesOrder {
       if (!this.chef.contains(newChef))
       {
          this.chef.add(newChef);
-         newChef.addDishOrder(this);      
+        // newChef.addDishOrder(this);      
       }
    }
    
@@ -67,7 +67,7 @@ public class DishesOrder {
          if (this.chef.contains(oldChef))
          {
             this.chef.remove(oldChef);
-            oldChef.removeDishOrder(this);
+            //oldChef.removeDishOrder(this);
          }
    }
    
@@ -80,7 +80,7 @@ public class DishesOrder {
          {
             oldChef = (Chef)iter.next();
             iter.remove();
-            oldChef.removeDishOrder(this);
+            //oldChef.removeDishOrder(this);
          }
       }
    }

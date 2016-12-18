@@ -136,12 +136,12 @@ public class Bid {
          {
             RestorauntManager oldRestorauntManager = this.manager;
             this.manager = null;
-            oldRestorauntManager.removeBids(this);
+            //oldRestorauntManager.removeBids(this);
          }
          if (newRestorauntManager != null)
          {
             this.manager = newRestorauntManager;
-            this.manager.addBids(this);
+            //this.manager.addBids(this);
          }
       }
    }

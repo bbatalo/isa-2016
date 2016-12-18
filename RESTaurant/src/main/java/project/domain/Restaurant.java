@@ -66,7 +66,7 @@ public class Restaurant {
       if (!this.employees.contains(newEmployee))
       {
          this.employees.add(newEmployee);
-         newEmployee.setRestaurant(this);      
+         //newEmployee.setRestaurant(this);      
       }
    }
    
@@ -79,7 +79,7 @@ public class Restaurant {
          if (this.employees.contains(oldEmployee))
          {
             this.employees.remove(oldEmployee);
-            oldEmployee.setRestaurant((Restaurant)null);
+            //oldEmployee.setRestaurant((Restaurant)null);
          }
    }
    
@@ -92,7 +92,7 @@ public class Restaurant {
          {
             oldEmployee = (Employee)iter.next();
             iter.remove();
-            oldEmployee.setRestaurant((Restaurant)null);
+            //oldEmployee.setRestaurant((Restaurant)null);
          }
       }
    }
@@ -252,7 +252,7 @@ public class Restaurant {
       if (!this.managers.contains(newRestorauntManager))
       {
          this.managers.add(newRestorauntManager);
-         newRestorauntManager.setRestoraunt(this);      
+         //newRestorauntManager.setRestoraunt(this);      
       }
    }
    
@@ -265,7 +265,7 @@ public class Restaurant {
          if (this.managers.contains(oldRestorauntManager))
          {
             this.managers.remove(oldRestorauntManager);
-            oldRestorauntManager.setRestoraunt((Restaurant)null);
+            //oldRestorauntManager.setRestoraunt((Restaurant)null);
          }
    }
    
@@ -278,7 +278,7 @@ public class Restaurant {
          {
             oldRestorauntManager = (RestorauntManager)iter.next();
             iter.remove();
-            oldRestorauntManager.setRestoraunt((Restaurant)null);
+            //oldRestorauntManager.setRestoraunt((Restaurant)null);
          }
       }
    }
