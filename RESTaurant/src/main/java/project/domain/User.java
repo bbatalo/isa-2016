@@ -31,15 +31,14 @@ public class User implements Serializable {
 	private UserType userType;
 	
 	protected User() {}
-
-	public Long getUserID() {
+	
+	public Long getIdUser() {
 		return userID;
 	}
 
-
-	public void setUserID(Long userID) {
-		this.userID = userID;
-	}
+	public void setIdUser(Long id_user) {
+		this.userID = id_user;
+	}	
 
 	public String getEmail() {
 		return email;

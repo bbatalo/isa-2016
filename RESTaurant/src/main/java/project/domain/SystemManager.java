@@ -14,7 +14,7 @@ public class SystemManager extends User {
 	@Column(name = "sys_surname", nullable = true)
 	private String surname;
 
-	public SystemManager() {}
+	protected SystemManager() {}
 	
 	public String getName() {
 		return name;

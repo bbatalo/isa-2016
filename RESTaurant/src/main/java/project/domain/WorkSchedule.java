@@ -98,12 +98,12 @@ public class WorkSchedule {
          {
             Restaurant oldRestaurant = this.restaurant;
             this.restaurant = null;
-            //oldRestaurant.removeSchedule(this);
+            oldRestaurant.removeSchedule(this);
          }
          if (newRestaurant != null)
          {
             this.restaurant = newRestaurant;
-            //this.restaurant.addSchedule(this);
+            this.restaurant.addSchedule(this);
          }
       }
    }

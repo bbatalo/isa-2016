@@ -138,12 +138,12 @@ public class Order {
          {
             Restaurant oldRestaurant = this.restaurant;
             this.restaurant = null;
-//            oldRestaurant.removeOrders(this);
+            oldRestaurant.removeOrders(this);
          }
          if (newRestaurant != null)
          {
             this.restaurant = newRestaurant;
-//            this.restaurant.addOrders(this);
+            this.restaurant.addOrders(this);
          }
       }
    }

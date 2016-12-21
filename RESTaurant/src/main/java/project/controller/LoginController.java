@@ -37,7 +37,7 @@ public class LoginController {
 			Online onl = new Online();
 			onl.setUser(user);
 			onl = onlineService.addOnline(onl);
-			return "Id logovanog korisnika: " + onl.getUser().getUserID();
+			return "Id logovanog korisnika: " + onl.getUser().getIdUser();
 		}
 		
 		return "Nema nista brt";
