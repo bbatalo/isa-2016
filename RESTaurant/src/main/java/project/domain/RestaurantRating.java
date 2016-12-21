@@ -34,12 +34,12 @@ public class RestaurantRating {
          {
             Restaurant oldRestaurant = this.restaurant;
             this.restaurant = null;
-            oldRestaurant.removeRatings(this);
+            //oldRestaurant.removeRatings(this);
          }
          if (newRestaurant != null)
          {
             this.restaurant = newRestaurant;
-            this.restaurant.addRatings(this);
+            //this.restaurant.addRatings(this);
          }
       }
    }

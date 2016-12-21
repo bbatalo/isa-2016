@@ -5,59 +5,108 @@
  ***********************************************************************/
 package project.domain;
 
+import java.io.Serializable;
 import java.util.*;
 
-/** @pdOid 2ab6373d-fdfc-45eb-b0ca-362e3b8ca236 */
-public class Restaurant {
-   /** @pdOid 81a9f18d-6e85-401e-bf9a-6f8ea50b203c */
-   public long idRestoraunt;
-   /** @pdOid 25f90c78-599b-42a7-911f-5cf2cbfacb37 */
-   public java.lang.String type;
-   /** @pdOid a0852914-cb2e-48bf-8b51-3feabd09ca43 */
-   public java.lang.String description;
-   
-   /** @pdRoleInfo migr=no name=SeatingArrangement assc=seating mult=0..1 */
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+
+@Entity
+public class Restaurant implements Serializable{
+
+	private static final long serialVersionUID = 4684933772758103682L;
+
+	@Id
+	@GeneratedValue
+	@Column(name="rst_id", nullable = false)
+	public long restaurantID;
+	   
+	@Column(name="rst_name", nullable = false)
+	public String name;
+	   
+	@Column(name="rst_type", nullable = true)
+	public String type;
+	   
+	@Column(name="rst_description", nullable = true)
+	public String description;
+	   
+	public Restaurant(){}
+
+	public long getRestaurantID() {
+		return restaurantID;
+	}
+	
+	public void setRestaurantID(long restaurantID) {
+		this.restaurantID = restaurantID;
+	}
+	
+	public String getName() {
+		return name;
+	}
+	
+	public void setName(String name) {
+		this.name = name;
+	}
+	
+	public String getType() {
+		return type;
+	}
+	
+	public void setType(String type) {
+		this.type = type;
+	}
+	
+	public String getDescription() {
+		return description;
+	}
+	
+	public void setDescription(String description) {
+		this.description = description;
+	}
+
+	@Override
+	public String toString() {
+		return "Restaurant [restaurantID=" + restaurantID + ", name=" + name + ", type=" + type + ", description="
+				+ description + "]";
+	}
+	
+   /*
    public SeatingArrangement seating;
-   /** @pdRoleInfo migr=no name=Employee assc=radnici coll=java.util.Collection impl=java.util.ArrayList mult=0..* */
+   
    public java.util.Collection<Employee> employees;
-   /** @pdRoleInfo migr=no name=Menu assc=menu mult=0..1 */
+   
    public Menu menu;
-   /** @pdRoleInfo migr=no name=WorkSchedule assc=schedule coll=java.util.Collection impl=java.util.ArrayList mult=0..* */
+
    public java.util.Collection<WorkSchedule> schedule;
-   /** @pdRoleInfo migr=no name=Order assc=ordersRest coll=java.util.Collection impl=java.util.ArrayList mult=0..* */
+
    public java.util.Collection<Order> orders;
-   /** @pdRoleInfo migr=no name=RestorauntManager assc=management coll=java.util.Collection impl=java.util.ArrayList mult=0..* side=A */
+
    public java.util.Collection<RestorauntManager> managers;
-   /** @pdRoleInfo migr=no name=DrinksMenu assc=drinkMenu mult=0..1 side=A */
+
    public DrinksMenu drinks;
-   /** @pdRoleInfo migr=no name=RestaurantRating assc=ratings coll=java.util.Collection impl=java.util.ArrayList mult=0..* side=A */
+
    public java.util.Collection<RestaurantRating> ratings;
    
-   
-   /** @pdGenerated default getter */
    public java.util.Collection<Employee> getEmployees() {
       if (employees == null)
          employees = new java.util.ArrayList<Employee>();
       return employees;
    }
    
-   /** @pdGenerated default iterator getter */
    public java.util.Iterator getIteratorEmployees() {
       if (employees == null)
          employees = new java.util.ArrayList<Employee>();
       return employees.iterator();
    }
    
-   /** @pdGenerated default setter
-     * @param newEmployees */
    public void setEmployees(java.util.Collection<Employee> newEmployees) {
       removeAllEmployees();
       for (java.util.Iterator iter = newEmployees.iterator(); iter.hasNext();)
          addEmployees((Employee)iter.next());
    }
    
-   /** @pdGenerated default add
-     * @param newEmployee */
    public void addEmployees(Employee newEmployee) {
       if (newEmployee == null)
          return;
@@ -70,8 +119,6 @@ public class Restaurant {
       }
    }
    
-   /** @pdGenerated default remove
-     * @param oldEmployee */
    public void removeEmployees(Employee oldEmployee) {
       if (oldEmployee == null)
          return;
@@ -83,7 +130,6 @@ public class Restaurant {
          }
    }
    
-   /** @pdGenerated default removeAll */
    public void removeAllEmployees() {
       if (employees != null)
       {
@@ -96,30 +142,25 @@ public class Restaurant {
          }
       }
    }
-   /** @pdGenerated default getter */
+
    public java.util.Collection<WorkSchedule> getSchedule() {
       if (schedule == null)
          schedule = new java.util.ArrayList<WorkSchedule>();
       return schedule;
    }
    
-   /** @pdGenerated default iterator getter */
    public java.util.Iterator getIteratorSchedule() {
       if (schedule == null)
          schedule = new java.util.ArrayList<WorkSchedule>();
       return schedule.iterator();
    }
    
-   /** @pdGenerated default setter
-     * @param newSchedule */
    public void setSchedule(java.util.Collection<WorkSchedule> newSchedule) {
       removeAllSchedule();
       for (java.util.Iterator iter = newSchedule.iterator(); iter.hasNext();)
          addSchedule((WorkSchedule)iter.next());
    }
    
-   /** @pdGenerated default add
-     * @param newWorkSchedule */
    public void addSchedule(WorkSchedule newWorkSchedule) {
       if (newWorkSchedule == null)
          return;
@@ -132,8 +173,6 @@ public class Restaurant {
       }
    }
    
-   /** @pdGenerated default remove
-     * @param oldWorkSchedule */
    public void removeSchedule(WorkSchedule oldWorkSchedule) {
       if (oldWorkSchedule == null)
          return;
@@ -145,7 +184,6 @@ public class Restaurant {
          }
    }
    
-   /** @pdGenerated default removeAll */
    public void removeAllSchedule() {
       if (schedule != null)
       {
@@ -158,30 +196,25 @@ public class Restaurant {
          }
       }
    }
-   /** @pdGenerated default getter */
+
    public java.util.Collection<Order> getOrders() {
       if (orders == null)
          orders = new java.util.ArrayList<Order>();
       return orders;
    }
    
-   /** @pdGenerated default iterator getter */
    public java.util.Iterator getIteratorOrders() {
       if (orders == null)
          orders = new java.util.ArrayList<Order>();
       return orders.iterator();
    }
    
-   /** @pdGenerated default setter
-     * @param newOrders */
    public void setOrders(java.util.Collection<Order> newOrders) {
       removeAllOrders();
       for (java.util.Iterator iter = newOrders.iterator(); iter.hasNext();)
          addOrders((Order)iter.next());
    }
    
-   /** @pdGenerated default add
-     * @param newOrder */
    public void addOrders(Order newOrder) {
       if (newOrder == null)
          return;
@@ -194,8 +227,6 @@ public class Restaurant {
       }
    }
    
-   /** @pdGenerated default remove
-     * @param oldOrder */
    public void removeOrders(Order oldOrder) {
       if (oldOrder == null)
          return;
@@ -207,7 +238,6 @@ public class Restaurant {
          }
    }
    
-   /** @pdGenerated default removeAll */
    public void removeAllOrders() {
       if (orders != null)
       {
@@ -220,30 +250,25 @@ public class Restaurant {
          }
       }
    }
-   /** @pdGenerated default getter */
+
    public java.util.Collection<RestorauntManager> getManagers() {
       if (managers == null)
          managers = new java.util.ArrayList<RestorauntManager>();
       return managers;
    }
    
-   /** @pdGenerated default iterator getter */
    public java.util.Iterator getIteratorManagers() {
       if (managers == null)
          managers = new java.util.ArrayList<RestorauntManager>();
       return managers.iterator();
    }
    
-   /** @pdGenerated default setter
-     * @param newManagers */
    public void setManagers(java.util.Collection<RestorauntManager> newManagers) {
       removeAllManagers();
       for (java.util.Iterator iter = newManagers.iterator(); iter.hasNext();)
          addManagers((RestorauntManager)iter.next());
    }
    
-   /** @pdGenerated default add
-     * @param newRestorauntManager */
    public void addManagers(RestorauntManager newRestorauntManager) {
       if (newRestorauntManager == null)
          return;
@@ -256,8 +281,6 @@ public class Restaurant {
       }
    }
    
-   /** @pdGenerated default remove
-     * @param oldRestorauntManager */
    public void removeManagers(RestorauntManager oldRestorauntManager) {
       if (oldRestorauntManager == null)
          return;
@@ -269,7 +292,6 @@ public class Restaurant {
          }
    }
    
-   /** @pdGenerated default removeAll */
    public void removeAllManagers() {
       if (managers != null)
       {
@@ -282,30 +304,25 @@ public class Restaurant {
          }
       }
    }
-   /** @pdGenerated default getter */
+
    public java.util.Collection<RestaurantRating> getRatings() {
       if (ratings == null)
          ratings = new java.util.ArrayList<RestaurantRating>();
       return ratings;
    }
    
-   /** @pdGenerated default iterator getter */
    public java.util.Iterator getIteratorRatings() {
       if (ratings == null)
          ratings = new java.util.ArrayList<RestaurantRating>();
       return ratings.iterator();
    }
    
-   /** @pdGenerated default setter
-     * @param newRatings */
    public void setRatings(java.util.Collection<RestaurantRating> newRatings) {
       removeAllRatings();
       for (java.util.Iterator iter = newRatings.iterator(); iter.hasNext();)
          addRatings((RestaurantRating)iter.next());
    }
    
-   /** @pdGenerated default add
-     * @param newRestaurantRating */
    public void addRatings(RestaurantRating newRestaurantRating) {
       if (newRestaurantRating == null)
          return;
@@ -318,8 +335,6 @@ public class Restaurant {
       }
    }
    
-   /** @pdGenerated default remove
-     * @param oldRestaurantRating */
    public void removeRatings(RestaurantRating oldRestaurantRating) {
       if (oldRestaurantRating == null)
          return;
@@ -331,7 +346,6 @@ public class Restaurant {
          }
    }
    
-   /** @pdGenerated default removeAll */
    public void removeAllRatings() {
       if (ratings != null)
       {
@@ -344,5 +358,5 @@ public class Restaurant {
          }
       }
    }
-
+*/
 }
