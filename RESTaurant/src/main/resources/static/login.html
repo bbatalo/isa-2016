@@ -13,6 +13,27 @@
 		<link rel="stylesheet" href="/webjars/bootstrap/3.3.6/css/bootstrap.css">
 	</head>
 	<body>
-	
+	<div class="row">
+  		<div class="col-sm-5"></div>
+  		<div class="col-sm-2">
+			<div class="panel panel-default">
+				<div class="panel-body">
+					<form class="form-signin" action="rest/index/login" id="forma">
+						<h3>Molimo prijavite se.</h3>
+						<fieldset class="form-group">
+							<input type="text" class="form-control" id="username" name="k_ime" placeholder="Korisničko ime:"></input>
+						</fieldset>
+						<fieldset class="form-group">
+							<input type="password" class="form-control" id="pwd" name="lozinka" placeholder="Lozinka:"></input>
+						</fieldset>
+						<button class="btn btn-lg btn-primary btn-block" type="button" id="loginbtn">Prijavi se</button>
+						<hr></hr>
+						<a href="register.html" class="btn btn-lg btn-primary btn-block" role="button">Registruj se</a>
+						<fieldset><div id="rezultat">Rezultat poziva</div></fieldset><br />
+					</form>
+				</div>
+			</div>
+  		</div>
+  		<div class="col-sm-5"></div>
 	</body>
 </html>
