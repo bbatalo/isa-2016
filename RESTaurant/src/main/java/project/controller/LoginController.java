@@ -1,19 +1,25 @@
 package project.controller;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.transaction.Transactional;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
 
 import project.domain.Online;
 import project.domain.User;
 import project.service.OnlineService;
 import project.service.UserService;
 
+@RequestMapping("/login")
 @Controller
 public class LoginController {
 
@@ -23,23 +29,98 @@ public class LoginController {
 	@Autowired
 	private UserService userService;
 	
-	@RequestMapping(value="/online/add",
+	@Transactional
+	@RequestMapping(value="/login",
 			method = RequestMethod.POST,
 			consumes= MediaType.APPLICATION_JSON,
 			produces= MediaType.TEXT_PLAIN)
-	@ResponseBody
-	public String addOnlineUser(@RequestBody User usr) {
-		//Online usr = onlineService.addOnline(online);
-		User user = userService.getUser(usr.getEmail());
-		//System.out.println(usr.getEmail());
-		
-		if (user != null) {
-			Online onl = new Online();
-			onl.setUser(user);
-			onl = onlineService.addOnline(onl);
-			return "Id logovanog korisnika: " + onl.getUser().getUserID();
+	public ResponseEntity<String> login(@Context HttpServletRequest request, @RequestBody User usr) {
+
+		if (usr == null) {
+			return new ResponseEntity<String>("Nothing sent", HttpStatus.OK);
 		}
 		
-		return "Nema nista brt";
+		if (usr.getEmail() == null) {
+			return new ResponseEntity<String>("No email", HttpStatus.OK);
+		}
+		
+		if (usr.getPassword() == null) {
+			return new ResponseEntity<String>("No password", HttpStatus.OK);
+		}
+		
+		HttpHeaders headers = new HttpHeaders();
+		
+		Online current = (Online) request.getSession().getAttribute("user");
+		
+		if (current != null) {
+			if (current.getUser().getEmail().equals(usr.getEmail())) {
+				return new ResponseEntity<String>("Already logged in", HttpStatus.OK);
+			} else {
+				onlineService.deleteOnline(current);
+				request.getSession().setAttribute("user", null);
+			}
+		} 
+		
+		User user = userService.getUser(usr.getEmail());
+		
+		if (user != null) {
+			if (usr.getPassword().equals(user.getPassword())) {
+				
+				Online onl = new Online();
+				onl.setUser(user);
+				onl = onlineService.addOnline(onl);
+				request.getSession().setAttribute("user", onl);
+				
+				headers.add("Location", "/index.html");
+				
+				return new ResponseEntity<String>("Logged in", headers, HttpStatus.OK);
+			} 
+		} 
+		
+		return new ResponseEntity<String>("Invalid credentials", headers, HttpStatus.OK);
+	}
+	
+	
+	
+	@Transactional
+	@RequestMapping(value = "/logout",
+			method = RequestMethod.GET,
+			produces = MediaType.TEXT_PLAIN)
+	public ResponseEntity<String> logout(@Context HttpServletRequest request) {
+		
+		Online online = (Online) request.getSession().getAttribute("user");
+		
+		if (online == null) {
+			return new ResponseEntity<String>("Not logged in", HttpStatus.OK);
+		}
+		
+		onlineService.deleteOnline(online);
+		request.getSession().invalidate();
+		
+		return new ResponseEntity<String>("Logged out", HttpStatus.OK);
+	}
+	
+	@RequestMapping(value = "/authorize",
+			method = RequestMethod.POST,
+			consumes = MediaType.TEXT_PLAIN,
+			produces = MediaType.TEXT_PLAIN)
+	public ResponseEntity<String> authorize(@Context HttpServletRequest request, @RequestBody String type) {
+		
+		Online online = (Online) request.getSession().getAttribute("user");
+		if (type.equals("index")) {
+			if (online == null) {
+				
+				return new ResponseEntity<String>("Not logged in", HttpStatus.OK);
+			}
+		}
+		
+		if (type.equals("login")) {
+			if (online != null) {
+				return new ResponseEntity<String>("Logged in", HttpStatus.OK);
+			}
+		}
+		
+		
+		return new ResponseEntity<String>("Authorized", HttpStatus.OK);
 	}
 }

@@ -1,7 +1,7 @@
 insert into User (usr_email, usr_password, usr_type) values ('bobi@bobinjo.com', 'bobijevasifra', '0')
 insert into User (usr_email, usr_password, usr_type) values ('prix@bobinjo.com', 'prixevasifra', '0')
 insert into User (usr_email, usr_password, usr_type) values ('gagi@bobinjo.com', 'gagijevasifra', '0')
-insert into User (usr_email, usr_password, usr_type) values ('admin', 'admin', '1')
+insert into User (usr_email, usr_password, usr_type) values ('admin@admin.com', 'admin', '1')
 insert into User (usr_email, usr_password, usr_type) values ('perisa@menadzer.com', 'perisinasifra', '2')
 insert into User (usr_email, usr_password, usr_type) values ('caki@menadzer.com', 'cakijevasifra', '2')
 insert into User (usr_email, usr_password, usr_type) values ('milica@konobar.com', 'milicinasifra', '3')

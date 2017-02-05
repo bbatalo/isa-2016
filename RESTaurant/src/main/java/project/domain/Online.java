@@ -19,10 +19,11 @@ public class Online {
 	@Id
 	@GeneratedValue
 	@Column(name = "onl_id", nullable = false)
-    public long id;
+    private long id;
 
 	@OneToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "usr_id")
+	//@JoinColumn(name = "usr_id", unique = true)
+	@JoinColumn(name = "user_id")
     private User user;
 	
 	public long getId() {

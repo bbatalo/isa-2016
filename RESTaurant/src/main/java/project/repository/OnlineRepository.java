@@ -2,6 +2,7 @@ package project.repository;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.Repository;
 
@@ -14,12 +15,16 @@ public interface OnlineRepository extends Repository<Online, Long>{
 	@Query("select o from Online o where o.id = ?1")
 	public Online findOnline(Long id);
 	
-	/*
-	@Query("insert into Online (usr_id) values (?1)")
-	public String addOnline(Long id);
+	@Query("select o from Online o where o.user = ?1")
+	public Online findUser(Long usr_id);
 	
-	@Query("delete o from Online o where o.id = ?1")
-	public String removeOnline(Long id);
-	*/
+	@Modifying
+	@Query("delete from Online o where o.id = ?1")
+	public void removeOnline(Long id);
+	
+	@Modifying
+	@Query("delete from Online o where o.user.userID = ?1")
+	public void removeUser(Long usr_id);
+	
 	public Online save(Online online);
 }
