@@ -13,18 +13,18 @@ public interface OnlineRepository extends Repository<Online, Long>{
 	public Page<Online> findAll(Pageable page);
 	
 	@Query("select o from Online o where o.id = ?1")
-	public Online findOnline(Long id);
+	public Online findOnlineById(Long id);
 	
-	@Query("select o from Online o where o.user = ?1")
-	public Online findUser(Long usr_id);
+	@Query("select o from Online o where o.user.userID = ?1")
+	public Online findOnlineByUserId(Long usr_id);
 	
 	@Modifying
 	@Query("delete from Online o where o.id = ?1")
-	public void removeOnline(Long id);
+	public void removeOnlineById(Long id);
 	
 	@Modifying
 	@Query("delete from Online o where o.user.userID = ?1")
-	public void removeUser(Long usr_id);
+	public void removeOnlineByUserId(Long usr_id);
 	
 	public Online save(Online online);
 }
