@@ -13,7 +13,7 @@
 	<link rel="stylesheet" href="/webjars/bootstrap/3.3.6/css/bootstrap.css">
 	
 	
-	<title>RESTaurantLogin</title>
+	<title>RESTaurant</title>
 	</head>
 	<body>
 		<nav class="navbar navbar-inverse">
@@ -22,9 +22,14 @@
 	     			 <a class="navbar-brand" href="index.html">Home</a>
 	   			 </div>
 	    		<ul class="nav navbar-nav">
-	    			
+	    			<li><a class="btn" >Restaurants</a></li>
+      				<li><a class="btn" >Friends</a></li>
+      				<li><a class="btn" >Visits</a></li>
 	    		</ul>
 	    		<ul class="nav navbar-nav navbar-right" ng-controller="ProfileController as profileCtrl">
+	    			<li><a class="btn"><span class="glyphicon glyphicon-envelope"></span> Invites</a></li>
+	    			<li><a class="btn"><span class="glyphicon glyphicon-bell"></span> Requests</a></li>
+	    			<li><a class="btn"><span class="glyphicon glyphicon-user"></span> Profile</a></li>
 	     			<li><a class="btn" ng-click="profileCtrl.logout()"><span class="glyphicon glyphicon-log-in"></span> Logout</a></li>
 	    		</ul>
 	  		</div>
