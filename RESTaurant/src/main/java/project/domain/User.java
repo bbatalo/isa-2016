@@ -19,13 +19,13 @@ public class User implements Serializable {
 	@Id
 	@GeneratedValue
 	@Column(name = "usr_id", nullable = false)
-	protected Long userID;
+	private Long userID;
 	
 	@Column(name = "usr_email", nullable = false, unique = true)
-	protected String email;
+	private String email;
 	
 	@Column(name = "usr_password", nullable = false)
-	protected String password;
+	private String password;
 	
 	@Column(name = "usr_type", nullable = false)
 	private UserType userType;

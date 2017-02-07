@@ -10,20 +10,20 @@ public class Customer extends User {
 
 	private static final long serialVersionUID = -2780627537315030281L;
 
-	@Column(name = "cst_name", nullable = true)
+	@Column(name = "cst_name", nullable = false)
 	private String name;
 	
-	@Column(name = "cst_surname", nullable = true)
+	@Column(name = "cst_surname", nullable = false)
     private String surname;
 	
-	@Column(name = "cst_address", nullable = true)
+	@Column(name = "cst_address", nullable = false)
     private String adress;
 	
-	@Column(name = "cst_date_birth", nullable = true)
+	@Column(name = "cst_date_birth", nullable = false)
     private Date dateBirth;
 	
-	public Customer() {}
-
+	protected Customer() {}
+	
 	/*
     public java.util.Collection<Reservation> reservations;
 

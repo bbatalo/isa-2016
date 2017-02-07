@@ -23,30 +23,31 @@ public class OnlineServiceImpl implements OnlineService {
 	@Override
 	public Online getOnline(Long id) {
 		Assert.notNull(id, "ID cannot be null.");
-		return this.onlineRepository.findOnlineById(id);
+		return this.onlineRepository.findOnline(id);
 	}
 
 	@Override
 	public Online addOnline(Online online) {
+		
 		return this.onlineRepository.save(online);
 	}
 
 	@Override
 	public Online getUser(Long usr_id) {
 		Assert.notNull(usr_id, "ID cannot be null.");
-		return this.onlineRepository.findOnlineByUserId(usr_id);
+		return this.onlineRepository.findUser(usr_id);
 	}
 
 	@Override
 	public void deleteOnline(Online online) {
 		Assert.notNull(online, "Online cannot be null.");
-		this.onlineRepository.removeOnlineById(online.getId());
+		this.onlineRepository.removeOnline(online.getId());
 	}
 
 	@Override
 	public void deleteUser(Long usr_id) {
 		Assert.notNull(usr_id, "ID cannot be null.");
-		this.onlineRepository.removeOnlineByUserId(usr_id);
+		this.onlineRepository.removeUser(usr_id);
 	}
 
 

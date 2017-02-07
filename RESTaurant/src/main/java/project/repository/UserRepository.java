@@ -13,6 +13,4 @@ public interface UserRepository extends Repository<User, Long> {
 	
 	@Query("select u from User u where u.email = ?1")
 	public User findUser(String email);
-	
-	public User save(User user);
 }
