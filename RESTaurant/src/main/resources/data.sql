@@ -14,8 +14,8 @@ insert into customer (cst_address, cst_date_birth, cst_name, cst_surname, usr_id
 
 insert into system_manager (sys_name, sys_surname, usr_id) values ('Milan', 'Kerac', '4')
 
-insert into restoraunt_manager (rsm_name, rsm_surname, usr_id) values ('Perisa', 'Slepac', '5')
-insert into restoraunt_manager (rsm_name, rsm_surname, usr_id) values ('Caki', 'Majmuncina', '6')
+insert into restaurant_manager (rsm_name, rsm_surname, usr_id) values ('Perisa', 'Slepac', '5')
+insert into restaurant_manager (rsm_name, rsm_surname, usr_id) values ('Caki', 'Majmuncina', '6')
 
 insert into employee (emp_name, emp_surname, emp_role, emp_pass_changed, emp_date_birth, emp_size_cloth, emp_size_shoes, usr_id) values ('Milica', 'Stanković', '0', false, '1995-5-5', '40', '38', '7')
 insert into employee (emp_name, emp_surname, emp_role, emp_pass_changed, emp_date_birth, emp_size_cloth, emp_size_shoes, usr_id) values ('Ognjen', 'Velisavčić', '1', false, '1995-5-5', '46', '45', '8')

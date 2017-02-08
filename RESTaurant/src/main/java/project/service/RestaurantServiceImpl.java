@@ -16,9 +16,9 @@ public class RestaurantServiceImpl implements RestaurantService{
 	private RestaurantRepository restaurantRepository;
 	
 	@Override
-	public Restaurant getRestaurant(String name) {
-		Assert.notNull(name, "name cannot be null.");
-		return this.restaurantRepository.findRestaurant(name);
+	public Restaurant getRestaurantById(Long id) {
+		Assert.notNull(id, "id cannot be null.");
+		return this.restaurantRepository.findRestaurantById(id);
 	}
 
 	@Override
@@ -30,6 +30,12 @@ public class RestaurantServiceImpl implements RestaurantService{
 	@Override
 	public List<Restaurant> getAll() {
 		return this.restaurantRepository.findAll();
+	}
+
+	@Override
+	public Restaurant getRestaurantByName(String name) {
+		Assert.notNull(name, "name cannot be null.");
+		return this.restaurantRepository.findRestaurantByName(name);
 	}
 
 }

@@ -12,11 +12,15 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToMany;
+
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 @Entity
 public class Restaurant implements Serializable{
 
-	private static final long serialVersionUID = 4684933772758103682L;
+	//private static final long serialVersionUID = 4684933772758103682L;
 
 	@Id
 	@GeneratedValue
@@ -31,7 +35,11 @@ public class Restaurant implements Serializable{
 	   
 	@Column(name="rst_description", nullable = true)
 	public String description;
-	   
+	
+	//@OneToMany(mappedBy="restaurant")
+	//@JsonManagedReference
+	//private Set<RestaurantManager> restaurantManagers;
+	
 	public Restaurant(){}
 
 	public long getRestaurantID() {
@@ -65,12 +73,14 @@ public class Restaurant implements Serializable{
 	public void setDescription(String description) {
 		this.description = description;
 	}
+	
+	//public Set<RestaurantManager> getRestaurantManagers() {
+	//	return restaurantManagers;
+	//}
 
-	@Override
-	public String toString() {
-		return "Restaurant [restaurantID=" + restaurantID + ", name=" + name + ", type=" + type + ", description="
-				+ description + "]";
-	}
+	//public void setRestaurantManagers(Set<RestaurantManager> restaurantManagers) {
+	//	this.restaurantManagers = restaurantManagers;
+	//}
 	
    /*
    public SeatingArrangement seating;

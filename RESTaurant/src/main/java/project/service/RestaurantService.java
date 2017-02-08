@@ -6,7 +6,9 @@ import project.domain.Restaurant;
 
 public interface RestaurantService {
 	
-	Restaurant getRestaurant(String name);
+	Restaurant getRestaurantById(Long id);
+	
+	Restaurant getRestaurantByName(String name);
 	
 	Restaurant addRestaurant(Restaurant r);
 	

@@ -2,19 +2,28 @@ package project.domain;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+
+import com.fasterxml.jackson.annotation.JsonBackReference;
 
 @Entity
-public class RestorauntManager extends User {
+public class RestaurantManager extends User {
 
-	private static final long serialVersionUID = -5315143688588885031L;
+	//private static final long serialVersionUID = -5315143688588885031L;
 
 	@Column(name = "rsm_name", nullable = false)
 	private String name;
 	
 	@Column(name = "rsm_surname", nullable = false)
     private String surname;
-
-	protected RestorauntManager() {}
+	
+	@ManyToOne
+	@JoinColumn(name="rst_id")
+	//@JsonBackReference
+	private Restaurant restaurant;
+	
+	protected RestaurantManager() {}
 	
 	public String getName() {
 		return name;
@@ -31,8 +40,14 @@ public class RestorauntManager extends User {
 	public void setSurname(String surname) {
 		this.surname = surname;
 	}
-	
-	
+
+	public Restaurant getRestaurant() {
+		return restaurant;
+	}
+
+	public void setRestaurant(Restaurant restaurant) {
+		this.restaurant = restaurant;
+	}
    /*
    public Restaurant restoraunt;
 
