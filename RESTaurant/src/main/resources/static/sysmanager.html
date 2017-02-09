@@ -158,10 +158,8 @@
 									<fieldset class="form-group">
 										<input ng-model="rmCtrl.restman.surname" type="text" class="form-control" placeholder="Surname:" required></input>
 									</fieldset>
-									<fieldset>
-										<select ng-model="rmCtrl.restman.restaurant.name" class="form-control" required>
-											<option ng-repeat="restaurant in rmCtrl.restaurants" value="{{restaurant.name}}">{{restaurant.name}}</option>
-										</select>
+									<fieldset class="form-group">
+										<input ng-model="rmCtrl.restman.restaurant.name" type="text" class="form-control" placeholder="Restaurant:" required></input>
 									</fieldset>
 									<fieldset class="form-group">
 		                				<input  type="submit" class="btn btn-lg btn-primary btn-block pull-right" value="Register" />

@@ -48,7 +48,6 @@
 		var control = this;
 		control.restman = {};
 		control.restmans = [];
-		control.restaurants = [];
 		control.result = "";
 		
 		this.register = function(){
@@ -73,16 +72,6 @@
 		};
 		
 		this.getRestMans();
-		
-		this.getRestaurants = function(){
-			$http.get('/sysman/getRestaurants').then(function success(response){
-				control.restaurants = response.data;
-			}), function error(response){
-				control.result = "Unknown error ocurred."
-			}
-		};
-		
-		this.getRestaurants();
 	}]);
 	
 	app.controller("RestaurantController", ['$http', '$window', function($http, $window){
