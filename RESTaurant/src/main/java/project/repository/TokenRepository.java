@@ -15,7 +15,10 @@ public interface TokenRepository extends Repository<Token, Long> {
 	public Token findTokenById(Long id);
 	
 	@Query("select t from Token t where t.token = ?1")
-	public Token findTokenByString(String str);
+	public Token findTokenByHash(String hash);
+	
+	@Query("select t from Token t where t.email = ?1")
+	public Token findTokenByEmail(String email);
 	
 	public Token save(Token token);
 }

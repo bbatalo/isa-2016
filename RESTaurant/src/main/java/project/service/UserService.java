@@ -10,4 +10,6 @@ public interface UserService {
 	Page<User> findUsers();
 	
 	User getUser(String email);
+	
+	User getUserById(Long id);
 }

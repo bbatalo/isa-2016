@@ -16,7 +16,7 @@
 			control.result = "";
 			if (control.selected.id == "1") {
 				if (control.user.password == control.user.repeated) {
-					control.result = "Usao."
+					control.result = "Processing request."
 					var customer = {}
 					customer.email = control.user.email;
 					customer.password = control.user.password;

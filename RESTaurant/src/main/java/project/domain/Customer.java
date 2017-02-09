@@ -17,7 +17,7 @@ public class Customer extends User {
     private String surname;
 	
 	@Column(name = "cst_address", nullable = true)
-    private String adress;
+    private String address;
 	
 	@Column(name = "cst_date_birth", nullable = true)
     private Date dateBirth;
@@ -56,12 +56,12 @@ public class Customer extends User {
 		this.surname = surname;
 	}
 
-	public String getAdress() {
-		return adress;
+	public String getAddress() {
+		return address;
 	}
 
-	public void setAdress(String adress) {
-		this.adress = adress;
+	public void setAddress(String address) {
+		this.address = address;
 	}
 
 	public Date getDateBirth() {

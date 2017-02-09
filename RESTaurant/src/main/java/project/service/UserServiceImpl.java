@@ -27,4 +27,10 @@ public class UserServiceImpl implements UserService {
 		return this.userRepository.findUser(email);
 	}
 
+	@Override
+	public User getUserById(Long id) {
+		Assert.notNull(id);
+		return this.userRepository.findUserById(id);
+	}
+
 }

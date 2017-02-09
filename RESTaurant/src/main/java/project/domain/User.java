@@ -30,7 +30,7 @@ public class User implements Serializable {
 	@Column(name = "usr_type", nullable = false)
 	private UserType userType;
 	
-	protected User() {}
+	public User() {}
 
 	public Long getUserID() {
 		return userID;

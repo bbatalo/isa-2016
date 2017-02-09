@@ -73,7 +73,7 @@ public class LoginController {
 				
 				headers.add("Location", "/index.html");
 				
-				return new ResponseEntity<String>("Logged in", headers, HttpStatus.OK);
+				return new ResponseEntity<String>("Logged in:" + user.getUserType().toString(), headers, HttpStatus.OK);
 			} 
 		} 
 		

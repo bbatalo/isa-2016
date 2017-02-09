@@ -8,7 +8,6 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.mail.SimpleMailMessage;
@@ -24,6 +23,7 @@ import project.domain.Token;
 import project.domain.UserType;
 import project.service.CustomerService;
 import project.service.TokenService;
+import project.service.UserService;
 
 @RequestMapping("/register")
 @Controller
@@ -31,6 +31,9 @@ public class RegisterController {
 
 	@Autowired
 	private CustomerService customerService;
+	
+	@Autowired
+	private UserService userService;
 	
 	@Autowired
 	private TokenService tokenService;
@@ -46,7 +49,15 @@ public class RegisterController {
 		
 		String hash = UUID.randomUUID().toString();
 		
+		if (userService.getUser(cst.getEmail()) != null) {
+			return new ResponseEntity<String>("Provided e-mail already in use.", HttpStatus.OK);
+		}
+		
+		Token tmpToken = tokenService.getTokenByEmail(cst.getEmail());
 		Token token = new Token(hash, cst.getEmail(), cst.getPassword(), cst.getName(), cst.getSurname());
+		if (tmpToken != null) {
+			token.setId(tmpToken.getId());
+		}
 		token.setExpiryDate(token.calculateExpiryDate());
 		tokenService.addToken(token);
 		System.out.println(hash);
@@ -60,14 +71,14 @@ public class RegisterController {
         message.setText("Please follow the link below to confirm your registration. \n\n" + url);
         javaMailSender.send(message);
         
-		return new ResponseEntity<String>("Uspjeh", HttpStatus.OK);
+		return new ResponseEntity<String>("A confirmation link has been sent to provided e-mail address.", HttpStatus.OK);
 	}
 	
 	@RequestMapping(value = "/confirm",
 			method = RequestMethod.GET)
 	public String confirmRegistration(@Context HttpServletRequest request, @RequestParam("token") String token) {
 		
-		Token tok = tokenService.getTokenByString(token);
+		Token tok = tokenService.getTokenByHash(token);
 		
 		if (tok == null) {
 			return "redirect:/register.html";

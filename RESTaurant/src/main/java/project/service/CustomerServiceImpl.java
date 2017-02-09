@@ -38,4 +38,25 @@ public class CustomerServiceImpl implements CustomerService {
 		return customerRepository.save(customer);
 	}
 
+	@Override
+	public void updateCustomerEmail(Customer customer) {
+		Assert.notNull(customer, "Cannot be null");
+		customerRepository.updateEmail(customer.getUserID(), customer.getEmail());
+	}
+
+	@Override
+	public void updateCustomerPassword(Customer customer) {
+		Assert.notNull(customer, "Cannot be null");
+		customerRepository.updatePassword(customer.getUserID(), customer.getPassword());
+		
+	}
+	
+	@Override
+	public void updateCustomerDetails(Customer customer) {
+		Assert.notNull(customer, "Cannot be null");
+		customerRepository.updateDetails(customer.getUserID(), customer.getName(), customer.getSurname(), customer.getAddress(), customer.getDateBirth());
+	}
+
+	
+
 }

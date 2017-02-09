@@ -10,7 +10,11 @@ Page<Token> getAll();
 	
 	Token getToken(Long id);
 	
-	Token getTokenByString(String str);
+	Token getTokenByHash(String hash);
+	
+	Token getTokenByEmail(String email);
 	
 	Token addToken(Token token);
+	
+	
 }

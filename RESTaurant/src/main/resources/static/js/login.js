@@ -29,12 +29,23 @@
 		
 		this.login = function() {
 			$http.post('/login/login', this.user).then(function success(response) {
-				if (response.data == "Invalid credentials") {
-					control.result = "Invalid credentials";
+				if (response.data.indexOf("Logged in") !== -1) {
+					if (response.data.indexOf("CUSTOMER") !== -1)
+						$window.location.href = '/index.html';
+					else if (response.data.indexOf("SYSMANAGER") !== -1)
+						$window.location.href = '/sysmanager.html';
+					else if (response.data.indexOf("RESTMANAGER") !== -1)
+						//NE POSTOJI RESURS JOS UVEK
+						$window.location.href = '/restmanager.html';
+					else if (response.data.indexOf("SUPPLIER") !== -1)
+						//NE POSTOJI RESURS JOS UVEK
+						$window.location.href = '/supplier.html';
+					else if (response.data.indexOf("EMPLOYEE") !== -1)
+						//NE POSTOJI RESURS JOS UVEK
+						$window.location.href = '/employee.html';
 				} else {
-					$window.location.href = '/index.html';
+					control.result = response.data;
 				}
-				
 				
 			}, function error(response) {
 				control.result = "Unknown error ocurred."

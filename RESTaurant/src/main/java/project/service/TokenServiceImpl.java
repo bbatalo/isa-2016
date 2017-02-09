@@ -27,14 +27,21 @@ public class TokenServiceImpl implements TokenService {
 	}
 
 	@Override
-	public Token getTokenByString(String str) {
-		Assert.notNull(str);
-		return tokenRepository.findTokenByString(str);
+	public Token getTokenByHash(String hash) {
+		Assert.notNull(hash);
+		return tokenRepository.findTokenByHash(hash);
 	}
 
+	@Override
+	public Token getTokenByEmail(String email) {
+		Assert.notNull(email);
+		return tokenRepository.findTokenByEmail(email);
+	}
+	
 	@Override
 	public Token addToken(Token token) {
 		return tokenRepository.save(token);
 	}
 
+	
 }

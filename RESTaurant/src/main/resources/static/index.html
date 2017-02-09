@@ -15,24 +15,120 @@
 	
 	<title>RESTaurant</title>
 	</head>
-	<body>
-		<nav class="navbar navbar-inverse">
+	<body ng-controller="TabController as tabCtrl">
+		<nav class="navbar navbar-inverse" >
 	  		<div class="container-fluid">
 	    		<div class="navbar-header">
 	     			 <a class="navbar-brand" href="index.html">Home</a>
 	   			 </div>
 	    		<ul class="nav navbar-nav">
-	    			<li><a class="btn" >Restaurants</a></li>
-      				<li><a class="btn" >Friends</a></li>
-      				<li><a class="btn" >Visits</a></li>
+	    			<li ng-class="{active:tabCtrl.isSet(1)}"><a class="btn" ng-click="tabCtrl.setTab(1)">Restaurants</a></li>
+      				<li ng-class="{active:tabCtrl.isSet(2)}"><a class="btn" ng-click="tabCtrl.setTab(2)">Friends</a></li>
+      				<li ng-class="{active:tabCtrl.isSet(3)}"><a class="btn" ng-click="tabCtrl.setTab(3)">Visits</a></li>
 	    		</ul>
-	    		<ul class="nav navbar-nav navbar-right" ng-controller="ProfileController as profileCtrl">
-	    			<li><a class="btn"><span class="glyphicon glyphicon-envelope"></span> Invites</a></li>
-	    			<li><a class="btn"><span class="glyphicon glyphicon-bell"></span> Requests</a></li>
-	    			<li><a class="btn"><span class="glyphicon glyphicon-user"></span> Profile</a></li>
-	     			<li><a class="btn" ng-click="profileCtrl.logout()"><span class="glyphicon glyphicon-log-in"></span> Logout</a></li>
+	    		<ul class="nav navbar-nav navbar-right" >
+	    			<li ng-class="{active:tabCtrl.isSet(4)}"><a class="btn" ng-click="tabCtrl.setTab(4)"><span class="glyphicon glyphicon-envelope"></span> Invites</a></li>
+	    			<li ng-class="{active:tabCtrl.isSet(5)}"><a class="btn" ng-click="tabCtrl.setTab(5)"><span class="glyphicon glyphicon-bell"></span> Requests</a></li>
+	    			<li ng-class="{active:tabCtrl.isSet(6)}"><a class="btn" ng-click="tabCtrl.setTab(6)"><span class="glyphicon glyphicon-user"></span> Profile</a></li>
+	     			<li><a class="btn" ng-click="indexCtrl.logout()"><span class="glyphicon glyphicon-log-in"></span> Logout</a></li>
 	    		</ul>
 	  		</div>
 		</nav>
+		<div ng-show="tabCtrl.isSet(1)">RESTORANI IDEMO</div>
+		<div ng-show="tabCtrl.isSet(2)">PRIJATELJI MOJI NAJBOLJI</div>
+		<div ng-show="tabCtrl.isSet(3)">OVDE SAM BIJO ALI NEMA INSTAGRAMA</div>
+		<div ng-show="tabCtrl.isSet(4)">POZVALI ME PRIJATELJI MOJI KINESKE RANE DA JEDEMO</div>
+		<div ng-show="tabCtrl.isSet(5)">DAL SE MI POZAJEDEMO?</div>
+		<div ng-show="tabCtrl.isSet(6)"  ng-controller="ProfileController as profileCtrl" ng-init="">
+			<div class="row">
+	  		<div class="col-sm-3"></div>
+	  		<div class="col-sm-5">
+	  			<div class="panel-group">
+			  		<div class="panel panel-default">
+			  			<div class="panel-heading">Mandatory</div>
+				  		<div class="panel-body">
+				  			<form name="emailForm" class="form-horizontal" ng-submit="emailForm.$valid && profileCtrl.update(0)" novalidate>
+				  				<div class="form-group">
+				  					<label class="control-label col-sm-3">E-mail:</label>
+				  					<div class="col-sm-9">
+				  						<input ng-model="profileCtrl.form.email" type="email" class="form-control" placeholder="E-mail:" required></input>
+				  					</div>
+				  				</div>
+				  				<div class="col-sm-10"></div>
+								<div class="form-group col-sm-2">
+		                				<input  type="submit" class="btn btn-md btn-primary pull-right" value="Change e-mail" />
+		              			</div>
+				  			</form>
+				  		</div>
+			  		</div>
+			  		<div class="panel panel-default">
+				  		<div class="panel-body">
+				  			<form name="passwordForm" class="form-horizontal" ng-submit="passwordForm.$valid && profileCtrl.update(1)" novalidate>
+				  				<div class="form-group">
+				  					<label class="control-label col-sm-3">Current password:</label>
+				  					<div class="col-sm-9">
+				  						<input ng-model="profileCtrl.form.currentPass" type="password" class="form-control" placeholder="Current password:" required></input>
+				  					</div>
+				  				</div>
+				  				<div class="form-group">
+				  					<label class="control-label col-sm-3">New password:</label>
+				  					<div class="col-sm-9">
+				  						<input ng-model="profileCtrl.form.newPass" type="password" class="form-control" placeholder="New password:" required></input>
+				  					</div>
+				  				</div>
+				  				<div class="form-group">
+				  					<label class="control-label col-sm-3">Repeat new:</label>
+				  					<div class="col-sm-9">
+				  						<input ng-model="profileCtrl.form.repeatPass" type="password" class="form-control" placeholder="Repeat new:" required></input>
+				  					</div>
+				  				</div>
+				  				<div class="col-sm-10">{{profileCtrl.control.resultPass}}</div>
+								<div class="form-group col-sm-2">
+		                				<input  type="submit" class="btn btn-md btn-primary pull-right" value="Change password" />
+		              			</div>
+				  			</form>
+				  		</div>
+				  	</div>
+				  	<div class="panel panel-default">
+				  		<div class="panel-heading">Optional</div>
+					  	<div class="panel-body">
+					  		<form name="detailsForm" class="form-horizontal" ng-submit="detailsForm.$valid && profileCtrl.update(2)" novalidate>
+					  			<div class="form-group">
+					  				<label class="control-label col-sm-3">Name:</label>
+					  				<div class="col-sm-9">
+					  					<input ng-model="profileCtrl.form.name" type="text" class="form-control" placeholder="Name" required></input>
+					  				</div>
+					  			</div>
+					  			<div class="form-group">
+					  				<label class="control-label col-sm-3">Surname:</label>
+					  				<div class="col-sm-9">
+					  					<input ng-model="profileCtrl.form.surname" type="text" class="form-control" placeholder="Surname:" required></input>
+					  				</div>
+					  			</div>
+					  			<div class="form-group">
+					  				<label class="control-label col-sm-3">Address:</label>
+					  				<div class="col-sm-9">
+					  					<input ng-model="profileCtrl.form.address" type="text" class="form-control" placeholder="Address:" required></input>
+					  				</div>
+					  			</div>
+					  			<div class="form-group">
+					  				<label class="control-label col-sm-3">Date of birth:</label>
+					  				<div class="col-sm-9">
+					  					<input ng-model="profileCtrl.form.dateBirth" type="date" class="form-control" placeholder="Repeat new:" required></input>
+					  				</div>
+					  			</div>
+					  			<div class="col-sm-10"></div>
+								<div class="form-group col-sm-2">
+			                			<input  type="submit" class="btn btn-md btn-primary pull-right" value="Apply changes" />
+			              		</div>
+					  		</form>
+					  	</div>
+				  	</div>
+		  		</div>
+	  		</div>
+	  		<div class="col-sm-4"></div>
+	  	</div>
+		
+		</div>
 	</body>
 </html>
