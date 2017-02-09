@@ -138,11 +138,65 @@
 			  	</div>
 		  	</div>
 		  	
-		  	<div class="row" ng-show="tab.isSet(3)">
-		  		<div class="col-sm-4"></div>
-		  		<div class="col-sm-4">
-		  		</div>
-		  		<div class="col-sm-4"></div>
+		  	<div ng-controller="RestManController as rmCtrl" ng-show="tab.isSet(3)">
+				<div class="row">
+			  		<div class="col-sm-4"></div>
+			  		<div class="col-sm-4">
+						<div class="panel panel-default">
+							<div class="panel-body">
+								<form name="addRestManForm" ng-submit="addRestManForm.$valid && rmCtrl.register()" class="form-signin" novalidate >
+									<h3>Register restaurant manager.</h3>
+									<fieldset class="form-group">
+										<input ng-model="rmCtrl.restman.email" type="email" class="form-control" placeholder="Email:" required></input>
+									</fieldset>
+									<fieldset class="form-group">
+										<input ng-model="rmCtrl.restman.password" type="password" class="form-control" placeholder="Password:" required></input>
+									</fieldset>
+									<fieldset class="form-group">
+										<input ng-model="rmCtrl.restman.name" type="text" class="form-control" placeholder="Name:" required></input>
+									</fieldset>
+									<fieldset class="form-group">
+										<input ng-model="rmCtrl.restman.surname" type="text" class="form-control" placeholder="Surname:" required></input>
+									</fieldset>
+									<fieldset>
+										<select ng-model="rmCtrl.restman.restaurant.name" class="form-control" required>
+											<option ng-repeat="restaurant in rmCtrl.restaurants" value="{{restaurant.name}}">{{restaurant.name}}</option>
+										</select>
+									</fieldset>
+									<fieldset class="form-group">
+		                				<input  type="submit" class="btn btn-lg btn-primary btn-block pull-right" value="Register" />
+		              				</fieldset>
+									<fieldset><div></div>{{rmCtrl.result}}</fieldset><br />
+								</form>
+							</div>
+						</div>
+			  		</div>
+			  		<div class="col-sm-4"></div>
+			  	</div>
+			  	<div class="row">
+			  		<div class="col-sm-2"></div>
+			  		<div class="col-sm-8">
+				  		<table class="table table-hover">
+							<thead>
+								<tr>
+									<th>Email</th>
+									<th>Name</th>
+									<th>Surname</th>
+									<th>Restaurant</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr ng-repeat="restman in rmCtrl.restmans">
+									<td>{{restman.email}}</td>
+									<td>{{restman.name}}</td>
+									<td>{{restman.surname}}</td>
+									<td>{{restman.restaurant.name}}</td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+					<div class="col-sm-2"></div>
+			  	</div>
 		  	</div>
 	</body>
 </html>

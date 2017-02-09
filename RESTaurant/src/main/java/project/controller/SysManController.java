@@ -22,8 +22,10 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import project.domain.Restaurant;
+import project.domain.RestaurantManager;
 import project.domain.SystemManager;
 import project.domain.User;
+import project.service.RestManService;
 import project.service.RestaurantService;
 import project.service.SysManService;
 import project.service.UserService;
@@ -38,6 +40,9 @@ public class SysManController {
 	
 	@Autowired
 	private RestaurantService restaurantService;
+	
+	@Autowired
+	private RestManService restManService;
 	
 	@Transactional
 	@RequestMapping(value="/addSystemManager",
@@ -60,6 +65,33 @@ public class SysManController {
 		return "User email already exists!";
 	}
 	
+	@Transactional
+	@RequestMapping(value="/addRestaurantManager",
+			method = RequestMethod.POST,
+			consumes = MediaType.APPLICATION_JSON,
+			produces = MediaType.TEXT_PLAIN)
+	@ResponseBody
+	public String addRestaurantManager(@RequestBody RestaurantManager rm){
+		User u = userService.getUser(rm.getEmail());
+		
+		if(rm.getRestaurant() != null){
+			Restaurant r = this.restaurantService.getRestaurantByName(rm.getRestaurant().getName());
+			rm.setRestaurant(r);
+		}else{
+			rm.setRestaurant(null);
+		}
+		
+		if(u == null){
+
+			rm.setUserType(project.domain.UserType.RESTMANAGER);
+			restManService.addRestaurantManager(rm);
+			
+			return "OK";
+		}
+		
+		return "User email already exists!";
+	}
+	
 	@RequestMapping(value="/getSystemManagers",
 			method = RequestMethod.GET,
 			produces = MediaType.APPLICATION_JSON)
@@ -68,12 +100,30 @@ public class SysManController {
 		return sysManService.getAll();
 	}
 	
+	@RequestMapping(value="/getRestaurantManagers",
+			method = RequestMethod.GET,
+			produces = MediaType.APPLICATION_JSON)
+	@ResponseBody
+	public List<RestaurantManager> getRestaurantManagers(){
+		
+		return restManService.getAll();
+	}
+	
 	@RequestMapping(value="/getRestaurants",
 			method = RequestMethod.GET,
 			produces = MediaType.APPLICATION_JSON)
 	@ResponseBody
 	public List<Restaurant> getRestaurants(){
 		return restaurantService.getAll();
+	}
+	
+	@RequestMapping(value="/getRestaurantByName",
+			method = RequestMethod.POST,
+			consumes = MediaType.APPLICATION_JSON,
+			produces = MediaType.APPLICATION_JSON)
+	@ResponseBody
+	public Restaurant getRestaurantByName(@RequestBody Restaurant r){
+		return this.restaurantService.getRestaurantByName(r.getName());
 	}
 	
 	@Transactional
@@ -85,7 +135,7 @@ public class SysManController {
 	public String addRestaurant(@RequestBody Restaurant r){
 		
 		
-		Restaurant restaurant = restaurantService.getRestaurant(r.getName());
+		Restaurant restaurant = restaurantService.getRestaurantByName(r.getName());
 		
 		if(restaurant == null){
 			

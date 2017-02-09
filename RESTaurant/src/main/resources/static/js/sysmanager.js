@@ -44,6 +44,47 @@
 		this.getSysMans();
 	}]);
 	
+	app.controller("RestManController", ['$http', '$window', function($http, $window){
+		var control = this;
+		control.restman = {};
+		control.restmans = [];
+		control.restaurants = [];
+		control.result = "";
+		
+		this.register = function(){
+			
+			$http.post('/sysman/addRestaurantManager', this.restman).then(function success(response) {
+				control.result = response.data;
+				if(control.result === "OK"){
+					control.restmans.push(control.restman);
+					control.restman = {};
+				}
+			}, function error(response) {
+				control.result = "Unknown error ocurred.";
+			});
+		};
+		
+		this.getRestMans = function(){
+			$http.get('/sysman/getRestaurantManagers').then(function success(response){
+				control.restmans = response.data;
+			}), function error(response){
+				control.result = "Unknown error ocurred."
+			}
+		};
+		
+		this.getRestMans();
+		
+		this.getRestaurants = function(){
+			$http.get('/sysman/getRestaurants').then(function success(response){
+				control.restaurants = response.data;
+			}), function error(response){
+				control.result = "Unknown error ocurred."
+			}
+		};
+		
+		this.getRestaurants();
+	}]);
+	
 	app.controller("RestaurantController", ['$http', '$window', function($http, $window){
 		var control = this;
 		control.restaurant = {};

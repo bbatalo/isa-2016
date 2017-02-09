@@ -21,7 +21,7 @@ public class Bid {
    /** @pdRoleInfo migr=no name=Grocery assc=requiredGroceries coll=java.util.Collection impl=java.util.ArrayList mult=0..* */
    public java.util.Collection<Grocery> groceries;
    /** @pdRoleInfo migr=no name=RestorauntManager assc=bids mult=0..1 side=A */
-   public RestorauntManager manager;
+   public RestaurantManager manager;
    /** @pdRoleInfo migr=no name=Offer assc=offersForBids coll=java.util.Collection impl=java.util.ArrayList mult=0..* side=A */
    public java.util.Collection<Offer> offers;
    
@@ -123,18 +123,18 @@ public class Bid {
          groceries.clear();
    }
    /** @pdGenerated default parent getter */
-   public RestorauntManager getManager() {
+   public RestaurantManager getManager() {
       return manager;
    }
    
    /** @pdGenerated default parent setter
      * @param newRestorauntManager */
-   public void setManager(RestorauntManager newRestorauntManager) {
+   public void setManager(RestaurantManager newRestorauntManager) {
       if (this.manager == null || !this.manager.equals(newRestorauntManager))
       {
          if (this.manager != null)
          {
-            RestorauntManager oldRestorauntManager = this.manager;
+            RestaurantManager oldRestorauntManager = this.manager;
             this.manager = null;
             //oldRestorauntManager.removeBids(this);
          }
