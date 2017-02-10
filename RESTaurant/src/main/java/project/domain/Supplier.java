@@ -16,7 +16,9 @@ public class Supplier extends User {
 
 	@Column(name = "sup_pass_changed", nullable = false)
     private boolean passChanged = false;
-
+	
+	public Supplier() {}
+	
 	public String getLabel() {
 		return label;
 	}

@@ -23,7 +23,7 @@ public class RestaurantManager extends User {
 	//@JsonBackReference
 	private Restaurant restaurant;
 	
-	protected RestaurantManager() {}
+	public RestaurantManager() {}
 	
 	public String getName() {
 		return name;

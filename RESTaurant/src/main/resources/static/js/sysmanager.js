@@ -1,6 +1,6 @@
 (function(){
 	var app = angular.module('sysmanager', []);
-	
+		
 	app.controller("TabController", function(){
 	    this.tab = 1;
 
@@ -57,6 +57,8 @@
 				if(control.result === "OK"){
 					control.restmans.push(control.restman);
 					control.restman = {};
+				}else if(control.result === "No such restaurant."){
+					control.restman.restaurant.name = "";
 				}
 			}, function error(response) {
 				control.result = "Unknown error ocurred.";

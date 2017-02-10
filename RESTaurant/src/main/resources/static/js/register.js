@@ -35,7 +35,25 @@
 					control.result = "Passwords must match.";
 				}
 			} else {
-				//registracija dobavljaca
+				if(control.user.password == control.user.repeated){
+					control.result = "Processing request.";
+					var supplier = {};
+					supplier.email = control.user.email;
+					supplier.password = control.user.password;
+					supplier.label = control.user.label;
+					supplier.description = control.user.description;
+					
+					$http.post('/register/supplier', supplier).then(function success(response) {
+						control.result = response.data;
+						
+					}, function error(response) {
+						control.result = "Unknown error ocurred."
+					});
+				}else{
+					control.user.password = "";
+					control.user.repeated = "";
+					control.result = "Passwords must match";
+				}
 			}
 		}
 	}]);

@@ -15,6 +15,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 @Entity
@@ -36,9 +37,9 @@ public class Restaurant implements Serializable{
 	@Column(name="rst_description", nullable = true)
 	public String description;
 	
-	//@OneToMany(mappedBy="restaurant")
-	//@JsonManagedReference
-	//private Set<RestaurantManager> restaurantManagers;
+	@OneToMany(mappedBy="restaurant")
+	@JsonIgnore
+	private Set<RestaurantManager> restaurantManagers;
 	
 	public Restaurant(){}
 

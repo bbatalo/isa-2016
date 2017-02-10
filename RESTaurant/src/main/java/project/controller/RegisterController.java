@@ -19,9 +19,11 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import project.domain.Customer;
+import project.domain.Supplier;
 import project.domain.Token;
 import project.domain.UserType;
 import project.service.CustomerService;
+import project.service.SupplierService;
 import project.service.TokenService;
 import project.service.UserService;
 
@@ -37,6 +39,9 @@ public class RegisterController {
 	
 	@Autowired
 	private TokenService tokenService;
+	
+	@Autowired
+	private SupplierService supplierService;
 	
 	@Autowired
     private JavaMailSender javaMailSender;
@@ -74,6 +79,39 @@ public class RegisterController {
 		return new ResponseEntity<String>("A confirmation link has been sent to provided e-mail address.", HttpStatus.OK);
 	}
 	
+	@RequestMapping(value = "/supplier",
+			method = RequestMethod.POST,
+			consumes = MediaType.APPLICATION_JSON,
+			produces = MediaType.TEXT_PLAIN)
+	public ResponseEntity<String> registerSupplier(@Context HttpServletRequest request, @RequestBody Supplier s) {
+		
+		String hash = UUID.randomUUID().toString();
+		
+		if (userService.getUser(s.getEmail()) != null) {
+			return new ResponseEntity<String>("Provided e-mail already in use.", HttpStatus.OK);
+		}
+		
+		Token tmpToken = tokenService.getTokenByEmail(s.getEmail());
+		Token token = new Token(hash, s.getEmail(), s.getPassword(), s.getLabel(), s.getDescription());
+		if (tmpToken != null) {
+			token.setId(tmpToken.getId());
+		}
+		token.setExpiryDate(token.calculateExpiryDate());
+		tokenService.addToken(token);
+		System.out.println(hash);
+		
+		String appLocation = getURL(request);
+		String url = appLocation + "/register/confirmsup?token=" + hash;
+		
+		SimpleMailMessage message = new SimpleMailMessage();
+        message.setTo(s.getEmail());
+        message.setSubject("Registration confirmation");
+        message.setText("Please follow the link below to confirm your registration. \n\n" + url);
+        javaMailSender.send(message);
+        
+		return new ResponseEntity<String>("A confirmation link has been sent to provided e-mail address.", HttpStatus.OK);
+	}
+	
 	@RequestMapping(value = "/confirm",
 			method = RequestMethod.GET)
 	public String confirmRegistration(@Context HttpServletRequest request, @RequestParam("token") String token) {
@@ -99,6 +137,37 @@ public class RegisterController {
 			cst.setSurname(tok.getSurname());
 		
 		customerService.addCustomer(cst);
+		
+		return "redirect:/login.html";
+		
+		
+	}
+	
+	@RequestMapping(value = "/confirmsup",
+			method = RequestMethod.GET)
+	public String confirmRegistrationSupplier(@Context HttpServletRequest request, @RequestParam("token") String token) {
+		
+		Token tok = tokenService.getTokenByHash(token);
+		
+		if (tok == null) {
+			return "redirect:/register.html";
+		}
+		
+		Calendar cal = Calendar.getInstance();
+		if ((tok.getExpiryDate().getTime() - cal.getTime().getTime()) <= 0) {
+			return "redirect:/register.html";
+		}
+		
+		Supplier s = new Supplier();
+		s.setEmail(tok.getEmail());
+		s.setPassword(tok.getPassword());
+		s.setUserType(UserType.SUPPLIER);
+		if (tok.getName() != "")
+			s.setLabel(tok.getName());
+		if (tok.getSurname() != "")
+			s.setDescription(tok.getSurname());
+		
+		supplierService.addSupplier(s);
 		
 		return "redirect:/login.html";
 		

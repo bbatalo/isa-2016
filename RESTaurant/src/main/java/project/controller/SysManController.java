@@ -76,9 +76,10 @@ public class SysManController {
 		
 		if(rm.getRestaurant() != null){
 			Restaurant r = this.restaurantService.getRestaurantByName(rm.getRestaurant().getName());
-			rm.setRestaurant(r);
-		}else{
-			rm.setRestaurant(null);
+			if(r != null)
+				rm.setRestaurant(r);
+			else
+				return "No such restaurant.";
 		}
 		
 		if(u == null){
