@@ -24,9 +24,7 @@ public class DishRating {
    public Dish getDish() {
       return dish;
    }
-   
-   /** @pdGenerated default parent setter
-     * @param newDish */
+   /*
    public void setDish(Dish newDish) {
       if (this.dish == null || !this.dish.equals(newDish))
       {
@@ -43,5 +41,5 @@ public class DishRating {
          }
       }
    }
-
+	*/
 }

@@ -18,6 +18,9 @@ public interface SupplierRepository extends Repository<Supplier, Long>{
 	@Query("select s from Supplier s where s.userID = ?1")
 	public Supplier findSupplierById(Long id);
 	
+	@Query("select s from Supplier s where s.email = ?1")
+	public Supplier findSupplierByEmail(String email);
+
 	@Modifying
 	@Query("update Supplier s set s.email = ?2 where s.userID = ?1 ")
 	public void updateEmail(Long id, String email);

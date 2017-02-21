@@ -21,10 +21,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import project.domain.Menu;
 import project.domain.Restaurant;
 import project.domain.RestaurantManager;
 import project.domain.SystemManager;
 import project.domain.User;
+import project.service.MenuService;
 import project.service.RestManService;
 import project.service.RestaurantService;
 import project.service.SysManService;
@@ -43,6 +45,9 @@ public class SysManController {
 	
 	@Autowired
 	private RestManService restManService;
+	
+	@Autowired
+	private MenuService menuService;
 	
 	@Transactional
 	@RequestMapping(value="/addSystemManager",
@@ -141,6 +146,11 @@ public class SysManController {
 		if(restaurant == null){
 			
 			restaurantService.addRestaurant(r);
+			
+			Menu menu = new Menu();
+			menu.setRestaurant(r);
+			
+			menuService.addMenu(menu);
 			
 			return "OK";
 		}

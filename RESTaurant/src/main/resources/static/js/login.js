@@ -35,7 +35,6 @@
 					else if (response.data.indexOf("SYSMANAGER") !== -1)
 						$window.location.href = '/sysmanager.html';
 					else if (response.data.indexOf("RESTMANAGER") !== -1)
-						//NE POSTOJI RESURS JOS UVEK
 						$window.location.href = '/restmanager.html';
 					else if (response.data.indexOf("SUPPLIER") !== -1)
 						//NE POSTOJI RESURS JOS UVEK

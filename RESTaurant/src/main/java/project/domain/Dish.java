@@ -7,49 +7,60 @@ package project.domain;
 
 import java.util.*;
 
-/** @pdOid 7920bc95-0f72-4d02-8a92-1691e84dd635 */
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
+@Entity
 public class Dish {
-   /** @pdOid 678e4c33-c5c4-4b15-b49d-a33be1878860 */
-   public long idDish;
-   /** @pdOid 8567b64e-6a23-4850-9c1f-001a85f44234 */
-   public java.lang.String label;
-   /** @pdOid d6b96f53-df99-4551-b8bf-bf6015125c13 */
-   public java.lang.String description;
-   /** @pdOid bf28d272-8309-4ffa-95a8-88e3c2b15969 */
-   public float price;
+	
+	@Id
+	@GeneratedValue
+	@Column(name="dish_id", nullable = false)
+	public long idDish;
+	
+	@Column(name="dish_label", nullable = false)
+	public String label;
+	
+	@Column(name="dish_description")
+	public String description;
+	
+	@Column(name="dish_price", nullable = false)
+	public float price;
    
-   /** @pdRoleInfo migr=no name=DishesOrder assc=dishesInAOrder coll=java.util.Collection impl=java.util.ArrayList mult=0..* */
-   public java.util.Collection<DishesOrder> dishOrders;
-   /** @pdRoleInfo migr=no name=DishRating assc=dishesRating coll=java.util.Collection impl=java.util.ArrayList mult=0..* */
-   public java.util.Collection<DishRating> ratings;
-   /** @pdRoleInfo migr=no name=Menu assc=dishes coll=java.util.Collection impl=java.util.ArrayList mult=0..* side=A */
-   public java.util.Collection<Menu> menu;
-   
-   
-   /** @pdGenerated default getter */
+	//public java.util.Collection<DishesOrder> dishOrders;
+	
+	//public java.util.Collection<DishRating> ratings;
+	
+	@ManyToOne
+	@JoinColumn(name="menu_id")
+	public Menu menu;
+	
+	public Dish() {}
+   /*
    public java.util.Collection<DishesOrder> getDishOrders() {
       if (dishOrders == null)
          dishOrders = new java.util.ArrayList<DishesOrder>();
       return dishOrders;
    }
    
-   /** @pdGenerated default iterator getter */
    public java.util.Iterator getIteratorDishOrders() {
       if (dishOrders == null)
          dishOrders = new java.util.ArrayList<DishesOrder>();
       return dishOrders.iterator();
    }
    
-   /** @pdGenerated default setter
-     * @param newDishOrders */
    public void setDishOrders(java.util.Collection<DishesOrder> newDishOrders) {
       removeAllDishOrders();
       for (java.util.Iterator iter = newDishOrders.iterator(); iter.hasNext();)
          addDishOrders((DishesOrder)iter.next());
    }
    
-   /** @pdGenerated default add
-     * @param newDishesOrder */
    public void addDishOrders(DishesOrder newDishesOrder) {
       if (newDishesOrder == null)
          return;
@@ -62,8 +73,6 @@ public class Dish {
       }
    }
    
-   /** @pdGenerated default remove
-     * @param oldDishesOrder */
    public void removeDishOrders(DishesOrder oldDishesOrder) {
       if (oldDishesOrder == null)
          return;
@@ -75,7 +84,6 @@ public class Dish {
          }
    }
    
-   /** @pdGenerated default removeAll */
    public void removeAllDishOrders() {
       if (dishOrders != null)
       {
@@ -88,30 +96,24 @@ public class Dish {
          }
       }
    }
-   /** @pdGenerated default getter */
    public java.util.Collection<DishRating> getRatings() {
       if (ratings == null)
          ratings = new java.util.ArrayList<DishRating>();
       return ratings;
    }
    
-   /** @pdGenerated default iterator getter */
    public java.util.Iterator getIteratorRatings() {
       if (ratings == null)
          ratings = new java.util.ArrayList<DishRating>();
       return ratings.iterator();
    }
    
-   /** @pdGenerated default setter
-     * @param newRatings */
    public void setRatings(java.util.Collection<DishRating> newRatings) {
       removeAllRatings();
       for (java.util.Iterator iter = newRatings.iterator(); iter.hasNext();)
          addRatings((DishRating)iter.next());
    }
    
-   /** @pdGenerated default add
-     * @param newDishRating */
    public void addRatings(DishRating newDishRating) {
       if (newDishRating == null)
          return;
@@ -123,9 +125,7 @@ public class Dish {
          newDishRating.setDish(this);      
       }
    }
-   
-   /** @pdGenerated default remove
-     * @param oldDishRating */
+
    public void removeRatings(DishRating oldDishRating) {
       if (oldDishRating == null)
          return;
@@ -137,7 +137,6 @@ public class Dish {
          }
    }
    
-   /** @pdGenerated default removeAll */
    public void removeAllRatings() {
       if (ratings != null)
       {
@@ -150,30 +149,23 @@ public class Dish {
          }
       }
    }
-   /** @pdGenerated default getter */
    public java.util.Collection<Menu> getMenu() {
       if (menu == null)
          menu = new java.util.ArrayList<Menu>();
       return menu;
    }
    
-   /** @pdGenerated default iterator getter */
    public java.util.Iterator getIteratorMenu() {
       if (menu == null)
          menu = new java.util.ArrayList<Menu>();
       return menu.iterator();
    }
-   
-   /** @pdGenerated default setter
-     * @param newMenu */
    public void setMenu(java.util.Collection<Menu> newMenu) {
       removeAllMenu();
       for (java.util.Iterator iter = newMenu.iterator(); iter.hasNext();)
          addMenu((Menu)iter.next());
    }
    
-   /** @pdGenerated default add
-     * @param newMenu */
    public void addMenu(Menu newMenu) {
       if (newMenu == null)
          return;
@@ -186,8 +178,6 @@ public class Dish {
       }
    }
    
-   /** @pdGenerated default remove
-     * @param oldMenu */
    public void removeMenu(Menu oldMenu) {
       if (oldMenu == null)
          return;
@@ -199,7 +189,6 @@ public class Dish {
          }
    }
    
-   /** @pdGenerated default removeAll */
    public void removeAllMenu() {
       if (menu != null)
       {
@@ -212,5 +201,45 @@ public class Dish {
          }
       }
    }
+	*/
 
+	public long getIdDish() {
+		return idDish;
+	}
+
+	public void setIdDish(long idDish) {
+		this.idDish = idDish;
+	}
+
+	public String getLabel() {
+		return label;
+	}
+
+	public void setLabel(String label) {
+		this.label = label;
+	}
+
+	public String getDescription() {
+		return description;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
+	}
+
+	public float getPrice() {
+		return price;
+	}
+
+	public void setPrice(float price) {
+		this.price = price;
+	}
+
+	public Menu getMenu() {
+		return menu;
+	}
+
+	public void setMenu(Menu menu) {
+		this.menu = menu;
+	}
 }

@@ -54,8 +54,15 @@ public class SupplierController {
 	public ResponseEntity<String> updateEmail(@Context HttpServletRequest request, @RequestBody Supplier supplier) {
 		
 		if (supplier != null && !supplier.getEmail().equals("")) {
-			supplierService.updateSupplierEmail(supplier);
-			return new ResponseEntity<String>(supplier.getEmail(), HttpStatus.OK);
+			if(supplierService.getSupplierByEmail(supplier.getEmail()) == null){
+				supplierService.updateSupplierEmail(supplier);
+				return new ResponseEntity<String>(supplier.getEmail(), HttpStatus.OK);
+			}else{
+				if(supplierService.getSupplierByEmail(supplier.getEmail()).getUserID().equals(supplier.getUserID())){
+					return new ResponseEntity<String>("same", HttpStatus.OK);
+				}
+				return new ResponseEntity<String>("taken", HttpStatus.OK);
+			}
 		}
 		
 		return new ResponseEntity<String>("No email sent", HttpStatus.OK);

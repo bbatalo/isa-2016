@@ -8,6 +8,8 @@ insert into User (usr_email, usr_password, usr_type) values ('milica@konobar.com
 insert into User (usr_email, usr_password, usr_type) values ('ognjen@kuvar.com', 'ognjenovasifra', '4')
 insert into User (usr_email, usr_password, usr_type) values ('suncokreten@sanker', 'kretenovasifra', '4')
 insert into User (usr_email, usr_password, usr_type) values ('dostavljac@dostavljac', 'dostavljac', '3')
+insert into User (usr_email, usr_password, usr_type) values ('test@test', 'test', '3')
+
 
 insert into customer (cst_address, cst_date_birth, cst_name, cst_surname, usr_id) values ('Somborska 8', '1994-11-10', 'Bojan', 'Batalo', '1')
 insert into customer (cst_address, cst_date_birth, cst_name, cst_surname, usr_id) values ('Neka tamo ulica 3', '1994-9-18', 'Dušan', 'Radisavljević', '2')
@@ -20,10 +22,16 @@ insert into restaurant (rst_name, rst_type, rst_description) values ('Caribic', 
 insert into restaurant (rst_name, rst_type, rst_description) values ('Kod Brene', 'Hamburgerija', 'Uvek povoljno')
 insert into restaurant (rst_name, rst_type, rst_description) values ('Mek', 'Svasta', 'Ne jedem te americke fekalije')
 
+insert into menu (restaurant) values (1)
+insert into menu (restaurant) values (2)
+insert into menu (restaurant) values (3)
+insert into menu (restaurant) values (4)
+
 insert into restaurant_manager (rsm_name, rsm_surname, usr_id, rst_id) values ('Perisa', 'Slepac', '5', '1')
-insert into restaurant_manager (rsm_name, rsm_surname, usr_id, rst_id) values ('Caki', 'Majmuncina', '6', '2')
+insert into restaurant_manager (rsm_name, rsm_surname, usr_id, rst_id) values ('Caki', 'Majmuncina', '6', '1')
 
 insert into supplier (sup_label, sup_desc, sup_pass_changed, usr_id) values ('Dostava', 'ispred sam', false, '10')
+insert into supplier (sup_label, sup_desc, sup_pass_changed, usr_id) values ('Test', 'ispred sam', false, '11')
 
 insert into employee (emp_name, emp_surname, emp_role, emp_pass_changed, emp_date_birth, emp_size_cloth, emp_size_shoes, usr_id) values ('Milica', 'Stanković', '0', false, '1995-5-5', '40', '38', '7')
 insert into employee (emp_name, emp_surname, emp_role, emp_pass_changed, emp_date_birth, emp_size_cloth, emp_size_shoes, usr_id) values ('Ognjen', 'Velisavčić', '1', false, '1995-5-5', '46', '45', '8')

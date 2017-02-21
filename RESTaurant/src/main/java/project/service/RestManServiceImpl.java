@@ -24,4 +24,9 @@ public class RestManServiceImpl implements RestManService{
 		return this.restManRepository.save(rm);
 	}
 
+	@Override
+	public RestaurantManager getRestaurantManagerById(Long id) {
+		return this.restManRepository.findRestaurantManagerById(id);
+	}
+
 }

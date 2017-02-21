@@ -7,41 +7,71 @@ package project.domain;
 
 import java.util.*;
 
-/** @pdOid 382a24db-925b-44ae-8ca8-b3e0f909ea98 */
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
+@Entity
 public class Menu {
-   /** @pdOid f8d152ba-a5e3-4e9a-80a8-441c0ca6a8b0 */
-   public long idMenu;
+	
+	@Id
+	@GeneratedValue
+	@Column(name="menu_id", nullable = false)
+	public long idMenu;
    
-   /** @pdRoleInfo migr=no name=Dish assc=dishes coll=java.util.Collection impl=java.util.ArrayList mult=0..* */
-   public java.util.Collection<Dish> dishes;
-   /** @pdRoleInfo migr=no name=Restaurant assc=menu mult=0..1 side=A */
-   public Restaurant restaurant;
+	//public java.util.Collection<Dish> dishes;
    
-   
-   /** @pdGenerated default getter */
+	@OneToOne
+	@JoinColumn(name="restaurant")
+	@JsonIgnore
+	public Restaurant restaurant;
+	
+	public Menu(){}
+
+	public long getIdMenu() {
+		return idMenu;
+	}
+
+	public void setIdMenu(long idMenu) {
+		this.idMenu = idMenu;
+	}
+
+	public Restaurant getRestaurant() {
+		return restaurant;
+	}
+
+	public void setRestaurant(Restaurant restaurant) {
+		this.restaurant = restaurant;
+	}
+	
+	@OneToMany(mappedBy="menu")
+	@JsonIgnore
+	public Set<Dish> dishes;
+	/*
    public java.util.Collection<Dish> getDishes() {
       if (dishes == null)
          dishes = new java.util.ArrayList<Dish>();
       return dishes;
    }
    
-   /** @pdGenerated default iterator getter */
    public java.util.Iterator getIteratorDishes() {
       if (dishes == null)
          dishes = new java.util.ArrayList<Dish>();
       return dishes.iterator();
    }
    
-   /** @pdGenerated default setter
-     * @param newDishes */
    public void setDishes(java.util.Collection<Dish> newDishes) {
       removeAllDishes();
       for (java.util.Iterator iter = newDishes.iterator(); iter.hasNext();)
          addDishes((Dish)iter.next());
    }
    
-   /** @pdGenerated default add
-     * @param newDish */
    public void addDishes(Dish newDish) {
       if (newDish == null)
          return;
@@ -54,8 +84,6 @@ public class Menu {
       }
    }
    
-   /** @pdGenerated default remove
-     * @param oldDish */
    public void removeDishes(Dish oldDish) {
       if (oldDish == null)
          return;
@@ -67,7 +95,6 @@ public class Menu {
          }
    }
    
-   /** @pdGenerated default removeAll */
    public void removeAllDishes() {
       if (dishes != null)
       {
@@ -80,5 +107,5 @@ public class Menu {
          }
       }
    }
-
+	 */
 }

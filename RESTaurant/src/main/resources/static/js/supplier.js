@@ -111,8 +111,15 @@
 						 },
 						 data: requestData
 				}).then(function success(response) {
-					control.form.email = response.data;
-					supplierService.setSupplierEmail(response.data);
+					if(response.data !== "taken" && response.data !== "No email sent" && response.data !== "same"){
+						alert("Sucess.");
+						control.form.email = response.data;
+						supplierService.setSupplierEmail(response.data);
+					}else if(response.data === "taken"){
+						alert("Email is already in use.");
+					}else if(response.data === "No email sent"){
+						alert(response.data);
+					}
 				});
 			} else if (type == 1) {
 				if (control.form.newPass == control.form.repeatPass) {
@@ -130,6 +137,7 @@
 						control.form.currentPass = "";
 						control.form.newPass = "";
 						control.form.repeatPass = "";
+						alert("Sucess.");
 					});
 				} else {
 					control.form.newPass = "";
@@ -148,6 +156,7 @@
 						 },
 						 data: requestData
 				}).then(function success(response) {
+					alert("Sucess.");
 					control.form.label = response.data.label;
 					control.form.description = response.data.description;
 					supplierService.setSupplierDetails(response.data);

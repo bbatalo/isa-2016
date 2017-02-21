@@ -11,6 +11,8 @@ public interface SupplierService {
 	
 	Supplier getSupplierById(Long id);
 	
+	Supplier getSupplierByEmail(String email);
+	
 	void updateSupplierEmail(Supplier supplier);
 	
 	void updateSupplierPassword(Supplier supplier);

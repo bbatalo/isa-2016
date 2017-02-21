@@ -13,4 +13,8 @@ public interface RestaurantService {
 	Restaurant addRestaurant(Restaurant r);
 	
 	List<Restaurant> getAll();
+	
+	void updateRestaurantName(Restaurant r);
+	
+	void updateRestaurantDetails(Restaurant r);
 }

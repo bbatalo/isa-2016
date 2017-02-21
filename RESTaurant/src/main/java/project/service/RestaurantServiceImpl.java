@@ -38,4 +38,15 @@ public class RestaurantServiceImpl implements RestaurantService{
 		return this.restaurantRepository.findRestaurantByName(name);
 	}
 
+	@Override
+	public void updateRestaurantName(Restaurant r) {
+		Assert.notNull(r, "Cannot be null");
+		restaurantRepository.updateName(r.getRestaurantID(), r.getName());
+	}
+
+	@Override
+	public void updateRestaurantDetails(Restaurant r) {
+		Assert.notNull(r, "Cannot be null");
+		restaurantRepository.updateDetails(r.getRestaurantID(), r.getType(), r.getDescription());
+	}
 }

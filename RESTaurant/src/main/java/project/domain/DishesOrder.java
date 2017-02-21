@@ -90,24 +90,19 @@ public class DishesOrder {
          dishes = new java.util.ArrayList<Dish>();
       return dishes;
    }
-   
-   /** @pdGenerated default iterator getter */
+   /*
    public java.util.Iterator getIteratorDishes() {
       if (dishes == null)
          dishes = new java.util.ArrayList<Dish>();
       return dishes.iterator();
    }
    
-   /** @pdGenerated default setter
-     * @param newDishes */
    public void setDishes(java.util.Collection<Dish> newDishes) {
       removeAllDishes();
       for (java.util.Iterator iter = newDishes.iterator(); iter.hasNext();)
          addDishes((Dish)iter.next());
    }
    
-   /** @pdGenerated default add
-     * @param newDish */
    public void addDishes(Dish newDish) {
       if (newDish == null)
          return;
@@ -120,8 +115,6 @@ public class DishesOrder {
       }
    }
    
-   /** @pdGenerated default remove
-     * @param oldDish */
    public void removeDishes(Dish oldDish) {
       if (oldDish == null)
          return;
@@ -133,7 +126,6 @@ public class DishesOrder {
          }
    }
    
-   /** @pdGenerated default removeAll */
    public void removeAllDishes() {
       if (dishes != null)
       {
@@ -146,5 +138,5 @@ public class DishesOrder {
          }
       }
    }
-
+*/
 }

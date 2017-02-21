@@ -49,4 +49,10 @@ public class SupplierServiceImpl implements SupplierService{
 		Assert.notNull(supplier, "Cannot be null");
 		supplierRepository.updateDetails(supplier.getUserID(), supplier.getLabel(), supplier.getDescription());
 	}
+
+	@Override
+	public Supplier getSupplierByEmail(String email) {
+		Assert.notNull(email, "email cannot be null");
+		return supplierRepository.findSupplierByEmail(email);
+	}
 }
