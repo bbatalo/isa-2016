@@ -5,51 +5,99 @@
  ***********************************************************************/
 package project.domain;
 
-import java.util.*;
+import java.util.Set;
 
-/** @pdOid 239f6de0-7c1c-43ee-a806-79a7db4c199d */
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
+
+@Entity
 public class Drink {
-   /** @pdOid 4ff28a33-a7e6-484b-acd6-2565fd9406fe */
-   public long idDrink;
-   /** @pdOid 9ef9acbb-47c0-4316-be50-25826ac6e8b4 */
-   public java.lang.String label;
-   /** @pdOid 2e45e04d-2c0d-48e2-aaf4-ed0e4e3fdd5d */
-   public java.lang.String description;
-   /** @pdOid c10e39e6-a96e-42eb-abb8-ccdd5254d5a7 */
-   public float price;
-   
-   /** @pdRoleInfo migr=no name=DrinkRating assc=drinkRating coll=java.util.Collection impl=java.util.ArrayList mult=0..* */
+	@Id
+	@GeneratedValue
+	@Column(name="drink_id", nullable = false)
+	public long idDrink;
+	
+	@Column(name="drink_label", nullable = false)
+	public String label;
+	
+	@Column(name="drink_description")
+	public String description;
+	
+	@Column(name="drink_price", nullable = false)
+	public float price;
+	
+	@ManyToOne
+	@JoinColumn(name="drinks_menu_id")
+	public DrinksMenu drinksMenu;
+	
+	@ManyToMany
+	@JoinColumn(name="bid_id")
+	public Set<Bid> bids;
+	
+	public Drink() {}
+
+	public long getIdDrink() {
+		return idDrink;
+	}
+
+	public void setIdDrink(long idDrink) {
+		this.idDrink = idDrink;
+	}
+
+	public String getLabel() {
+		return label;
+	}
+
+	public void setLabel(String label) {
+		this.label = label;
+	}
+
+	public String getDescription() {
+		return description;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
+	}
+
+	public float getPrice() {
+		return price;
+	}
+
+	public void setPrice(float price) {
+		this.price = price;
+	}
+	
+	
+   /*
    public java.util.Collection<DrinkRating> ratings;
-   /** @pdRoleInfo migr=no name=DrinksMenu assc=pica coll=java.util.Collection impl=java.util.ArrayList mult=0..* side=A */
    public java.util.Collection<DrinksMenu> drinkMenu;
-   /** @pdRoleInfo migr=no name=DrinksOrder assc=drinksInAnOrder coll=java.util.Collection impl=java.util.ArrayList mult=0..* side=A */
    public java.util.Collection<DrinksOrder> drinkOrders;
    
    
-   /** @pdGenerated default getter */
    public java.util.Collection<DrinkRating> getRatings() {
       if (ratings == null)
          ratings = new java.util.ArrayList<DrinkRating>();
       return ratings;
    }
    
-   /** @pdGenerated default iterator getter */
    public java.util.Iterator getIteratorRatings() {
       if (ratings == null)
          ratings = new java.util.ArrayList<DrinkRating>();
       return ratings.iterator();
    }
    
-   /** @pdGenerated default setter
-     * @param newRatings */
    public void setRatings(java.util.Collection<DrinkRating> newRatings) {
       removeAllRatings();
       for (java.util.Iterator iter = newRatings.iterator(); iter.hasNext();)
          addRatings((DrinkRating)iter.next());
    }
    
-   /** @pdGenerated default add
-     * @param newDrinkRating */
    public void addRatings(DrinkRating newDrinkRating) {
       if (newDrinkRating == null)
          return;
@@ -62,8 +110,6 @@ public class Drink {
       }
    }
    
-   /** @pdGenerated default remove
-     * @param oldDrinkRating */
    public void removeRatings(DrinkRating oldDrinkRating) {
       if (oldDrinkRating == null)
          return;
@@ -75,7 +121,6 @@ public class Drink {
          }
    }
    
-   /** @pdGenerated default removeAll */
    public void removeAllRatings() {
       if (ratings != null)
       {
@@ -88,30 +133,24 @@ public class Drink {
          }
       }
    }
-   /** @pdGenerated default getter */
    public java.util.Collection<DrinksMenu> getDrinkMenu() {
       if (drinkMenu == null)
          drinkMenu = new java.util.ArrayList<DrinksMenu>();
       return drinkMenu;
    }
    
-   /** @pdGenerated default iterator getter */
    public java.util.Iterator getIteratorDrinkMenu() {
       if (drinkMenu == null)
          drinkMenu = new java.util.ArrayList<DrinksMenu>();
       return drinkMenu.iterator();
    }
    
-   /** @pdGenerated default setter
-     * @param newDrinkMenu */
    public void setDrinkMenu(java.util.Collection<DrinksMenu> newDrinkMenu) {
       removeAllDrinkMenu();
       for (java.util.Iterator iter = newDrinkMenu.iterator(); iter.hasNext();)
          addDrinkMenu((DrinksMenu)iter.next());
    }
    
-   /** @pdGenerated default add
-     * @param newDrinksMenu */
    public void addDrinkMenu(DrinksMenu newDrinksMenu) {
       if (newDrinksMenu == null)
          return;
@@ -124,8 +163,6 @@ public class Drink {
       }
    }
    
-   /** @pdGenerated default remove
-     * @param oldDrinksMenu */
    public void removeDrinkMenu(DrinksMenu oldDrinksMenu) {
       if (oldDrinksMenu == null)
          return;
@@ -137,7 +174,6 @@ public class Drink {
          }
    }
    
-   /** @pdGenerated default removeAll */
    public void removeAllDrinkMenu() {
       if (drinkMenu != null)
       {
@@ -150,30 +186,24 @@ public class Drink {
          }
       }
    }
-   /** @pdGenerated default getter */
    public java.util.Collection<DrinksOrder> getDrinkOrders() {
       if (drinkOrders == null)
          drinkOrders = new java.util.ArrayList<DrinksOrder>();
       return drinkOrders;
    }
    
-   /** @pdGenerated default iterator getter */
    public java.util.Iterator getIteratorDrinkOrders() {
       if (drinkOrders == null)
          drinkOrders = new java.util.ArrayList<DrinksOrder>();
       return drinkOrders.iterator();
    }
    
-   /** @pdGenerated default setter
-     * @param newDrinkOrders */
    public void setDrinkOrders(java.util.Collection<DrinksOrder> newDrinkOrders) {
       removeAllDrinkOrders();
       for (java.util.Iterator iter = newDrinkOrders.iterator(); iter.hasNext();)
          addDrinkOrders((DrinksOrder)iter.next());
    }
    
-   /** @pdGenerated default add
-     * @param newDrinksOrder */
    public void addDrinkOrders(DrinksOrder newDrinksOrder) {
       if (newDrinksOrder == null)
          return;
@@ -186,8 +216,6 @@ public class Drink {
       }
    }
    
-   /** @pdGenerated default remove
-     * @param oldDrinksOrder */
    public void removeDrinkOrders(DrinksOrder oldDrinksOrder) {
       if (oldDrinksOrder == null)
          return;
@@ -199,7 +227,6 @@ public class Drink {
          }
    }
    
-   /** @pdGenerated default removeAll */
    public void removeAllDrinkOrders() {
       if (drinkOrders != null)
       {
@@ -212,5 +239,5 @@ public class Drink {
          }
       }
    }
-
+	*/
 }

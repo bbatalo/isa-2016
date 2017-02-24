@@ -29,23 +29,19 @@ public class DrinksOrder {
       return drinks;
    }
    
-   /** @pdGenerated default iterator getter */
    public java.util.Iterator getIteratorDrinks() {
       if (drinks == null)
          drinks = new java.util.ArrayList<Drink>();
       return drinks.iterator();
    }
-   
-   /** @pdGenerated default setter
-     * @param newDrinks */
+   /*
    public void setDrinks(java.util.Collection<Drink> newDrinks) {
       removeAllDrinks();
       for (java.util.Iterator iter = newDrinks.iterator(); iter.hasNext();)
          addDrinks((Drink)iter.next());
    }
-   
-   /** @pdGenerated default add
-     * @param newDrink */
+   */
+   /*
    public void addDrinks(Drink newDrink) {
       if (newDrink == null)
          return;
@@ -58,8 +54,6 @@ public class DrinksOrder {
       }
    }
    
-   /** @pdGenerated default remove
-     * @param oldDrink */
    public void removeDrinks(Drink oldDrink) {
       if (oldDrink == null)
          return;
@@ -71,7 +65,6 @@ public class DrinksOrder {
          }
    }
    
-   /** @pdGenerated default removeAll */
    public void removeAllDrinks() {
       if (drinks != null)
       {
@@ -84,6 +77,7 @@ public class DrinksOrder {
          }
       }
    }
+   */
    /** @pdGenerated default getter */
    public java.util.Collection<Bartender> getBartender() {
       if (bartender == null)

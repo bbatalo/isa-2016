@@ -25,31 +25,25 @@ public class Offer {
    /** @pdRoleInfo migr=no name=GroceryOffer assc=groceryOffer coll=java.util.Collection impl=java.util.ArrayList mult=0..* */
    public java.util.Collection<GroceryOffer> groceryOffers;
    
-   
-   /** @pdGenerated default getter */
+   /*
    public java.util.Collection<Bid> getBids() {
       if (bids == null)
          bids = new java.util.ArrayList<Bid>();
       return bids;
    }
    
-   /** @pdGenerated default iterator getter */
    public java.util.Iterator getIteratorBids() {
       if (bids == null)
          bids = new java.util.ArrayList<Bid>();
       return bids.iterator();
    }
    
-   /** @pdGenerated default setter
-     * @param newBids */
    public void setBids(java.util.Collection<Bid> newBids) {
       removeAllBids();
       for (java.util.Iterator iter = newBids.iterator(); iter.hasNext();)
          addBids((Bid)iter.next());
    }
    
-   /** @pdGenerated default add
-     * @param newBid */
    public void addBids(Bid newBid) {
       if (newBid == null)
          return;
@@ -62,8 +56,6 @@ public class Offer {
       }
    }
    
-   /** @pdGenerated default remove
-     * @param oldBid */
    public void removeBids(Bid oldBid) {
       if (oldBid == null)
          return;
@@ -75,7 +67,6 @@ public class Offer {
          }
    }
    
-   /** @pdGenerated default removeAll */
    public void removeAllBids() {
       if (bids != null)
       {
@@ -88,30 +79,24 @@ public class Offer {
          }
       }
    }
-   /** @pdGenerated default getter */
    public java.util.Collection<DrinkOffer> getDrinkOffers() {
       if (drinkOffers == null)
          drinkOffers = new java.util.ArrayList<DrinkOffer>();
       return drinkOffers;
    }
    
-   /** @pdGenerated default iterator getter */
    public java.util.Iterator getIteratorDrinkOffers() {
       if (drinkOffers == null)
          drinkOffers = new java.util.ArrayList<DrinkOffer>();
       return drinkOffers.iterator();
    }
    
-   /** @pdGenerated default setter
-     * @param newDrinkOffers */
    public void setDrinkOffers(java.util.Collection<DrinkOffer> newDrinkOffers) {
       removeAllDrinkOffers();
       for (java.util.Iterator iter = newDrinkOffers.iterator(); iter.hasNext();)
          addDrinkOffers((DrinkOffer)iter.next());
    }
    
-   /** @pdGenerated default add
-     * @param newDrinkOffer */
    public void addDrinkOffers(DrinkOffer newDrinkOffer) {
       if (newDrinkOffer == null)
          return;
@@ -124,8 +109,6 @@ public class Offer {
       }
    }
    
-   /** @pdGenerated default remove
-     * @param oldDrinkOffer */
    public void removeDrinkOffers(DrinkOffer oldDrinkOffer) {
       if (oldDrinkOffer == null)
          return;
@@ -137,7 +120,6 @@ public class Offer {
          }
    }
    
-   /** @pdGenerated default removeAll */
    public void removeAllDrinkOffers() {
       if (drinkOffers != null)
       {
@@ -150,30 +132,24 @@ public class Offer {
          }
       }
    }
-   /** @pdGenerated default getter */
    public java.util.Collection<GroceryOffer> getGroceryOffers() {
       if (groceryOffers == null)
          groceryOffers = new java.util.ArrayList<GroceryOffer>();
       return groceryOffers;
    }
    
-   /** @pdGenerated default iterator getter */
    public java.util.Iterator getIteratorGroceryOffers() {
       if (groceryOffers == null)
          groceryOffers = new java.util.ArrayList<GroceryOffer>();
       return groceryOffers.iterator();
    }
    
-   /** @pdGenerated default setter
-     * @param newGroceryOffers */
    public void setGroceryOffers(java.util.Collection<GroceryOffer> newGroceryOffers) {
       removeAllGroceryOffers();
       for (java.util.Iterator iter = newGroceryOffers.iterator(); iter.hasNext();)
          addGroceryOffers((GroceryOffer)iter.next());
    }
    
-   /** @pdGenerated default add
-     * @param newGroceryOffer */
    public void addGroceryOffers(GroceryOffer newGroceryOffer) {
       if (newGroceryOffer == null)
          return;
@@ -186,8 +162,6 @@ public class Offer {
       }
    }
    
-   /** @pdGenerated default remove
-     * @param oldGroceryOffer */
    public void removeGroceryOffers(GroceryOffer oldGroceryOffer) {
       if (oldGroceryOffer == null)
          return;
@@ -199,7 +173,6 @@ public class Offer {
          }
    }
    
-   /** @pdGenerated default removeAll */
    public void removeAllGroceryOffers() {
       if (groceryOffers != null)
       {
@@ -212,5 +185,5 @@ public class Offer {
          }
       }
    }
-
+	*/
 }

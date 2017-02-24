@@ -24,9 +24,7 @@ public class DrinkRating {
    public Drink getDrink() {
       return drink;
    }
-   
-   /** @pdGenerated default parent setter
-     * @param newDrink */
+   /*
    public void setDrink(Drink newDrink) {
       if (this.drink == null || !this.drink.equals(newDrink))
       {
@@ -43,5 +41,5 @@ public class DrinkRating {
          }
       }
    }
-
+	*/
 }

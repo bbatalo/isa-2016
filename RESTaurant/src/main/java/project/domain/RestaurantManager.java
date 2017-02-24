@@ -1,11 +1,15 @@
 package project.domain;
 
+import java.util.Set;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
 public class RestaurantManager extends User {
@@ -20,8 +24,11 @@ public class RestaurantManager extends User {
 	
 	@ManyToOne
 	@JoinColumn(name="rst_id")
-	//@JsonBackReference
 	private Restaurant restaurant;
+	
+	@OneToMany(mappedBy="manager")
+	@JsonIgnore
+	public Set<Bid> bids;
 	
 	public RestaurantManager() {}
 	

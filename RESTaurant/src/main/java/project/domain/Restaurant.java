@@ -45,6 +45,10 @@ public class Restaurant implements Serializable{
 	@OneToOne(mappedBy="restaurant")
 	public Menu menu;
 	
+	@OneToOne(mappedBy="restaurant")
+	public DrinksMenu drinksMenu;
+	
+	
 	public Restaurant(){}
 
 	public long getRestaurantID() {

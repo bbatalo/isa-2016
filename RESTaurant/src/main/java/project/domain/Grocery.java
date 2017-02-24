@@ -7,13 +7,61 @@ package project.domain;
 
 import java.util.*;
 
-/** @pdOid 7578d276-d0b1-4c4c-90ed-fa3fee0a2fe5 */
-public class Grocery {
-   /** @pdOid b3f9af4f-7fae-4fd3-a961-25a5d6b73d68 */
-   public long idGrocery;
-   /** @pdOid 831fc093-1813-4b01-bedc-d1e6416b1902 */
-   public java.lang.String label;
-   /** @pdOid 7dbc5756-2311-4de3-8a8e-f3588d90a464 */
-   public java.lang.String description;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToMany;
 
+@Entity
+public class Grocery {
+	@Id
+	@GeneratedValue
+	@Column(name="grocery_id", nullable = false)
+	public long idGrocery;
+	
+	@Column(name="grocery_label", nullable = false)
+	public String label;
+	
+	@Column(name="grocery_description")
+	public String description;
+	
+	@ManyToMany
+	@JoinColumn(name="bid_id")
+	public Set<Bid> bids;
+	
+	public Grocery() {}
+
+	public long getIdGrocery() {
+		return idGrocery;
+	}
+
+	public void setIdGrocery(long idGrocery) {
+		this.idGrocery = idGrocery;
+	}
+
+	public String getLabel() {
+		return label;
+	}
+
+	public void setLabel(String label) {
+		this.label = label;
+	}
+
+	public String getDescription() {
+		return description;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
+	}
+
+	public Set<Bid> getBids() {
+		return bids;
+	}
+
+	public void setBids(Set<Bid> bids) {
+		this.bids = bids;
+	}
 }

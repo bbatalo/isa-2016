@@ -27,6 +27,21 @@ insert into menu (restaurant) values (2)
 insert into menu (restaurant) values (3)
 insert into menu (restaurant) values (4)
 
+insert into drinks_menu (restaurant) values (1)
+insert into drinks_menu (restaurant) values (2)
+insert into drinks_menu (restaurant) values (3)
+insert into drinks_menu (restaurant) values (4)
+
+insert into drink (drink_label, drink_description, drink_price) values ('koka', 'crna', 100)
+insert into drink (drink_label, drink_description, drink_price) values ('fanta', 'sokata', 150)
+insert into drink (drink_label, drink_description, drink_price) values ('tekila', 'dva prsta', 200)
+insert into drink (drink_label, drink_description, drink_price) values ('vinjak', 'rubin', 250)
+
+insert into grocery (grocery_label, grocery_description) values ('paradajz', 'crven')
+insert into grocery (grocery_label, grocery_description) values ('kupus', 'zelen')
+insert into grocery (grocery_label, grocery_description) values ('mleko', 'belo')
+insert into grocery (grocery_label, grocery_description) values ('brasno', 'belo')
+
 insert into restaurant_manager (rsm_name, rsm_surname, usr_id, rst_id) values ('Perisa', 'Slepac', '5', '1')
 insert into restaurant_manager (rsm_name, rsm_surname, usr_id, rst_id) values ('Caki', 'Majmuncina', '6', '1')
 

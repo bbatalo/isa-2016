@@ -17,6 +17,9 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import project.domain.Dish;
+import project.domain.Drink;
+import project.domain.DrinksMenu;
+import project.domain.Grocery;
 import project.domain.Menu;
 import project.domain.Online;
 import project.domain.Restaurant;
@@ -25,6 +28,8 @@ import project.domain.Supplier;
 import project.domain.SystemManager;
 import project.domain.User;
 import project.service.DishService;
+import project.service.DrinkService;
+import project.service.GroceryService;
 import project.service.OnlineService;
 import project.service.RestaurantService;
 import project.service.RestManService;
@@ -43,6 +48,12 @@ public class RestManController {
 	
 	@Autowired
 	private DishService dishService;
+	
+	@Autowired
+	private DrinkService drinkService;
+	
+	@Autowired
+	private GroceryService groceryService;
 	
 	@RequestMapping(value = "/load",
 			method = RequestMethod.GET,
@@ -144,5 +155,70 @@ public class RestManController {
 	@ResponseBody
 	public List<Dish> getDishes(@Context HttpServletRequest request, @RequestBody Menu menu){
 		return this.dishService.getDishesByMenuId(menu.getIdMenu());
+	}
+	//odavde
+	@Transactional
+	@RequestMapping(value="/addDrink",
+			method = RequestMethod.POST,
+			consumes = MediaType.APPLICATION_JSON,
+			produces = MediaType.TEXT_PLAIN)
+	@ResponseBody
+	public String addDrink(@RequestBody Drink drink){
+		
+		Drink d = drinkService.getDrinkByLabel(drink.getLabel());
+		
+		if(d == null){
+
+			drinkService.addDrink(drink);
+			
+			return "OK";
+		}
+		
+		return "Drink with that label already exists!";
+	}
+	
+	@Transactional
+	@RequestMapping(value="/removeDrink",
+			method = RequestMethod.POST,
+			consumes = MediaType.APPLICATION_JSON,
+			produces = MediaType.TEXT_PLAIN)
+	@ResponseBody
+	public String removeDrink(@RequestBody Drink drink){
+		
+		Drink d = drinkService.getDrinkByLabel(drink.getLabel());
+		
+		if(d != null){
+
+			drinkService.deleteDrinkById(d.getIdDrink());
+			
+			return "Drink removed.";
+		}
+		
+		return "Drink not found!";
+	}
+	
+	@RequestMapping(value="/getDrinks",
+			method = RequestMethod.POST,
+			consumes = MediaType.APPLICATION_JSON,
+			produces = MediaType.APPLICATION_JSON)
+	@ResponseBody
+	public List<Drink> getDrinks(@Context HttpServletRequest request, @RequestBody DrinksMenu drinksMenu){
+		return this.drinkService.getDrinksByDrinksMenuId(drinksMenu.getIdDrinkMenu());
+	}
+	
+	@RequestMapping(value="/getAllDrinks",
+			method = RequestMethod.GET,
+			produces = MediaType.APPLICATION_JSON)
+	@ResponseBody
+	public List<Drink> getAllDrinks(@Context HttpServletRequest request){
+		return this.drinkService.getAllDrinks();
+	}
+	
+	@RequestMapping(value="/getAllGroceries",
+			method = RequestMethod.GET,
+			produces = MediaType.APPLICATION_JSON)
+	@ResponseBody
+	public List<Grocery> getAllGroceries(@Context HttpServletRequest request){
+		return this.groceryService.getAllGroceries();
 	}
 }

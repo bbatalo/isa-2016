@@ -24,9 +24,7 @@ public class DrinkOffer {
    public Offer getOffer() {
       return offer;
    }
-   
-   /** @pdGenerated default parent setter
-     * @param newOffer */
+   /*
    public void setOffer(Offer newOffer) {
       if (this.offer == null || !this.offer.equals(newOffer))
       {
@@ -43,5 +41,5 @@ public class DrinkOffer {
          }
       }
    }
-
+	*/
 }

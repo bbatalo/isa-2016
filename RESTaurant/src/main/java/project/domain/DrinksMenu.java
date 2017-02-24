@@ -5,43 +5,79 @@
  ***********************************************************************/
 package project.domain;
 
-import java.util.*;
+import java.util.Set;
 
-/** @pdOid c6c07d07-3fc4-42f9-bcc0-86334830a3d0 */
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
+@Entity
 public class DrinksMenu {
-   /** @pdOid 76eb3174-4015-4ed3-b116-c040d1f05dd4 */
-   public long idDrinkMenu;
-   
-   /** @pdRoleInfo migr=no name=Restaurant assc=drinkMenu mult=0..1 */
-   public Restaurant restaurant;
-   /** @pdRoleInfo migr=no name=Drink assc=pica coll=java.util.Collection impl=java.util.ArrayList mult=0..* */
-   public java.util.Collection<Drink> drinks;
-   
-   
-   /** @pdGenerated default getter */
+
+	@Id
+	@GeneratedValue
+	@Column(name="drinks_menu_id", nullable = false)
+	public long idDrinkMenu;
+
+	@OneToOne
+	@JoinColumn(name="restaurant")
+	@JsonIgnore
+	public Restaurant restaurant;
+	
+	@OneToMany(mappedBy="drinksMenu")
+	@JsonIgnore
+	public Set<Drink> drinks;
+	
+	public DrinksMenu() {}
+
+	public long getIdDrinkMenu() {
+		return idDrinkMenu;
+	}
+
+	public void setIdDrinkMenu(long idDrinkMenu) {
+		this.idDrinkMenu = idDrinkMenu;
+	}
+
+	public Restaurant getRestaurant() {
+		return restaurant;
+	}
+
+	public void setRestaurant(Restaurant restaurant) {
+		this.restaurant = restaurant;
+	}
+
+	public Set<Drink> getDrinks() {
+		return drinks;
+	}
+
+	public void setDrinks(Set<Drink> drinks) {
+		this.drinks = drinks;
+	}
+   /*
    public java.util.Collection<Drink> getDrinks() {
       if (drinks == null)
          drinks = new java.util.ArrayList<Drink>();
       return drinks;
    }
    
-   /** @pdGenerated default iterator getter */
    public java.util.Iterator getIteratorDrinks() {
       if (drinks == null)
          drinks = new java.util.ArrayList<Drink>();
       return drinks.iterator();
    }
    
-   /** @pdGenerated default setter
-     * @param newDrinks */
    public void setDrinks(java.util.Collection<Drink> newDrinks) {
       removeAllDrinks();
       for (java.util.Iterator iter = newDrinks.iterator(); iter.hasNext();)
          addDrinks((Drink)iter.next());
    }
    
-   /** @pdGenerated default add
-     * @param newDrink */
    public void addDrinks(Drink newDrink) {
       if (newDrink == null)
          return;
@@ -54,8 +90,6 @@ public class DrinksMenu {
       }
    }
    
-   /** @pdGenerated default remove
-     * @param oldDrink */
    public void removeDrinks(Drink oldDrink) {
       if (oldDrink == null)
          return;
@@ -67,7 +101,6 @@ public class DrinksMenu {
          }
    }
    
-   /** @pdGenerated default removeAll */
    public void removeAllDrinks() {
       if (drinks != null)
       {
@@ -80,5 +113,5 @@ public class DrinksMenu {
          }
       }
    }
-
+   */
 }

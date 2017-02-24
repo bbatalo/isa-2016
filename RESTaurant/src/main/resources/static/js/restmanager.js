@@ -28,6 +28,10 @@
 			return restaurant.menu;
 		}
 		
+		var getRestaurantDrinksMenu = function(){
+			return restaurant.drinksMenu;
+		}
+		
 		var getRestaurantDetails = function() {
 			var tmp = {};
 			tmp.restaurantID = restaurant.restaurantID;
@@ -52,7 +56,8 @@
 		    getRestaurantDetails: getRestaurantDetails,
 		    setRestaurantName: setRestaurantName,
 		    setRestaurantDetails: setRestaurantDetails,
-		    getRestaurantMenu: getRestaurantMenu
+		    getRestaurantMenu: getRestaurantMenu,
+		    getRestaurantDrinksMenu: getRestaurantDrinksMenu
 		  };
 	});
 	
@@ -205,5 +210,86 @@
 				control.result = "Unknown error ocurred.";
 			}
 		}
+	}]);
+	
+	app.controller('DrinksMenuController', ['$scope', '$http', '$window', 'restaurantService', function($scope, $http, $window, restaurantService) {
+		var control = this;
+		control.drink = {};
+		control.drinks = [];
+		control.result = "";
+		
+		this.register = function(){
+			control.drink.drinksMenu = restaurantService.getRestaurantDrinksMenu();
+			$http.post('/restmanager/addDrink', this.drink).then(function success(response) {
+				control.result = response.data;
+				if(control.result === "OK"){
+					control.drinks.push(control.drink);
+					control.drink = {};
+				}
+			}, function error(response) {
+				control.result = "Unknown error ocurred."
+			});
+		};
+		
+		this.getDrinks = function(){
+			$http.post('/restmanager/getDrinks', restaurantService.getRestaurantDrinksMenu()).then(function success(response){
+				control.drinks = response.data;
+			}), function error(response){
+				control.result = "Unknown error ocurred.";
+			}
+			
+		};
+		
+		$scope.$watch('tab.isSet(4)', function() {
+			control.getDrinks();
+		});
+		
+		this.removeDrink = function(drink){
+			$http.post('/restmanager/removeDrink', drink).then(function success(response){
+				alert(response.data);
+				var index = -1;		
+				var drinkArr = eval( control.drinks );
+				for( var i = 0; i < drinkArr.length; i++ ) {
+					if( drinkArr[i].label === drink.label ) {
+						index = i;
+						break;
+					}
+				}
+				if( index === -1 ) {
+					alert( "Something gone wrong" );
+				}
+				control.drinks.splice( index, 1 );
+			}), function error(response){
+				control.result = "Unknown error ocurred.";
+			}
+		}
+	}]);
+	
+
+	app.controller('BidsController', ['$scope', '$http', '$window', function($scope, $http, $window){
+		var control = this;
+		control.drinks = [];
+		control.groceries = [];
+		
+		this.getAllDrinks = function(){
+			$http.get('/restmanager/getAllDrinks').then(function success(response){
+				control.drinks = response.data;
+			}), function error(response){
+				control.result = "Unknown error ocurred.";
+			}
+		}
+		
+		this.getAllGroceries = function(){
+			$http.get('/restmanager/getAllGroceries').then(function success(response){
+				control.groceries = response.data;
+			}), function error(response){
+				control.result = "Unknown error ocurred.";
+			}
+		}
+		
+		$scope.$watch('tab.isSet(5)', function() {
+			control.getAllDrinks();
+			control.getAllGroceries();
+		});
 	}]);
 })();
