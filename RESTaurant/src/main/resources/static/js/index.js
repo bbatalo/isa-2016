@@ -86,7 +86,8 @@
 	
 	app.controller("TabController", function(){
 	    this.tab = 1;
-
+	    this.pill = 1;
+	    
 	    this.isSet = function(checkTab) {
 	      return this.tab === checkTab;
 	    };
@@ -94,6 +95,14 @@
 	    this.setTab = function(setTab) {
 	      this.tab = setTab;
 	    };
+	    
+	    this.isPill = function(checkPill) {
+	    	return this.pill === checkPill;
+		};
+
+		this.setPill = function(setPill) {
+			this.pill = setPill;
+		};
 	});
 	
 	app.controller('ProfileController', ['$scope', '$http', '$window', 'customerService', function($scope, $http, $window, customerService) {
@@ -152,7 +161,7 @@
 					headers: {
 						   'Content-Type': 'application/json',	   
 						 },
-						 data: requestData
+					data: requestData
 				}).then(function success(response) {
 					control.form.name = response.data.name;
 					control.form.surname = response.data.surname;
@@ -170,6 +179,48 @@
 
 	}]);
 	
+	app.controller('FriendsController', ['$scope', '$http', '$window', 'customerService', function($scope, $http, $window, customerService) { 
+		var control = this;
+		control.friends = [];
+		
+		control.filters = [
+		      {id: '1', name: 'Email'},
+		      {id: '2', name: 'Name'},
+		      {id: '3', name: 'Surname'}
+		    ];
+		
+		control.selected = {id: '1', name: 'Email'};
+		
+		control.customers = [];
+		
+		$scope.$watch('tabCtrl.isSet(2)', function() {
+			var requestData = {};
+			requestData.userID = customerService.getCustomer().userID;
+			
+			$http({
+				method: 'POST',
+				url: '/index/loadFriends',
+				headers: {
+					   'Content-Type': 'application/json',	   
+					 },
+				data: requestData
+			}).then(function success(response) {
+				if (response.data.length != 0) {
+					control.friends = response.data;
+				}
+			});
+			
+			$http({
+				method: 'GET',
+				url: '/index/loadCustomers',
+			}).then(function success(response) {
+				if (response.data.length != 0) {
+					control.customers = response.data;
+				}
+			});
+		});
+		
+	}]);
 	
 })();
 

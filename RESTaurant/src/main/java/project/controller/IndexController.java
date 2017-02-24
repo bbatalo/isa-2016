@@ -1,11 +1,12 @@
 package project.controller;
 
+import java.util.List;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.transaction.Transactional;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 
-import org.hibernate.usertype.UserType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,15 +19,11 @@ import project.domain.Customer;
 import project.domain.Online;
 import project.domain.dto.PasswordDTO;
 import project.service.CustomerService;
-import project.service.OnlineService;
 
 @RequestMapping("/index")
 @Controller
 public class IndexController {
 
-	@Autowired
-	private OnlineService onlineService;
-	
 	@Autowired
 	private CustomerService customerService;
 	
@@ -97,5 +94,42 @@ public class IndexController {
 		}
 		
 		return new ResponseEntity<Customer>(new Customer(), HttpStatus.OK);
+	}
+	
+	@RequestMapping(value = "loadFriends",
+			method = RequestMethod.POST,
+			consumes = MediaType.APPLICATION_JSON,
+			produces = MediaType.APPLICATION_JSON)
+	public ResponseEntity<List<Customer>> loadFriends(@Context HttpServletRequest request, @RequestBody PasswordDTO data) {
+		
+		if (data.getUserID() != null) {
+			Customer customer = customerService.getCustomerById(data.getUserID());
+			if (customer != null) {
+				List<Customer> friends = customer.getFriends();
+				List<Customer> friendOf = customer.getFriendOf();
+				friends.addAll(friendOf);
+				return new ResponseEntity<List<Customer>>(friends, HttpStatus.OK);
+			}
+		}
+		
+		return null;
+	}
+	
+	@RequestMapping(value = "/loadCustomers",
+			method = RequestMethod.GET,
+			produces = MediaType.APPLICATION_JSON)
+	public ResponseEntity<Customer> loadCustomers(@Context HttpServletRequest request) {
+		
+		Online online = (Online) request.getSession().getAttribute("user");
+		
+		if (online != null) {
+			Customer customer = customerService.getCustomerById(online.getUser().getUserID());
+			customer.setPassword("");
+			return new ResponseEntity<Customer>(customer, HttpStatus.OK);
+		} else {
+			return null;
+		}
+
+		
 	}
 }

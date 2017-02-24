@@ -55,3 +55,6 @@ insert into employee (emp_name, emp_surname, emp_role, emp_pass_changed, emp_dat
 insert into bartender (bar_cocktails, usr_id) values (true, '7')
 insert into waiter (wtr_trial, usr_id) values (true, '8')
 insert into chef (chf_type, usr_id) values ('Kineski', '9')
+
+insert into friends (usr_id, frd_id) values ('1', '2')
+insert into friends (usr_id, frd_id) values ('1', '3')
