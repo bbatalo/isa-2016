@@ -20,15 +20,150 @@
 	   			 </div>
 	    		<ul class="nav navbar-nav">
 	    			<li ng-class="{active:tabCtrl.isSet(1)}"><a class="btn" ng-click="tabCtrl.setTab(1)">Restaurants</a></li>
-      				<li ng-class="{active:tabCtrl.isSet(2)}"><a class="btn" ng-click="tabCtrl.setTab(2)">Offers</a></li>
+      				<li ng-class="{active:tabCtrl.isSet(2)}"><a class="btn" ng-click="tabCtrl.setTab(2)">Bids</a></li>
+      				<li ng-class="{active:tabCtrl.isSet(3)}"><a class="btn" ng-click="tabCtrl.setTab(3)">Offers</a></li>
 	    		</ul>
 	    		<ul class="nav navbar-nav navbar-right" >
-	    			<li ng-class="{active:tabCtrl.isSet(3)}"><a class="btn" ng-click="tabCtrl.setTab(3)"><span class="glyphicon glyphicon-user"></span> Profile</a></li>
+	    			<li ng-class="{active:tabCtrl.isSet(4)}"><a class="btn" ng-click="tabCtrl.setTab(3)"><span class="glyphicon glyphicon-user"></span> Profile</a></li>
 	     			<li><a class="btn" ng-click="supplierCtrl.logout()"><span class="glyphicon glyphicon-log-in"></span> Logout</a></li>
 	    		</ul>
 	  		</div>
 		</nav>
-		<div ng-show="tabCtrl.isSet(3)"  ng-controller="ProfileController as profileCtrl" ng-init="">
+		<div ng-controller="BidsController as bidsCtrl"  ng-show="tabCtrl.isSet(2)">
+			<div class="row">
+				<div class="col-sm-2"></div>
+		  		<div class="col-sm-8" ng-show="bidsCtrl.isToggled()">
+		  			<h3>Bids</h3>
+			  		<table class="table table-hover">
+						<thead>
+							<tr>
+								<th>Restaurant</th>
+								<th>Manager</th>
+								<th>Begin</th>
+								<th>End</th>
+								<th>Offer</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr ng-repeat="bid in bidsCtrl.bids">
+								<td>{{bid.manager.restaurant.name}}</td>
+								<td>{{bid.manager.email}}</td>
+								<td>{{bid.beginning}}</td>
+								<td>{{bid.end}}</td>
+								<td><input  type="button" class="btn btn-info" value="Offer" ng-click="bidsCtrl.createOffer(bid)"/></td>
+							</tr>
+						</tbody>
+					</table>
+		  		</div>
+		  		<div class="col-sm-2"></div>
+			</div>
+			<div class="row" ng-show="!bidsCtrl.isToggled()">
+		  		<div class="col-sm-4">
+		  			<h3>Groceries</h3>
+			  		<table class="table table-hover">
+						<thead>
+							<tr>
+								<th>Label</th>
+								<th>Description</th>
+								<th>Price</th>
+								<th>Offer</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr ng-repeat="groceryOffer in bidsCtrl.groceryOffers">
+								<td>{{groceryOffer.grocery.label}}</td>
+								<td>{{groceryOffer.grocery.description}}</td>
+								<td><input type="number" min="1" max="10000" ng-model="groceryOffer.price"/></td>
+								<td><input  type="button" class="btn btn-info" value="Offer" ng-click="bidsCtrl.addGroceryOffer(groceryOffer)"/></td>
+							</tr>
+						</tbody>
+					</table>
+		  		</div>
+		  		<div class="col-sm-4">
+		  			<h3>Drinks</h3>
+			  		<table class="table table-hover">
+						<thead>
+							<tr>
+								<th>Label</th>
+								<th>Description</th>
+								<th>Price</th>
+								<th>Offer</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr ng-repeat="drinkOffer in bidsCtrl.drinkOffers">
+								<td>{{drinkOffer.drink.label}}</td>
+								<td>{{drinkOffer.drink.description}}</td>
+								<td><input type="number" min="1" max="10000" ng-model="drinkOffer.price"/></td>
+								<td><input  type="button" class="btn btn-info" value="Offer" ng-click="bidsCtrl.addDrinkOffer(drinkOffer)"/></td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+				<div class="col-sm-4">
+						<div class="panel panel-default">
+							<div class="panel-body">
+								<form name="addOfferForm" ng-submit="addOfferForm.$valid && bidsCtrl.addOffer()" class="form-signin" novalidate >
+									<h3>Create offer.</h3>
+									<fieldset class="form-group">
+										<input ng-model="offerDelivery.value" type="date" class="form-control" required></input>
+									</fieldset>
+									<fieldset class="form-group">
+										<input ng-model="offerWarranty.value" type="date" class="form-control" required></input>
+									</fieldset>
+									<fieldset class="form-group">
+										<input ng-model="offerLastsUntil.value" type="date" class="form-control" required></input>
+									</fieldset>
+									<fieldset class="form-group">
+		                				<input  type="submit" class="btn btn-lg btn-primary btn-block pull-right" value="Create" />
+		              				</fieldset>
+									<hr></hr>
+									<fieldset><div></div>{{bidsCtrl.result}}</fieldset><br />
+								</form>
+								<h3>Drinks list</h3>
+						  		<table class="table table-hover">
+									<thead>
+										<tr>
+											<th>Label</th>
+											<th>Description</th>
+											<th>Price</th>
+											<th>Remove</th>
+										</tr>
+									</thead>
+									<tbody>
+										<tr ng-repeat="drinkOffer in bidsCtrl.offer.drinkOffers">
+											<td>{{drinkOffer.drink.label}}</td>
+											<td>{{drinkOffer.drink.description}}</td>
+											<td>{{drinkOffer.price}}</td>
+											<td><input  type="button" class="btn btn-danger" value="Remove" ng-click="bidsCtrl.removeDrinkOffer(drinkOffer)"/></td>
+										</tr>
+									</tbody>
+								</table>
+								<h3>Groceries list</h3>
+						  		<table class="table table-hover">
+									<thead>
+										<tr>
+											<th>Label</th>
+											<th>Description</th>
+											<th>Price</th>
+											<th>Remove</th>
+										</tr>
+									</thead>
+									<tbody>
+										<tr ng-repeat="groceryOffer in bidsCtrl.offer.groceryOffers">
+											<td>{{groceryOffer.grocery.label}}</td>
+											<td>{{groceryOffer.grocery.description}}</td>
+											<td>{{groceryOffer.price}}</td>
+											<td><input  type="button" class="btn btn-danger" value="Remove" ng-click="bidsCtrl.removeGroceryOffer(groceryOffer)"/></td>
+										</tr>
+									</tbody>
+								</table>
+							</div>
+						</div>
+					</div>
+			  </div>
+		</div>
+		<div ng-show="tabCtrl.isSet(4)"  ng-controller="ProfileController as profileCtrl" ng-init="">
 			<div class="row">
 	  		<div class="col-sm-3"></div>
 	  		<div class="col-sm-5">

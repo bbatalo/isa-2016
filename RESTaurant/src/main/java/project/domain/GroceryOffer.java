@@ -7,24 +7,66 @@ package project.domain;
 
 import java.util.*;
 
-/** @pdOid 102b2278-4ea1-4513-8a9b-d80ed6a23687 */
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
+@Entity
 public class GroceryOffer {
-   /** @pdOid b53cde6b-ddff-4a58-b993-0262510746c5 */
-   public long idGroceryOffer;
-   /** @pdOid 35bf8298-3a7a-4129-98cb-2824b387a35f */
-   public float price;
+	@Id
+	@GeneratedValue
+	@Column(name="grocery_offer_id", nullable = false)
+	public long idGroceryOffer;
+
+	@Column(name="grocery_offer_price", nullable = false)
+	public float price;
    
-   /** @pdRoleInfo migr=no name=Offer assc=groceryOffer mult=0..1 side=A */
-   public Offer offer;
-   /** @pdRoleInfo migr=no name=Grocery assc=offeredGrocery mult=0..1 side=A */
-   public Grocery grocery;
-   
-   
-   /** @pdGenerated default parent getter */
+	
+	@ManyToMany(mappedBy = "groceryOffers")
+	@JsonIgnore
+	public Set<Offer> offers;
+	
+	@ManyToOne
+	@JoinColumn(name="grocery_id")
+	public Grocery grocery;
+	
+	public GroceryOffer(){}
+
+	public long getIdGroceryOffer() {
+		return idGroceryOffer;
+	}
+
+	public void setIdGroceryOffer(long idGroceryOffer) {
+		this.idGroceryOffer = idGroceryOffer;
+	}
+
+	public float getPrice() {
+		return price;
+	}
+
+	public void setPrice(float price) {
+		this.price = price;
+	}
+
+	public Grocery getGrocery() {
+		return grocery;
+	}
+
+	public void setGrocery(Grocery grocery) {
+		this.grocery = grocery;
+	}
+	
+	/*
    public Offer getOffer() {
       return offer;
    }
-   /*
+   
    public void setOffer(Offer newOffer) {
       if (this.offer == null || !this.offer.equals(newOffer))
       {

@@ -7,24 +7,107 @@ package project.domain;
 
 import java.util.*;
 
-/** @pdOid 161f585d-ab32-40d9-b65a-21f4d54ebe78 */
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
+
+@Entity
 public class Offer {
-   /** @pdOid 62d75a26-4e54-4eb8-bf60-23b6f5a4de90 */
-   public long idOffer;
-   /** @pdOid cd1cfd17-d9a8-4c56-a22f-b3067ab7c839 */
-   public java.util.Date delivery;
-   /** @pdOid b53c5300-4a49-4330-a3a3-7916225cb4c0 */
-   public java.util.Date warranty;
-   /** @pdOid dc7ee83c-873e-41f5-90e8-b89c6ddc7795 */
-   public java.util.Date lastsUntil;
-   
-   /** @pdRoleInfo migr=no name=Bid assc=offersForBids coll=java.util.Collection impl=java.util.ArrayList mult=0..* */
-   public java.util.Collection<Bid> bids;
-   /** @pdRoleInfo migr=no name=DrinkOffer assc=drinkOffer coll=java.util.Collection impl=java.util.ArrayList mult=0..* */
-   public java.util.Collection<DrinkOffer> drinkOffers;
-   /** @pdRoleInfo migr=no name=GroceryOffer assc=groceryOffer coll=java.util.Collection impl=java.util.ArrayList mult=0..* */
-   public java.util.Collection<GroceryOffer> groceryOffers;
-   
+	@Id
+	@GeneratedValue
+	@Column(name="offer_id", nullable = false)
+	public long idOffer;
+
+	public long getIdOffer() {
+		return idOffer;
+	}
+
+	public void setIdOffer(long idOffer) {
+		this.idOffer = idOffer;
+	}
+
+	public Date getDelivery() {
+		return delivery;
+	}
+
+	public void setDelivery(Date delivery) {
+		this.delivery = delivery;
+	}
+
+	public Date getWarranty() {
+		return warranty;
+	}
+
+	public void setWarranty(Date warranty) {
+		this.warranty = warranty;
+	}
+
+	public Date getLastsUntil() {
+		return lastsUntil;
+	}
+
+	public void setLastsUntil(Date lastsUntil) {
+		this.lastsUntil = lastsUntil;
+	}
+
+	public Bid getBid() {
+		return bid;
+	}
+
+	public void setBid(Bid bid) {
+		this.bid = bid;
+	}
+
+	public Set<DrinkOffer> getDrinkOffers() {
+		return drinkOffers;
+	}
+
+	public void setDrinkOffers(Set<DrinkOffer> drinkOffers) {
+		this.drinkOffers = drinkOffers;
+	}
+
+	public Set<GroceryOffer> getGroceryOffers() {
+		return groceryOffers;
+	}
+
+	public void setGroceryOffers(Set<GroceryOffer> groceryOffers) {
+		this.groceryOffers = groceryOffers;
+	}
+
+	@Column(name="offer_delivery", nullable = false)
+	public Date delivery;
+
+	@Column(name="offer_warranty", nullable = false)
+	public Date warranty;
+
+	@Column(name="offer_lasts_until", nullable = false)
+	public Date lastsUntil;
+	
+	@ManyToOne
+	@JoinColumn(name="bid_id")
+	public Bid bid;
+	
+	
+	@ManyToMany
+	@JoinTable(name = "offer_drinkoffers", joinColumns = {
+			@JoinColumn(name = "drink_offer_id", nullable = false, updatable = false) },
+			inverseJoinColumns = { @JoinColumn(name = "offer_id",
+					nullable = false, updatable = false) })
+	public Set<DrinkOffer> drinkOffers;
+
+	@ManyToMany
+	@JoinTable(name = "offer_groceryoffers", joinColumns = {
+			@JoinColumn(name = "grocery_offer_id", nullable = false, updatable = false) },
+			inverseJoinColumns = { @JoinColumn(name = "offer_id",
+					nullable = false, updatable = false) })
+	public Set<GroceryOffer> groceryOffers;
+	
+	public Offer(){}
    /*
    public java.util.Collection<Bid> getBids() {
       if (bids == null)

@@ -14,6 +14,9 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
 public class Drink {
@@ -35,9 +38,13 @@ public class Drink {
 	@JoinColumn(name="drinks_menu_id")
 	public DrinksMenu drinksMenu;
 	
-	@ManyToMany
-	@JoinColumn(name="bid_id")
+	@ManyToMany(mappedBy = "drinks")
+	@JsonIgnore
 	public Set<Bid> bids;
+	
+	@OneToMany(mappedBy="drink")
+	@JsonIgnore
+	public Set<DrinkOffer> drinkOffers;
 	
 	public Drink() {}
 

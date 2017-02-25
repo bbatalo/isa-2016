@@ -231,7 +231,60 @@
 							</tbody>
 						</table>
 					</div>
-					<div class="col-sm-4"></div>
+					<div class="col-sm-4">
+						<div class="panel panel-default">
+							<div class="panel-body">
+								<form name="addBidForm" ng-submit="addBidForm.$valid && bidsCtrl.addBid()" class="form-signin" novalidate >
+									<h3>Create bid.</h3>
+									<fieldset class="form-group">
+										<input ng-model="bidBegin.value" type="date" class="form-control" required></input>
+									</fieldset>
+									<fieldset class="form-group">
+										<input ng-model="bidEnd.value" type="date" class="form-control" required></input>
+									</fieldset>
+									<fieldset class="form-group">
+		                				<input  type="submit" class="btn btn-lg btn-primary btn-block pull-right" value="Create" />
+		              				</fieldset>
+									<hr></hr>
+									<fieldset><div></div>{{bidsCtrl.result}}</fieldset><br />
+								</form>
+								<h3>Drinks list</h3>
+						  		<table class="table table-hover">
+									<thead>
+										<tr>
+											<th>Label</th>
+											<th>Description</th>
+											<th>Remove</th>
+										</tr>
+									</thead>
+									<tbody>
+										<tr ng-repeat="drink in bidsCtrl.bid.drinks">
+											<td>{{drink.label}}</td>
+											<td>{{drink.description}}</td>
+											<td><input  type="button" class="btn btn-danger" value="Remove" ng-click="bidsCtrl.removeDrink(drink)"/></td>
+										</tr>
+									</tbody>
+								</table>
+								<h3>Groceries list</h3>
+						  		<table class="table table-hover">
+									<thead>
+										<tr>
+											<th>Label</th>
+											<th>Description</th>
+											<th>Remove</th>
+										</tr>
+									</thead>
+									<tbody>
+										<tr ng-repeat="grocery in bidsCtrl.bid.groceries">
+											<td>{{grocery.label}}</td>
+											<td>{{grocery.description}}</td>
+											<td><input  type="button" class="btn btn-danger" value="Remove" ng-click="bidsCtrl.removeGrocery(grocery)"/></td>
+										</tr>
+									</tbody>
+								</table>
+							</div>
+						</div>
+					</div>
 			  	</div>
 		  	</div>
 	</body>
