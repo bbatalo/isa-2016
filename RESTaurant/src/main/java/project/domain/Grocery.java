@@ -13,6 +13,9 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToMany;
+import javax.persistence.OneToMany;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
 public class Grocery {
@@ -27,9 +30,13 @@ public class Grocery {
 	@Column(name="grocery_description")
 	public String description;
 	
-	@ManyToMany
-	@JoinColumn(name="bid_id")
+	@ManyToMany(mappedBy = "groceries")
+	@JsonIgnore
 	public Set<Bid> bids;
+	
+	@OneToMany(mappedBy="grocery")
+	@JsonIgnore
+	public Set<GroceryOffer> groceryOffers;
 	
 	public Grocery() {}
 

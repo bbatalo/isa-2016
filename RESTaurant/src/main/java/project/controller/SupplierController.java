@@ -1,5 +1,11 @@
 package project.controller;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.transaction.Transactional;
 import javax.ws.rs.core.Context;
@@ -12,10 +18,23 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 
+import project.domain.Bid;
+import project.domain.DrinkOffer;
+import project.domain.Grocery;
+import project.domain.GroceryOffer;
+import project.domain.Offer;
 import project.domain.Online;
 import project.domain.Supplier;
+import project.domain.dto.BidDTO;
+import project.domain.dto.OfferDTO;
 import project.domain.dto.PasswordDTO;
+import project.repository.BidRepository;
+import project.service.BidService;
+import project.service.DrinkOfferService;
+import project.service.GroceryOfferService;
+import project.service.OfferService;
 import project.service.OnlineService;
 import project.service.SupplierService;
 
@@ -27,6 +46,18 @@ public class SupplierController {
 	
 	@Autowired
 	private SupplierService supplierService;
+	
+	@Autowired
+	private BidService bidService;
+	
+	@Autowired
+	private OfferService offerService;
+	
+	@Autowired
+	private DrinkOfferService drinkOfferService;
+	
+	@Autowired
+	private GroceryOfferService groceryOfferService;
 	
 	@RequestMapping(value = "/load",
 			method = RequestMethod.GET,
@@ -102,5 +133,64 @@ public class SupplierController {
 		}
 		
 		return new ResponseEntity<Supplier>(new Supplier(), HttpStatus.OK);
+	}
+	
+	@RequestMapping(value="/getBids",
+			method = RequestMethod.GET,
+			produces = MediaType.APPLICATION_JSON)
+	@ResponseBody
+	public List<BidDTO> getBids(@Context HttpServletRequest request){
+		
+		List<Bid> tmp = bidService.getAllBids();
+		List<BidDTO> ret = new ArrayList<BidDTO>();
+		
+
+		SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+		
+		for(Bid b : tmp){
+			BidDTO bidDTO = new BidDTO();
+			bidDTO.setIdBid(b.getIdBid());
+			bidDTO.setManager(b.getManager());
+			bidDTO.setGroceries(b.getGroceries());
+			bidDTO.setDrinks(b.getDrinks());
+			bidDTO.setBeginning(sdf.format(b.getBeginning()));
+			bidDTO.setEnd(sdf.format(b.getEnd()));
+			
+			ret.add(bidDTO);
+		}
+		
+		return ret;
+	}
+	
+	@RequestMapping(value="/addOffer",
+			method = RequestMethod.POST,
+			consumes = MediaType.APPLICATION_JSON,
+			produces = MediaType.TEXT_PLAIN)
+	@ResponseBody
+	public String addOffer(@Context HttpServletRequest request, @RequestBody OfferDTO offerDTO) throws ParseException{
+		Offer realOffer = new Offer();
+		
+		for(DrinkOffer drinkOffer : offerDTO.getDrinkOffers()){
+			drinkOfferService.addDrinkOffer(drinkOffer);
+		}
+		
+		for(GroceryOffer groceryOffer : offerDTO.getGroceryOffers()){
+			groceryOfferService.addGroceryOffer(groceryOffer);
+		}
+		
+		SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+		
+		realOffer.setDelivery(sdf.parse(offerDTO.getDelivery()));
+		realOffer.setWarranty(sdf.parse(offerDTO.getWarranty()));
+		realOffer.setLastsUntil(sdf.parse(offerDTO.getLastsUntil()));
+		realOffer.setGroceryOffers(offerDTO.getGroceryOffers());
+		realOffer.setDrinkOffers(offerDTO.getDrinkOffers());
+		
+		Bid realBid = bidService.getBid(offerDTO.getBid().getIdBid());
+		
+		realOffer.setBid(realBid);
+		offerService.addOffer(realOffer);
+		
+		return "OK";
 	}
 }

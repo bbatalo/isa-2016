@@ -1,5 +1,8 @@
 package project.controller;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -16,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import project.domain.Bid;
 import project.domain.Dish;
 import project.domain.Drink;
 import project.domain.DrinksMenu;
@@ -27,6 +31,8 @@ import project.domain.RestaurantManager;
 import project.domain.Supplier;
 import project.domain.SystemManager;
 import project.domain.User;
+import project.domain.dto.BidDTO;
+import project.service.BidService;
 import project.service.DishService;
 import project.service.DrinkService;
 import project.service.GroceryService;
@@ -54,6 +60,9 @@ public class RestManController {
 	
 	@Autowired
 	private GroceryService groceryService;
+	
+	@Autowired
+	private BidService bidService;
 	
 	@RequestMapping(value = "/load",
 			method = RequestMethod.GET,
@@ -220,5 +229,26 @@ public class RestManController {
 	@ResponseBody
 	public List<Grocery> getAllGroceries(@Context HttpServletRequest request){
 		return this.groceryService.getAllGroceries();
+	}
+	
+	@RequestMapping(value="/addBid",
+			method = RequestMethod.POST,
+			consumes = MediaType.APPLICATION_JSON,
+			produces = MediaType.TEXT_PLAIN)
+	@ResponseBody
+	public String addBid(@Context HttpServletRequest request, @RequestBody BidDTO bid) throws ParseException{
+		Bid realBid = new Bid();
+		
+		SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+
+		realBid.setBeginning(sdf.parse(bid.getBeginning()));
+		realBid.setEnd(sdf.parse(bid.getEnd()));
+		realBid.setGroceries(bid.getGroceries());
+		realBid.setDrinks(bid.getDrinks());
+		realBid.setManager(bid.getManager());
+		
+		bidService.addBid(realBid);
+		
+		return "OK";
 	}
 }

@@ -92,6 +92,142 @@
 		this.loadUser();
 	}]);
 	
+	app.controller('BidsController', ['$scope', '$http', '$window', function($scope, $http, $window) {
+		var control = this;
+		control.bids = [];
+		control.toggleOffer = true;
+		control.bidToOffer = {};
+		control.drinkOffers = [];
+		control.groceryOffers = [];
+		control.offer = {};
+		control.offer.drinkOffers = [];
+		control.offer.groceryOffers = [];
+		
+		this.loadBids = function(){
+			$http.get('/supplier/getBids').then(function success(response) {
+				control.bids = response.data;
+			}, function error(response) {
+				control.result = "Unknown error ocurred."
+			});
+		}
+		
+
+		this.isToggled = function(){
+			return control.toggleOffer;
+		}
+		
+		this.createOffer = function(bid){
+			control.toggleOffer = false;
+			control.bidToOffer = bid;
+			for(it in bid.drinks){
+				var drinkOffer = {};
+				drinkOffer.drink = bid.drinks[it];
+				drinkOffer.price = {};
+				control.drinkOffers.push(drinkOffer);
+			}
+			
+			for(it in bid.groceries){
+				var groceryOffer = {};
+				groceryOffer.grocery = bid.groceries[it];
+				groceryOffer.price = {};
+				control.groceryOffers.push(groceryOffer);
+			}
+		}
+		
+		this.addDrinkOffer = function(drinkOffer){
+			var index = -1;		
+			var drinkOfferArr = eval( control.offer.drinkOffers );
+			for( var i = 0; i < drinkOfferArr.length; i++ ) {
+				if( drinkOfferArr[i].drink.label === drinkOffer.drink.label ) {
+					index = i;
+					break;
+				}
+			}
+			if( index === -1 ) {
+				control.offer.drinkOffers.push(drinkOffer);
+			}
+		}
+		
+		this.addGroceryOffer = function(groceryOffer){
+			var index = -1;		
+			var groceryOfferArr = eval( control.offer.groceryOffers );
+			for( var i = 0; i < groceryOfferArr.length; i++ ) {
+				if( groceryOfferArr[i].grocery.label === groceryOffer.grocery.label ) {
+					index = i;
+					break;
+				}
+			}
+			if( index === -1 ) {
+				control.offer.groceryOffers.push(groceryOffer);
+			}
+		}
+		
+		this.removeDrinkOffer = function(drinkOffer){
+			var index = -1;		
+			var drinkOfferArr = eval( control.offer.drinkOffers );
+			for( var i = 0; i < drinkOfferArr.length; i++ ) {
+				if( drinkOfferArr[i].drink.label === drinkOffer.drink.label ) {
+					index = i;
+					break;
+				}
+			}
+			if( index === -1 ) {
+				alert( "Something gone wrong" );
+			}
+			control.offer.drinkOffers.splice( index, 1 );
+		}
+		
+		this.removeGroceryOffer = function(groceryOffer){
+			var index = -1;		
+			var groceryOfferArr = eval( control.offer.groceryOffers );
+			for( var i = 0; i < groceryOfferArr.length; i++ ) {
+				if( groceryOfferArr[i].grocery.label === groceryOffer.grocery.label ) {
+					index = i;
+					break;
+				}
+			}
+			if( index === -1 ) {
+				alert( "Something gone wrong" );
+			}
+			control.offer.groceryOffers.splice( index, 1 );
+		}
+		
+		this.formatDate = function(date){
+			ret = date;
+			var dd = ret.getDate();
+			var mm = ret.getMonth()+1; //January is 0!
+			var yyyy = ret.getFullYear();
+
+			if(dd<10) {
+			    dd='0'+dd
+			} 
+
+			if(mm<10) {
+			    mm='0'+mm
+			} 
+
+			ret = dd+'/'+mm+'/'+yyyy;
+			return ret;
+		}
+		
+		this.addOffer = function(){
+			control.offer.delivery = control.formatDate($scope.offerDelivery.value);
+			control.offer.warranty = control.formatDate($scope.offerWarranty.value);
+			control.offer.lastsUntil = control.formatDate($scope.offerLastsUntil.value);
+			control.offer.bid = control.bidToOffer;
+			
+			$http.post('/supplier/addOffer', control.offer).then(function success(response){
+				alert('Success!');
+			}), function error(response){
+				control.result = "Unknown error ocurred.";
+			}
+		}
+		
+		$scope.$watch('tabCtrl.isSet(2)', function() {
+			control.loadBids();
+		});
+	}]);
+	
 	app.controller('ProfileController', ['$scope', '$http', '$window', 'supplierService', function($scope, $http, $window, supplierService) {
 		var control = this;
 		control.form = {};
@@ -164,7 +300,7 @@
 			}
 		}
 
-		$scope.$watch('tabCtrl.isSet(3)', function() {
+		$scope.$watch('tabCtrl.isSet(4)', function() {
 			control.form = JSON.parse(JSON.stringify(supplierService.getSupplierDetails()));
 		});
 

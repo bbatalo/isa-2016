@@ -15,6 +15,15 @@
 	
 	app.service('restaurantService', function(){
 		var restaurant = {};
+		var manager = {};
+		
+		var setRestaurantManager = function(newRestaurantManager) {
+			manager = newRestaurantManager;
+		}
+		
+		var getRestaurantManager = function() {
+			return manager;
+		}
 		
 		var setRestaurant = function(newRestaurant) {
 			restaurant = newRestaurant;
@@ -57,7 +66,9 @@
 		    setRestaurantName: setRestaurantName,
 		    setRestaurantDetails: setRestaurantDetails,
 		    getRestaurantMenu: getRestaurantMenu,
-		    getRestaurantDrinksMenu: getRestaurantDrinksMenu
+		    getRestaurantDrinksMenu: getRestaurantDrinksMenu,
+		    setRestaurantManager: setRestaurantManager,
+		    getRestaurantManager: getRestaurantManager
 		  };
 	});
 	
@@ -94,6 +105,7 @@
 			}).then(function success(response) {
 				if (response.data.email != null) {
 					restaurantService.setRestaurant(response.data.restaurant);
+					restaurantService.setRestaurantManager(response.data);
 				}
 			});
 		}
@@ -266,10 +278,35 @@
 	}]);
 	
 
-	app.controller('BidsController', ['$scope', '$http', '$window', function($scope, $http, $window){
+	app.controller('BidsController', ['$scope', '$http', '$window', 'restaurantService', function($scope, $http, $window, restaurantService){
 		var control = this;
 		control.drinks = [];
 		control.groceries = [];
+		control.bid = {};
+		control.bid.drinks = [];
+		control.bid.groceries = [];
+		
+		$scope.bidBegin = {
+		         value: new Date()
+		};
+		
+		this.formatDate = function(date){
+			ret = date;
+			var dd = ret.getDate();
+			var mm = ret.getMonth()+1; //January is 0!
+			var yyyy = ret.getFullYear();
+
+			if(dd<10) {
+			    dd='0'+dd
+			} 
+
+			if(mm<10) {
+			    mm='0'+mm
+			} 
+
+			ret = dd+'/'+mm+'/'+yyyy;
+			return ret;
+		}
 		
 		this.getAllDrinks = function(){
 			$http.get('/restmanager/getAllDrinks').then(function success(response){
@@ -285,6 +322,86 @@
 			}), function error(response){
 				control.result = "Unknown error ocurred.";
 			}
+		}
+		
+		this.addDrink = function(drink){
+			var index = -1;		
+			var drinkArr = eval( control.bid.drinks );
+			for( var i = 0; i < drinkArr.length; i++ ) {
+				if( drinkArr[i].label === drink.label ) {
+					index = i;
+					break;
+				}
+			}
+			if( index === -1 ) {
+				control.bid.drinks.push(drink);
+			}
+		}
+		
+		this.addGrocery = function(grocery){
+			var index = -1;		
+			var groceryArr = eval( control.bid.groceries );
+			for( var i = 0; i < groceryArr.length; i++ ) {
+				if( groceryArr[i].label === grocery.label ) {
+					index = i;
+					break;
+				}
+			}
+			if( index === -1 ) {
+				control.bid.groceries.push(grocery);
+			}
+		}
+		
+		this.removeDrink = function(drink){
+			var index = -1;		
+			var drinkArr = eval( control.bid.drinks );
+			for( var i = 0; i < drinkArr.length; i++ ) {
+				if( drinkArr[i].label === drink.label ) {
+					index = i;
+					break;
+				}
+			}
+			if( index === -1 ) {
+				alert( "Something gone wrong" );
+			}
+			control.bid.drinks.splice( index, 1 );
+		}
+		
+		this.removeGrocery = function(grocery){
+			var index = -1;		
+			var groceryArr = eval( control.bid.groceries );
+			for( var i = 0; i < groceryArr.length; i++ ) {
+				if( groceryArr[i].label === grocery.label ) {
+					index = i;
+					break;
+				}
+			}
+			if( index === -1 ) {
+				alert( "Something gone wrong" );
+			}
+			control.bid.groceries.splice( index, 1 );
+		}
+		
+		this.addBid = function(){
+			control.bid.beginning = control.formatDate($scope.bidBegin.value);
+			control.bid.end= control.formatDate($scope.bidEnd.value);
+			control.bid.manager = restaurantService.getRestaurantManager();
+			
+			if(control.bid.beginning < control.bid.end)
+				if(control.bid.drinks.length !== 0 || control.bid.groceries.length !== 0)
+					$http.post('/restmanager/addBid', control.bid).then(function success(response){
+						control.bid = {};
+						control.bid.drinks = [];
+						control.bid.groceries = [];
+						alert("Success!");
+					}), function error(response){
+						control.result = "Unknown error ocurred.";
+					}
+				else{
+					alert('Grocery or drink list is empty.');
+				}
+			else
+				alert('End date needs to be after begin date.');
 		}
 		
 		$scope.$watch('tab.isSet(5)', function() {

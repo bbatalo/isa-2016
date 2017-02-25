@@ -13,6 +13,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
@@ -32,17 +33,78 @@ public class Bid {
 	@Column(name="big_end")
 	public Date end;
 	
-	@ManyToMany(mappedBy="bids")
-	@JsonIgnore
+	@ManyToMany
+	@JoinTable(name = "bid_drinks", joinColumns = {
+			@JoinColumn(name = "drink_id", nullable = false, updatable = false) },
+			inverseJoinColumns = { @JoinColumn(name = "bid_id",
+					nullable = false, updatable = false) })
 	public Set<Drink> drinks;
 	
-	@ManyToMany(mappedBy="bids")
-	@JsonIgnore
+	@ManyToMany
+	@JoinTable(name = "bid_groceries", joinColumns = {
+			@JoinColumn(name = "grocery_id", nullable = false, updatable = false) },
+			inverseJoinColumns = { @JoinColumn(name = "bid_id",
+					nullable = false, updatable = false) })
 	public Set<Grocery> groceries;
 	
 	@ManyToOne
 	@JoinColumn(name="usr_id")
 	public RestaurantManager manager;
+	
+	
+	@OneToMany(mappedBy="bid")
+	@JsonIgnore
+	public Set<Offer> offers;
+	
+	public Bid() {}
+
+	public long getIdBid() {
+		return idBid;
+	}
+
+	public void setIdBid(long idBid) {
+		this.idBid = idBid;
+	}
+
+	public Date getBeginning() {
+		return beginning;
+	}
+
+	public void setBeginning(Date beginning) {
+		this.beginning = beginning;
+	}
+
+	public Date getEnd() {
+		return end;
+	}
+
+	public void setEnd(Date end) {
+		this.end = end;
+	}
+
+	public Set<Drink> getDrinks() {
+		return drinks;
+	}
+
+	public void setDrinks(Set<Drink> drinks) {
+		this.drinks = drinks;
+	}
+
+	public Set<Grocery> getGroceries() {
+		return groceries;
+	}
+
+	public void setGroceries(Set<Grocery> groceries) {
+		this.groceries = groceries;
+	}
+
+	public RestaurantManager getManager() {
+		return manager;
+	}
+
+	public void setManager(RestaurantManager manager) {
+		this.manager = manager;
+	}
 	//public Set<Offer> offers;
    
    /*
