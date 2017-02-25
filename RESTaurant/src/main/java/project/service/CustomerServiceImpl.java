@@ -1,7 +1,8 @@
 package project.service;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
@@ -15,9 +16,8 @@ public class CustomerServiceImpl implements CustomerService {
 	private CustomerRepository customerRepository;
 	
 	@Override
-	public Page<Customer> getAll() {
-		// TODO Auto-generated method stub
-		return null;
+	public List<Customer> getAll() {
+		return customerRepository.findAll();
 	}
 
 	@Override
@@ -56,6 +56,8 @@ public class CustomerServiceImpl implements CustomerService {
 		Assert.notNull(customer, "Cannot be null");
 		customerRepository.updateDetails(customer.getUserID(), customer.getName(), customer.getSurname(), customer.getAddress(), customer.getDateBirth());
 	}
+
+	
 
 	
 

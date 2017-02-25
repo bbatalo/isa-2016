@@ -1,5 +1,6 @@
 package project.controller;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -41,7 +42,6 @@ public class IndexController {
 		} else {
 			return null;
 		}
-
 		
 	}
 	
@@ -108,6 +108,9 @@ public class IndexController {
 				List<Customer> friends = customer.getFriends();
 				List<Customer> friendOf = customer.getFriendOf();
 				friends.addAll(friendOf);
+				for (Customer c : friends) {
+					c.setPassword("");
+				}
 				return new ResponseEntity<List<Customer>>(friends, HttpStatus.OK);
 			}
 		}
@@ -118,14 +121,21 @@ public class IndexController {
 	@RequestMapping(value = "/loadCustomers",
 			method = RequestMethod.GET,
 			produces = MediaType.APPLICATION_JSON)
-	public ResponseEntity<Customer> loadCustomers(@Context HttpServletRequest request) {
+	public ResponseEntity<List<Customer>> loadCustomers(@Context HttpServletRequest request) {
 		
 		Online online = (Online) request.getSession().getAttribute("user");
-		
 		if (online != null) {
 			Customer customer = customerService.getCustomerById(online.getUser().getUserID());
-			customer.setPassword("");
-			return new ResponseEntity<Customer>(customer, HttpStatus.OK);
+			List<Customer> customers = customerService.getAll();
+			List<Customer> retVal = new ArrayList<Customer>();
+			for (Customer c : customers) {
+				if (!customer.getFriends().contains(c) && !customer.getFriendOf().contains(c)) {
+					c.setPassword("");
+					retVal.add(c);
+				}
+			}
+			retVal.remove(customer);
+			return new ResponseEntity<List<Customer>>(retVal, HttpStatus.OK);
 		} else {
 			return null;
 		}

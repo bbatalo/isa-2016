@@ -1,6 +1,7 @@
 package project.repository;
 
 import java.util.Date;
+import java.util.List;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -11,11 +12,12 @@ import org.springframework.data.repository.Repository;
 import project.domain.Customer;
 
 public interface CustomerRepository extends Repository<Customer, Long> {
-
-	public Page<Customer> findAll(Pageable pageable);
 	
 	@Query("select c from Customer c where c.userID = ?1")
 	public Customer findCustomerById(Long id);
+	
+	@Query("select c from Customer c")
+	public List<Customer> findAll();
 	
 	@Modifying
 	@Query("delete from Customer c where c.userID = ?1")

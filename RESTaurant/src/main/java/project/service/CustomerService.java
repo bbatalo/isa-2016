@@ -1,12 +1,12 @@
 package project.service;
 
-import org.springframework.data.domain.Page;
+import java.util.List;
 
 import project.domain.Customer;
 
 public interface CustomerService {
 
-	Page<Customer> getAll();
+	List<Customer> getAll();
 	
 	Customer getCustomerById(Long id);
 	

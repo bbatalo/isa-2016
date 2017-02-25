@@ -172,9 +172,11 @@
 			}
 		}
 
-		$scope.$watch('tabCtrl.isSet(6)', function() {
-			control.form = JSON.parse(JSON.stringify(customerService.getCustomerDetails()));
-			control.form.dateBirth = new Date(control.form.dateBirth)
+		$scope.$watch('tabCtrl.tab', function(newValue) {
+			if (newValue == 6) {
+				control.form = JSON.parse(JSON.stringify(customerService.getCustomerDetails()));
+				control.form.dateBirth = new Date(control.form.dateBirth)
+			}
 		});
 
 	}]);
@@ -190,25 +192,34 @@
 		    ];
 		
 		control.selected = {id: '1', name: 'Email'};
+		control.cst_selected = {id: '1', name: 'Email'};
 		
 		control.customers = [];
 		
-		$scope.$watch('tabCtrl.isSet(2)', function() {
-			var requestData = {};
-			requestData.userID = customerService.getCustomer().userID;
-			
-			$http({
-				method: 'POST',
-				url: '/index/loadFriends',
-				headers: {
-					   'Content-Type': 'application/json',	   
-					 },
-				data: requestData
-			}).then(function success(response) {
-				if (response.data.length != 0) {
-					control.friends = response.data;
-				}
-			});
+		$scope.$watch('tabCtrl.tab', function(newValue) {
+			if (newValue == 2) {
+				var requestData = {};
+				requestData.userID = customerService.getCustomer().userID;
+				
+				$http({
+					method: 'POST',
+					url: '/index/loadFriends',
+					headers: {
+						   'Content-Type': 'application/json',	   
+						 },
+					data: requestData
+				}).then(function success(response) {
+					if (response.data.length != 0) {
+						control.friends = response.data;
+					}
+				});
+				
+				control.loadCustomers()
+			}
+		});
+		
+		control.loadCustomers = function() {
+			control.customers = []
 			
 			$http({
 				method: 'GET',
@@ -218,8 +229,7 @@
 					control.customers = response.data;
 				}
 			});
-		});
-		
+		}
 	}]);
 	
 })();
