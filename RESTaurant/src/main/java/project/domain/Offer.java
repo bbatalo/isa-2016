@@ -15,6 +15,9 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
 public class Offer {
@@ -92,19 +95,22 @@ public class Offer {
 	@JoinColumn(name="bid_id")
 	public Bid bid;
 	
+	@ManyToOne
+	@JoinColumn(name="usr_id")
+	public Supplier supplier;
 	
-	@ManyToMany
-	@JoinTable(name = "offer_drinkoffers", joinColumns = {
-			@JoinColumn(name = "drink_offer_id", nullable = false, updatable = false) },
-			inverseJoinColumns = { @JoinColumn(name = "offer_id",
-					nullable = false, updatable = false) })
+	public Supplier getSupplier() {
+		return supplier;
+	}
+
+	public void setSupplier(Supplier supplier) {
+		this.supplier = supplier;
+	}
+
+	@OneToMany(mappedBy="offer")
 	public Set<DrinkOffer> drinkOffers;
 
-	@ManyToMany
-	@JoinTable(name = "offer_groceryoffers", joinColumns = {
-			@JoinColumn(name = "grocery_offer_id", nullable = false, updatable = false) },
-			inverseJoinColumns = { @JoinColumn(name = "offer_id",
-					nullable = false, updatable = false) })
+	@OneToMany(mappedBy="offer")
 	public Set<GroceryOffer> groceryOffers;
 	
 	public Offer(){}

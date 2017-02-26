@@ -2,6 +2,7 @@ package project.controller;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -22,9 +23,12 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import project.domain.Bid;
 import project.domain.Dish;
 import project.domain.Drink;
+import project.domain.DrinkOffer;
 import project.domain.DrinksMenu;
 import project.domain.Grocery;
+import project.domain.GroceryOffer;
 import project.domain.Menu;
+import project.domain.Offer;
 import project.domain.Online;
 import project.domain.RestTable;
 import project.domain.Restaurant;
@@ -37,8 +41,11 @@ import project.domain.User;
 import project.domain.dto.BidDTO;
 import project.service.BidService;
 import project.service.DishService;
+import project.service.DrinkOfferService;
 import project.service.DrinkService;
+import project.service.GroceryOfferService;
 import project.service.GroceryService;
+import project.service.OfferService;
 import project.service.OnlineService;
 import project.service.RestaurantService;
 import project.service.SegmentService;
@@ -74,6 +81,15 @@ public class RestManController {
 	
 	@Autowired
 	private TableService tableService;
+	
+	@Autowired
+	private OfferService offerService;
+	
+	@Autowired
+	private DrinkOfferService drinkOfferService;
+	
+	@Autowired
+	private GroceryOfferService groceryOfferService;
 	
 	@RequestMapping(value = "/load",
 			method = RequestMethod.GET,
@@ -357,5 +373,42 @@ public class RestManController {
 	@ResponseBody
 	public List<RestTable> getTables(@Context HttpServletRequest request, @RequestBody Segment segment){
 		return tableService.getTablesBySegmentId(segment.getIdSegment());
+	}
+	
+	@RequestMapping(value="/getOffers",
+			method = RequestMethod.POST,
+			consumes = MediaType.APPLICATION_JSON,
+			produces = MediaType.APPLICATION_JSON)
+	@ResponseBody
+	public List<Offer> getOffers(@Context HttpServletRequest request, @RequestBody Restaurant restaurant){
+		return offerService.getOffersByManagerId(restaurant.getRestaurantID());
+	}
+	
+	@Transactional
+	@RequestMapping(value="/acceptOffer",
+			method = RequestMethod.POST,
+			consumes = MediaType.APPLICATION_JSON,
+			produces = MediaType.TEXT_PLAIN)
+	@ResponseBody
+	public String acceptOffer(@Context HttpServletRequest request, @RequestBody Offer offer){
+		System.out.println(offer.getIdOffer());
+		
+		System.out.println(offer.getBid().idBid);
+		
+		Bid realBid = bidService.getBid(offer.getBid().idBid);
+		
+		List<Offer> realOffers = offerService.getOffersByBidId(realBid.getIdBid());
+		
+		for(Offer o : realOffers){
+			drinkOfferService.removeDrinkOfferByOfferId(o.getIdOffer());
+			
+			groceryOfferService.removeGroceryOfferByOfferId(o.getIdOffer());
+			
+			offerService.deleteOfferById(o.getIdOffer());
+		}
+		
+		bidService.deleteBidById(realBid.getIdBid());
+		
+		return "OK";
 	}
 }

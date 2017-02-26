@@ -1,7 +1,12 @@
 package project.domain;
 
+import java.util.Set;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.OneToMany;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
 public class Supplier extends User {
@@ -17,6 +22,18 @@ public class Supplier extends User {
 	@Column(name = "sup_pass_changed", nullable = false)
     private boolean passChanged = false;
 	
+	@OneToMany(mappedBy="supplier")
+	@JsonIgnore
+	private Set<Offer> offers;
+	
+	public Set<Offer> getOffers() {
+		return offers;
+	}
+
+	public void setOffers(Set<Offer> offers) {
+		this.offers = offers;
+	}
+
 	public Supplier() {}
 	
 	public String getLabel() {

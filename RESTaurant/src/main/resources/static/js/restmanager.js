@@ -397,6 +397,53 @@
 		});
 	}]);
 	
+	app.controller('OffersController', ['$scope', '$http', '$window', 'restaurantService', function($scope, $http, $window, restaurantService){
+		var control = this;
+		control.offers = [];
+		control.seeOffer = {};
+		control.toggleContent = true;
+		
+		this.isToggled = function(){
+			return control.toggleContent;
+		}
+		
+		this.loadOffers = function(){
+			$http.post('/restmanager/getOffers', restaurantService.getRestaurant()).then(function success(response) {
+				control.offers = response.data;
+				
+				for(it in control.offers){
+					control.offers[it].delivery = new Date(control.offers[it].delivery);
+					control.offers[it].warranty = new Date(control.offers[it].warranty);
+					control.offers[it].lastsUntil = new Date(control.offers[it].lastsUntil);
+				}
+			}, function error(response) {
+				control.result = "Unknown error ocurred."
+			});
+		}
+		
+		this.seeContent = function(offer){
+			control.seeOffer = offer;
+			control.toggleContent = false;
+		}
+		
+		this.acceptOffer = function(offer){
+			$http.post('/restmanager/acceptOffer', offer).then(function success(response) {
+				alert('Offer accepted');
+			}, function error(response) {
+				control.result = "Unknown error ocurred."
+			});
+		}
+		
+		this.goBack = function(){
+			control.seeOffer = {};
+			control.toggleContent = true;
+		}
+		
+		$scope.$watch('tab.isSet(6)', function() {
+			control.loadOffers();
+		});
+	}]);
+	
 	app.controller('SeatingController', ['$scope', '$http', '$window', 'restaurantService', function($scope, $http, $window, restaurantService) {
 		var control = this;
 		control.segment = {};

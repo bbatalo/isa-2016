@@ -31,6 +31,8 @@ import project.domain.dto.BidDTO;
 import project.domain.dto.OfferDTO;
 import project.domain.dto.PasswordDTO;
 import project.repository.BidRepository;
+import project.repository.DrinkOfferRepository;
+import project.repository.OfferRepository;
 import project.service.BidService;
 import project.service.DrinkOfferService;
 import project.service.GroceryOfferService;
@@ -168,28 +170,60 @@ public class SupplierController {
 			produces = MediaType.TEXT_PLAIN)
 	@ResponseBody
 	public String addOffer(@Context HttpServletRequest request, @RequestBody Offer offer) throws ParseException{
-		//Offer realOffer = new Offer();
+		
+		offerService.addOffer(offer);
 		
 		for(DrinkOffer drinkOffer : offer.getDrinkOffers()){
+			drinkOffer.setOffer(offer);
 			drinkOfferService.addDrinkOffer(drinkOffer);
 		}
 		
 		for(GroceryOffer groceryOffer : offer.getGroceryOffers()){
+			groceryOffer.setOffer(offer);
 			groceryOfferService.addGroceryOffer(groceryOffer);
 		}
 		
-		/*
-		realOffer.setDelivery(sdf.parse(offerDTO.getDelivery()));
-		realOffer.setWarranty(sdf.parse(offerDTO.getWarranty()));
-		realOffer.setLastsUntil(sdf.parse(offerDTO.getLastsUntil()));
-		realOffer.setGroceryOffers(offerDTO.getGroceryOffers());
-		realOffer.setDrinkOffers(offerDTO.getDrinkOffers());
-		*/
-		//Bid bid = bidService.getBid(offer.getBid().getIdBid());
+		return "OK";
+	}
+	
+	@RequestMapping(value="/getOffers",
+			method = RequestMethod.POST,
+			consumes = MediaType.APPLICATION_JSON,
+			produces = MediaType.APPLICATION_JSON)
+	@ResponseBody
+	public List<Offer> getOffers(@Context HttpServletRequest request, @RequestBody Supplier supplier){
 		
-		//offer.setBid(bid);
-		offerService.addOffer(offer);
+		return offerService.getOffersBySupplierId(supplier.getUserID());
+	}
+	
+	@Transactional
+	@RequestMapping(value="/updateOffer",
+			method = RequestMethod.POST,
+			consumes = MediaType.APPLICATION_JSON,
+			produces = MediaType.TEXT_PLAIN)
+	@ResponseBody
+	public String updateOffer(@Context HttpServletRequest request, @RequestBody Offer offer){
+		
+		if(offer.getBid().getEnd().after(new Date())){
+		drinkOfferService.removeDrinkOfferByOfferId(offer.getIdOffer());
+		groceryOfferService.removeGroceryOfferByOfferId(offer.getIdOffer());
+		
+		Offer realOffer = offerService.getOfferById(offer.getIdOffer());
+		
+		for(DrinkOffer drinkOffer : offer.getDrinkOffers()){
+			drinkOffer.setOffer(realOffer);
+			drinkOfferService.addDrinkOffer(drinkOffer);
+		}
+		
+		for(GroceryOffer groceryOffer : offer.getGroceryOffers()){
+			groceryOffer.setOffer(realOffer);
+			groceryOfferService.addGroceryOffer(groceryOffer);
+		}
+		
+		offerService.updateDetails(offer.getIdOffer(), offer.getDelivery(), offer.getWarranty(), offer.getLastsUntil());
 		
 		return "OK";
+		}
+		return "Too late to update offer.";
 	}
 }

@@ -28,11 +28,19 @@ public class DrinkOffer {
 	public float price;
    
 	
-	@ManyToMany(mappedBy = "drinkOffers")
+	@ManyToOne
+	@JoinColumn(name="offer_id")
 	@JsonIgnore
-	public Set<Offer> offers;
+	public Offer offer;
 	
-	
+	public Offer getOffer() {
+		return offer;
+	}
+
+	public void setOffer(Offer offer) {
+		this.offer = offer;
+	}
+
 	@ManyToOne
 	@JoinColumn(name="drink_id")
 	public Drink drink;

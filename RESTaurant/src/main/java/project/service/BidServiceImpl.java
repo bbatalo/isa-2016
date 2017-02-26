@@ -39,4 +39,9 @@ public class BidServiceImpl implements BidService{
 		return bidRepository.findBidById(id);
 	}
 
+	@Override
+	public List<Bid> getBidsByRestaurantId(Long id) {
+		return bidRepository.findBidsByRestaurant(id);
+	}
+
 }

@@ -9,6 +9,8 @@ public interface BidService {
 	
 	List<Bid> getBidsByManagerId(Long id);
 	
+	List<Bid> getBidsByRestaurantId(Long id);
+	
 	void deleteBidById(Long id);
 	
 	List<Bid> getAllBids();
