@@ -17,4 +17,9 @@ public class DrinkOfferServiceImpl implements DrinkOfferService{
 		return drinkOfferRepository.save(drinkOffer);
 	}
 
+	@Override
+	public void removeDrinkOfferByOfferId(Long id) {
+		drinkOfferRepository.removeDrinkOfferByOfferId(id);
+	}
+
 }

@@ -19,7 +19,7 @@ public class Reservation {
    public short duration;
    
    /** @pdRoleInfo migr=no name=Table assc=reservedTables coll=java.util.Collection impl=java.util.ArrayList mult=0..* */
-   public java.util.Collection<Table> tables;
+   public java.util.Collection<RestTable> tables;
    /** @pdRoleInfo migr=no name=Invite assc=invite coll=java.util.Collection impl=java.util.ArrayList mult=0..* */
    public java.util.Collection<Invite> invite;
    /** @pdRoleInfo migr=no name=Order assc=order mult=0..1 */
@@ -29,29 +29,25 @@ public class Reservation {
    
    
    /** @pdGenerated default getter */
-   public java.util.Collection<Table> getTables() {
+   public java.util.Collection<RestTable> getTables() {
       if (tables == null)
-         tables = new java.util.ArrayList<Table>();
+         tables = new java.util.ArrayList<RestTable>();
       return tables;
    }
    
-   /** @pdGenerated default iterator getter */
+   /*
    public java.util.Iterator getIteratorTables() {
       if (tables == null)
          tables = new java.util.ArrayList<Table>();
       return tables.iterator();
    }
    
-   /** @pdGenerated default setter
-     * @param newTables */
    public void setTables(java.util.Collection<Table> newTables) {
       removeAllTables();
       for (java.util.Iterator iter = newTables.iterator(); iter.hasNext();)
          addTables((Table)iter.next());
    }
    
-   /** @pdGenerated default add
-     * @param newTable */
    public void addTables(Table newTable) {
       if (newTable == null)
          return;
@@ -64,8 +60,6 @@ public class Reservation {
       }
    }
    
-   /** @pdGenerated default remove
-     * @param oldTable */
    public void removeTables(Table oldTable) {
       if (oldTable == null)
          return;
@@ -77,7 +71,6 @@ public class Reservation {
          }
    }
    
-   /** @pdGenerated default removeAll */
    public void removeAllTables() {
       if (tables != null)
       {
@@ -90,6 +83,7 @@ public class Reservation {
          }
       }
    }
+   */
    /** @pdGenerated default getter */
    public java.util.Collection<Invite> getInvite() {
       if (invite == null)

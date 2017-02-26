@@ -27,6 +27,7 @@
 		    			<li ng-class="{active:tab.isSet(4)}"><a class="navbar-brand" href ng-click="tab.setTab(4)">Drinks</a></li>
 		    			<li ng-class="{active:tab.isSet(5)}"><a class="navbar-brand" href ng-click="tab.setTab(5)">Bids</a></li>
 		    			<li ng-class="{active:tab.isSet(6)}"><a class="navbar-brand" href ng-click="tab.setTab(6)">Offers</a></li>
+		    			<li ng-class="{active:tab.isSet(7)}"><a class="navbar-brand" href ng-click="tab.setTab(7)">Seating arrangement</a></li>
 		    		</ul>
 	    		</section>
 	    		<ul class="nav navbar-nav navbar-right">
@@ -237,10 +238,16 @@
 								<form name="addBidForm" ng-submit="addBidForm.$valid && bidsCtrl.addBid()" class="form-signin" novalidate >
 									<h3>Create bid.</h3>
 									<fieldset class="form-group">
-										<input ng-model="bidBegin.value" type="date" class="form-control" required></input>
+										<label class="control-label col-sm-3">Bid begins:</label>
+										<div class="col-sm-9">
+											<input ng-model="bidBegin.value" type="date" class="form-control" required></input>
+										</div>
 									</fieldset>
 									<fieldset class="form-group">
-										<input ng-model="bidEnd.value" type="date" class="form-control" required></input>
+										<label class="control-label col-sm-3">Bid ends:</label>
+										<div class="col-sm-9">
+											<input ng-model="bidEnd.value" type="date" class="form-control" required></input>
+										</div>
 									</fieldset>
 									<fieldset class="form-group">
 		                				<input  type="submit" class="btn btn-lg btn-primary btn-block pull-right" value="Create" />
@@ -285,6 +292,173 @@
 							</div>
 						</div>
 					</div>
+			  	</div>
+		  	</div>
+		  	<div ng-controller="OffersController as offersCtrl" ng-show="tab.isSet(6)">
+				<div class="row" ng-show="offersCtrl.isToggled()">
+					<div class="col-sm-2"></div>
+			  		<div class="col-sm-8">
+			  			<h3>Offers</h3>
+				  		<table class="table table-hover">
+							<thead>
+								<tr>
+									<th>Supplier</th>
+									<th>Manager</th>
+									<th>Delivery</th>
+									<th>Warranty</th>
+									<th>Lasts until</th>
+									<th>See content</th>
+									<th>Accept</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr ng-repeat="offer in offersCtrl.offers">
+									<td>{{offer.supplier.email}}</td>
+									<td>{{offer.bid.manager.email}}</td>
+									<td><input type="date" ng-model="offer.delivery" readonly/></td>
+									<td><input type="date" ng-model="offer.warranty" readonly/></td>
+									<td><input type="date" ng-model="offer.lastsUntil" readonly/></td>
+									<td><input  type="button" class="btn btn-info" value="See content" ng-click="offersCtrl.seeContent(offer)"/></td>
+									<td><input  type="button" class="btn btn-primary" value="Accept" ng-click="offersCtrl.acceptOffer(offer)"/></td>
+								</tr>
+							</tbody>
+						</table>
+			  		</div>
+			  		<div class="col-sm-2"></div>
+				</div>
+				<div ng-show="!offersCtrl.isToggled()">
+					<div class="row">
+						<div class="col-sm-3"></div>
+						<div class="col-sm-6">
+				  			<h3>Groceries</h3>
+					  		<table class="table table-hover">
+								<thead>
+									<tr>
+										<th>Label</th>
+										<th>Description</th>
+										<th>Price</th>
+									</tr>
+								</thead>
+								<tbody>
+									<tr ng-repeat="groceryOffer in offersCtrl.seeOffer.groceryOffers">
+										<td>{{groceryOffer.grocery.label}}</td>
+										<td>{{groceryOffer.grocery.description}}</td>
+										<td>{{groceryOffer.price}}</td>
+									</tr>
+								</tbody>
+							</table>
+						</div>
+						<div class="col-sm-3"></div>
+			  		</div>
+			  		<div class="row">
+			  			<div class="col-sm-3"></div>
+			  			<div class="col-sm-6">
+				  			<h3>Drinks</h3>
+					  		<table class="table table-hover">
+								<thead>
+									<tr>
+										<th>Label</th>
+										<th>Description</th>
+										<th>Price</th>
+									</tr>
+								</thead>
+								<tbody>
+									<tr ng-repeat="drinkOffer in offersCtrl.seeOffer.drinkOffers">
+										<td>{{drinkOffer.drink.label}}</td>
+										<td>{{drinkOffer.drink.description}}</td>
+										<td>{{drinkOffer.price}}</td>
+									</tr>
+								</tbody>
+							</table>
+						</div>
+						<div class="col-sm-3"></div>
+					</div>
+					<div class="row">
+						<div class="col-sm-5"></div>
+						<div class="col-sm-2">
+							<input  type="button" class="btn btn-primary" value="Accept" ng-click="offersCtrl.acceptOffer(offersCtrl.seeOffer)"/>
+							<input  type="button" class="btn btn-info" value="Back" ng-click="offersCtrl.goBack()"/>
+						</div>
+						<div class="col-sm-5"></div>
+					</div>
+				</div>
+			</div>
+		  	<div ng-controller="SeatingController as seatingCtrl"  ng-show="tab.isSet(7)">
+			  	<div class="row" ng-show="!seatingCtrl.isToggled()">
+			  		<div class="col-sm-4"></div>
+			  		<div class="col-sm-4">
+						<div class="panel panel-default">
+							<div class="panel-body">
+								<form name="addSegmentForm" ng-submit="addSegmentForm.$valid && seatingCtrl.register()" class="form-signin" novalidate >
+									<h3>Add seating segment.</h3>
+									<fieldset class="form-group">
+										<input ng-model="seatingCtrl.segment.label" type="text" class="form-control" placeholder="Label" required></input>
+									</fieldset>
+									<fieldset class="form-group">
+										<input ng-model="seatingCtrl.segment.description" type="text" class="form-control" placeholder="Description"></input>
+									</fieldset>
+									<fieldset class="form-group">
+										<div class="col-sm-6">
+											<input ng-model="seatingCtrl.segment.tableRows" type="number" min="1" class="form-control" placeholder="Table rows" required></input>
+										</div>
+										<div class="col-sm-6">
+											<input ng-model="seatingCtrl.segment.tableColumns" type="number" min="1" class="form-control" placeholder="Table columns" required></input>
+										</div>
+									</fieldset>
+									<fieldset class="form-group">
+		                				<input  type="submit" class="btn btn-lg btn-primary btn-block pull-right" value="Add" />
+		              				</fieldset>
+									<hr></hr>
+									<fieldset><div></div>{{seatingCtrl.result}}</fieldset><br />
+								</form>
+							</div>
+						</div>
+			  		</div>
+			  		<div class="col-sm-4"></div>
+			  	</div>
+			  	<div class="row" ng-show="!seatingCtrl.isToggled()">
+			  		<div class="col-sm-2"></div>
+			  		<div class="col-sm-8">
+			  			<h3>Segments</h3>
+				  		<table class="table table-hover">
+							<thead>
+								<tr>
+									<th>Label</th>
+									<th>Description</th>
+									<th>Table rows</th>
+									<th>Table columns</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr ng-repeat="segment in seatingCtrl.segments">
+									<td>{{segment.label}}</td>
+									<td>{{segment.description}}</td>
+									<td>{{segment.tableRows}}</td>
+									<td>{{segment.tableColumns}}</td>
+									<td><input  type="button" class="btn btn-primary" value="Arrange" ng-click="seatingCtrl.arrangeTables(segment)"/></td>
+									<td><input  type="button" class="btn btn-danger" value="Remove" ng-click="seatingCtrl.removeSegment(segment)"/></td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+					<div class="col-sm-2"></div>
+			  	</div>
+			  	<div class="row" ng-show="seatingCtrl.isToggled()">
+			  		<div class="col-sm-1"></div>
+			  		<div class="col-sm-8">
+			  			<h3>Arrange tables.</h3>
+			  			<input  type="button" class="btn btn-info" value="Go Back" ng-click="seatingCtrl.goBack()"/>
+				  		<table class="luksuz">
+							<tbody>
+								<tr ng-repeat="tableRow in seatingCtrl.tables">
+									<td ng-repeat="tableCol in tableRow">
+										<input  type="button" ng-class="tableCol.tableClass" ng-value="tableCol.status" ng-click="seatingCtrl.manageTable(tableCol)"/>
+									</td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+					<div class="col-sm-1"></div>
 			  	</div>
 		  	</div>
 	</body>

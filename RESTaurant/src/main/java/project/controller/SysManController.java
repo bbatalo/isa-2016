@@ -25,12 +25,14 @@ import project.domain.DrinksMenu;
 import project.domain.Menu;
 import project.domain.Restaurant;
 import project.domain.RestaurantManager;
+import project.domain.SeatingArrangement;
 import project.domain.SystemManager;
 import project.domain.User;
 import project.service.DrinksMenuService;
 import project.service.MenuService;
 import project.service.RestManService;
 import project.service.RestaurantService;
+import project.service.SeatingArrangementService;
 import project.service.SysManService;
 import project.service.UserService;
 @RequestMapping("/sysman")
@@ -53,6 +55,9 @@ public class SysManController {
 	
 	@Autowired
 	private DrinksMenuService drinksMenuService;
+	
+	@Autowired
+	private SeatingArrangementService seatingArrangementService;
 	
 	@Transactional
 	@RequestMapping(value="/addSystemManager",
@@ -156,9 +161,12 @@ public class SysManController {
 			menu.setRestaurant(r);
 			DrinksMenu drinksMenu = new DrinksMenu();
 			drinksMenu.setRestaurant(r);
+			SeatingArrangement seatingArrangement = new SeatingArrangement();
+			seatingArrangement.setRestaurant(r);
 			
 			menuService.addMenu(menu);
 			drinksMenuService.addDrinksMenu(drinksMenu);
+			seatingArrangementService.addSeatingArrangement(seatingArrangement);
 			
 			return "OK";
 		}

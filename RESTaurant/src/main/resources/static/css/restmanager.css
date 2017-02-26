@@ -6,3 +6,8 @@
 .ng-valid.ng-dirty {
 	border-color: green;
 }
+
+table.luksuz {
+    border-collapse: separate;
+    border-spacing: 30px;
+}

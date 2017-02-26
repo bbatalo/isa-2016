@@ -21,6 +21,9 @@ public interface BidRepository extends Repository<Bid, Long>{
 	@Query("select b from Bid b where b.manager.userID =?1")
 	public List<Bid> findBidsByManager(Long id);
 	
+	@Query("select b from Bid b where b.manager.restaurant.restaurantID =?1")
+	public List<Bid> findBidsByRestaurant(Long id);
+	
 	@Query("select b from Bid b")
 	public List<Bid> findAllBids();
 }

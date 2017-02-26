@@ -92,7 +92,7 @@
 		this.loadUser();
 	}]);
 	
-	app.controller('BidsController', ['$scope', '$http', '$window', function($scope, $http, $window) {
+	app.controller('BidsController', ['$scope', '$http', '$window', 'supplierService', function($scope, $http, $window, supplierService) {
 		var control = this;
 		control.bids = [];
 		control.toggleOffer = true;
@@ -106,6 +106,11 @@
 		this.loadBids = function(){
 			$http.get('/supplier/getBids').then(function success(response) {
 				control.bids = response.data;
+				
+				for(it in control.bids){
+					control.bids[it].beginning = new Date(control.bids[it].beginning);
+					control.bids[it].end = new Date(control.bids[it].end);
+				}
 			}, function error(response) {
 				control.result = "Unknown error ocurred."
 			});
@@ -117,6 +122,11 @@
 		}
 		
 		this.createOffer = function(bid){
+			if(bid.end < new Date()){
+				alert("This bid has expired!");
+				return;
+			}
+			
 			control.toggleOffer = false;
 			control.bidToOffer = bid;
 			for(it in bid.drinks){
@@ -191,40 +201,217 @@
 			}
 			control.offer.groceryOffers.splice( index, 1 );
 		}
-		
-		this.formatDate = function(date){
-			ret = date;
-			var dd = ret.getDate();
-			var mm = ret.getMonth()+1; //January is 0!
-			var yyyy = ret.getFullYear();
 
-			if(dd<10) {
-			    dd='0'+dd
-			} 
-
-			if(mm<10) {
-			    mm='0'+mm
-			} 
-
-			ret = dd+'/'+mm+'/'+yyyy;
-			return ret;
-		}
-		
 		this.addOffer = function(){
-			control.offer.delivery = control.formatDate($scope.offerDelivery.value);
-			control.offer.warranty = control.formatDate($scope.offerWarranty.value);
-			control.offer.lastsUntil = control.formatDate($scope.offerLastsUntil.value);
+			control.offer.delivery = $scope.offerDelivery.value;
+			control.offer.warranty = $scope.offerWarranty.value;
+			control.offer.lastsUntil = $scope.offerLastsUntil.value;
 			control.offer.bid = control.bidToOffer;
-			
+			control.offer.supplier = supplierService.getSupplier();
 			$http.post('/supplier/addOffer', control.offer).then(function success(response){
 				alert('Success!');
+				control.offer = {};
+				control.offer.bid = {};
+				control.offer.drinkOffers = [];
+				control.offer.groceryOffers = [];
+				control.bidToOffer = {};
+				control.drinkOffers = [];
+				control.groceryOffers = [];
+				control.toggleOffer = true;
 			}), function error(response){
 				control.result = "Unknown error ocurred.";
 			}
 		}
 		
+		this.cancelOffer = function(){
+			control.offer = {};
+			control.offer.bid = {};
+			control.offer.drinkOffers = [];
+			control.offer.groceryOffers = [];
+			control.bidToOffer = {};
+			control.drinkOffers = [];
+			control.groceryOffers = [];
+			control.toggleOffer = true;
+		}
+		
 		$scope.$watch('tabCtrl.isSet(2)', function() {
 			control.loadBids();
+		});
+	}]);
+	
+	app.controller('OffersController', ['$scope', '$http', '$window', 'supplierService', function($scope, $http, $window, supplierService) {
+		var control = this;
+		control.offers = [];
+		control.toggleOffer = true;
+		control.offerToUpdate = {};
+		control.drinkOffers = [];
+		control.groceryOffers = [];
+		control.offer = {};
+		control.offer.drinkOffers = [];
+		control.offer.groceryOffers = [];
+		
+		this.isToggled = function(){
+			return control.toggleOffer;
+		}
+		
+		this.loadOffers = function(){
+			$http.post('/supplier/getOffers', supplierService.getSupplier()).then(function success(response) {
+				control.offers = response.data;
+				
+				for(it in control.offers){
+					control.offers[it].delivery = new Date(control.offers[it].delivery);
+					control.offers[it].warranty = new Date(control.offers[it].warranty);
+					control.offers[it].lastsUntil = new Date(control.offers[it].lastsUntil);
+				}
+			}, function error(response) {
+				control.result = "Unknown error ocurred."
+			});
+		}
+		
+		this.updateOffer = function(offer){
+			if(offer.bid.end < new Date()){
+				alert("This bid has expired!");
+				return;
+			}
+			
+			control.toggleOffer = false;
+			control.offerToUpdate = offer;
+			for(it in offer.bid.drinks){
+				var drinkOffer = {};
+				drinkOffer.drink = offer.bid.drinks[it];
+				drinkOffer.price = {};
+				control.drinkOffers.push(drinkOffer);
+			}
+			
+			for(it in offer.bid.groceries){
+				var groceryOffer = {};
+				groceryOffer.grocery = offer.bid.groceries[it];
+				groceryOffer.price = {};
+				control.groceryOffers.push(groceryOffer);
+			}
+			
+			$scope.offerDelivery = {
+			         value: new Date(offer.delivery)
+			};
+			
+			$scope.offerWarranty = {
+			         value: new Date(offer.warranty)
+			};
+			
+			$scope.offerLastsUntil = {
+			         value: new Date(offer.lastsUntil)
+			};
+			
+			for(it in offer.drinkOffers){
+				control.offer.drinkOffers.push(offer.drinkOffers[it]);
+			}
+			
+			for(it in offer.groceryOffers){
+				control.offer.groceryOffers.push(offer.groceryOffers[it]);
+			}
+		}
+		
+		this.addDrinkOffer = function(drinkOffer){
+			var index = -1;		
+			var drinkOfferArr = eval( control.offer.drinkOffers );
+			for( var i = 0; i < drinkOfferArr.length; i++ ) {
+				if( drinkOfferArr[i].drink.label === drinkOffer.drink.label ) {
+					index = i;
+					break;
+				}
+			}
+			if( index === -1 ) {
+				control.offer.drinkOffers.push(drinkOffer);
+			}
+		}
+		
+		this.addGroceryOffer = function(groceryOffer){
+			var index = -1;		
+			var groceryOfferArr = eval( control.offer.groceryOffers );
+			for( var i = 0; i < groceryOfferArr.length; i++ ) {
+				if( groceryOfferArr[i].grocery.label === groceryOffer.grocery.label ) {
+					index = i;
+					break;
+				}
+			}
+			if( index === -1 ) {
+				control.offer.groceryOffers.push(groceryOffer);
+			}
+		}
+		
+		this.removeDrinkOffer = function(drinkOffer){
+			var index = -1;		
+			var drinkOfferArr = eval( control.offer.drinkOffers );
+			for( var i = 0; i < drinkOfferArr.length; i++ ) {
+				if( drinkOfferArr[i].drink.label === drinkOffer.drink.label ) {
+					index = i;
+					break;
+				}
+			}
+			if( index === -1 ) {
+				alert( "Something gone wrong" );
+			}
+			control.offer.drinkOffers.splice( index, 1 );
+		}
+		
+		this.removeGroceryOffer = function(groceryOffer){
+			var index = -1;		
+			var groceryOfferArr = eval( control.offer.groceryOffers );
+			for( var i = 0; i < groceryOfferArr.length; i++ ) {
+				if( groceryOfferArr[i].grocery.label === groceryOffer.grocery.label ) {
+					index = i;
+					break;
+				}
+			}
+			if( index === -1 ) {
+				alert( "Something gone wrong" );
+			}
+			control.offer.groceryOffers.splice( index, 1 );
+		}
+		
+		this.modifyOffer = function(){
+			control.offer.idOffer = control.offerToUpdate.idOffer;
+			control.offer.delivery = $scope.offerDelivery.value;
+			control.offer.warranty = $scope.offerWarranty.value;
+			control.offer.lastsUntil = $scope.offerLastsUntil.value;
+			control.offer.bid = control.offerToUpdate.bid;
+			control.offer.supplier = control.offerToUpdate.supplier;
+			$http.post('/supplier/updateOffer', control.offer).then(function success(response){
+				alert('Success!');
+				
+				for(it in control.offers){
+					if(control.offer.idOffer === control.offers[it].idOffer){
+						control.offers[it] = control.offer;
+						break;
+					}
+				}
+				
+				control.offer = {};
+				control.offer.bid = {};
+				control.offer.drinkOffers = [];
+				control.offer.groceryOffers = [];
+				control.bidToOffer = {};
+				control.drinkOffers = [];
+				control.groceryOffers = [];
+				control.toggleOffer = true;
+			}), function error(response){
+				control.result = "Unknown error ocurred.";
+			}
+		}
+		
+		this.cancelOffer = function(){
+			control.offer = {};
+			control.offer.bid = {};
+			control.offer.drinkOffers = [];
+			control.offer.groceryOffers = [];
+			control.bidToOffer = {};
+			control.drinkOffers = [];
+			control.groceryOffers = [];
+			control.toggleOffer = true;
+		}
+		
+		$scope.$watch('tabCtrl.isSet(3)', function() {
+			control.loadOffers();
 		});
 	}]);
 	

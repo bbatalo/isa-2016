@@ -31,6 +31,8 @@ import project.domain.dto.BidDTO;
 import project.domain.dto.OfferDTO;
 import project.domain.dto.PasswordDTO;
 import project.repository.BidRepository;
+import project.repository.DrinkOfferRepository;
+import project.repository.OfferRepository;
 import project.service.BidService;
 import project.service.DrinkOfferService;
 import project.service.GroceryOfferService;
@@ -139,14 +141,14 @@ public class SupplierController {
 			method = RequestMethod.GET,
 			produces = MediaType.APPLICATION_JSON)
 	@ResponseBody
-	public List<BidDTO> getBids(@Context HttpServletRequest request){
+	public List<Bid> getBids(@Context HttpServletRequest request){
 		
-		List<Bid> tmp = bidService.getAllBids();
-		List<BidDTO> ret = new ArrayList<BidDTO>();
+		//List<Bid> ret = bidService.getAllBids();
+		//List<BidDTO> ret = new ArrayList<BidDTO>();
 		
 
-		SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
-		
+		//SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+		/*
 		for(Bid b : tmp){
 			BidDTO bidDTO = new BidDTO();
 			bidDTO.setIdBid(b.getIdBid());
@@ -158,8 +160,8 @@ public class SupplierController {
 			
 			ret.add(bidDTO);
 		}
-		
-		return ret;
+		*/
+		return bidService.getAllBids();
 	}
 	
 	@RequestMapping(value="/addOffer",
@@ -167,30 +169,61 @@ public class SupplierController {
 			consumes = MediaType.APPLICATION_JSON,
 			produces = MediaType.TEXT_PLAIN)
 	@ResponseBody
-	public String addOffer(@Context HttpServletRequest request, @RequestBody OfferDTO offerDTO) throws ParseException{
-		Offer realOffer = new Offer();
+	public String addOffer(@Context HttpServletRequest request, @RequestBody Offer offer) throws ParseException{
 		
-		for(DrinkOffer drinkOffer : offerDTO.getDrinkOffers()){
+		offerService.addOffer(offer);
+		
+		for(DrinkOffer drinkOffer : offer.getDrinkOffers()){
+			drinkOffer.setOffer(offer);
 			drinkOfferService.addDrinkOffer(drinkOffer);
 		}
 		
-		for(GroceryOffer groceryOffer : offerDTO.getGroceryOffers()){
+		for(GroceryOffer groceryOffer : offer.getGroceryOffers()){
+			groceryOffer.setOffer(offer);
 			groceryOfferService.addGroceryOffer(groceryOffer);
 		}
 		
-		SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+		return "OK";
+	}
+	
+	@RequestMapping(value="/getOffers",
+			method = RequestMethod.POST,
+			consumes = MediaType.APPLICATION_JSON,
+			produces = MediaType.APPLICATION_JSON)
+	@ResponseBody
+	public List<Offer> getOffers(@Context HttpServletRequest request, @RequestBody Supplier supplier){
 		
-		realOffer.setDelivery(sdf.parse(offerDTO.getDelivery()));
-		realOffer.setWarranty(sdf.parse(offerDTO.getWarranty()));
-		realOffer.setLastsUntil(sdf.parse(offerDTO.getLastsUntil()));
-		realOffer.setGroceryOffers(offerDTO.getGroceryOffers());
-		realOffer.setDrinkOffers(offerDTO.getDrinkOffers());
+		return offerService.getOffersBySupplierId(supplier.getUserID());
+	}
+	
+	@Transactional
+	@RequestMapping(value="/updateOffer",
+			method = RequestMethod.POST,
+			consumes = MediaType.APPLICATION_JSON,
+			produces = MediaType.TEXT_PLAIN)
+	@ResponseBody
+	public String updateOffer(@Context HttpServletRequest request, @RequestBody Offer offer){
 		
-		Bid realBid = bidService.getBid(offerDTO.getBid().getIdBid());
+		if(offer.getBid().getEnd().after(new Date())){
+		drinkOfferService.removeDrinkOfferByOfferId(offer.getIdOffer());
+		groceryOfferService.removeGroceryOfferByOfferId(offer.getIdOffer());
 		
-		realOffer.setBid(realBid);
-		offerService.addOffer(realOffer);
+		Offer realOffer = offerService.getOfferById(offer.getIdOffer());
+		
+		for(DrinkOffer drinkOffer : offer.getDrinkOffers()){
+			drinkOffer.setOffer(realOffer);
+			drinkOfferService.addDrinkOffer(drinkOffer);
+		}
+		
+		for(GroceryOffer groceryOffer : offer.getGroceryOffers()){
+			groceryOffer.setOffer(realOffer);
+			groceryOfferService.addGroceryOffer(groceryOffer);
+		}
+		
+		offerService.updateDetails(offer.getIdOffer(), offer.getDelivery(), offer.getWarranty(), offer.getLastsUntil());
 		
 		return "OK";
+		}
+		return "Too late to update offer.";
 	}
 }

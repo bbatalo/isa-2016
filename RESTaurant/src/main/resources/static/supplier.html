@@ -24,7 +24,7 @@
       				<li ng-class="{active:tabCtrl.isSet(3)}"><a class="btn" ng-click="tabCtrl.setTab(3)">Offers</a></li>
 	    		</ul>
 	    		<ul class="nav navbar-nav navbar-right" >
-	    			<li ng-class="{active:tabCtrl.isSet(4)}"><a class="btn" ng-click="tabCtrl.setTab(3)"><span class="glyphicon glyphicon-user"></span> Profile</a></li>
+	    			<li ng-class="{active:tabCtrl.isSet(4)}"><a class="btn" ng-click="tabCtrl.setTab(4)"><span class="glyphicon glyphicon-user"></span> Profile</a></li>
 	     			<li><a class="btn" ng-click="supplierCtrl.logout()"><span class="glyphicon glyphicon-log-in"></span> Logout</a></li>
 	    		</ul>
 	  		</div>
@@ -48,8 +48,8 @@
 							<tr ng-repeat="bid in bidsCtrl.bids">
 								<td>{{bid.manager.restaurant.name}}</td>
 								<td>{{bid.manager.email}}</td>
-								<td>{{bid.beginning}}</td>
-								<td>{{bid.end}}</td>
+								<td><input type="date" ng-model="bid.beginning" readonly/></td>
+								<td><input type="date" ng-model="bid.end" readonly/></td>
 								<td><input  type="button" class="btn btn-info" value="Offer" ng-click="bidsCtrl.createOffer(bid)"/></td>
 							</tr>
 						</tbody>
@@ -106,16 +106,26 @@
 								<form name="addOfferForm" ng-submit="addOfferForm.$valid && bidsCtrl.addOffer()" class="form-signin" novalidate >
 									<h3>Create offer.</h3>
 									<fieldset class="form-group">
-										<input ng-model="offerDelivery.value" type="date" class="form-control" required></input>
+										<label class="control-label col-sm-3">Offer delivery:</label>
+										<div class="col-sm-9">
+											<input ng-model="offerDelivery.value" type="date" class="form-control" required></input>
+										</div>
 									</fieldset>
 									<fieldset class="form-group">
-										<input ng-model="offerWarranty.value" type="date" class="form-control" required></input>
+										<label class="control-label col-sm-3">Offer warranty:</label>
+										<div class="col-sm-9">
+											<input ng-model="offerWarranty.value" type="date" class="form-control" required></input>
+										</div>
 									</fieldset>
 									<fieldset class="form-group">
-										<input ng-model="offerLastsUntil.value" type="date" class="form-control" required></input>
+										<label class="control-label col-sm-3">Lasts until:</label>
+										<div class="col-sm-9">
+											<input ng-model="offerLastsUntil.value" type="date" class="form-control" required></input>
+										</div>
 									</fieldset>
 									<fieldset class="form-group">
-		                				<input  type="submit" class="btn btn-lg btn-primary btn-block pull-right" value="Create" />
+		                				<input  type="submit" class="btn btn-lg btn-primary btn-block pull-left" value="Create" />
+		                				<input  type="button" class="btn btn-lg btn-info btn-block pull-right" value="Cancel" ng-click="bidsCtrl.cancelOffer()"/>
 		              				</fieldset>
 									<hr></hr>
 									<fieldset><div></div>{{bidsCtrl.result}}</fieldset><br />
@@ -155,6 +165,152 @@
 											<td>{{groceryOffer.grocery.description}}</td>
 											<td>{{groceryOffer.price}}</td>
 											<td><input  type="button" class="btn btn-danger" value="Remove" ng-click="bidsCtrl.removeGroceryOffer(groceryOffer)"/></td>
+										</tr>
+									</tbody>
+								</table>
+							</div>
+						</div>
+					</div>
+			  </div>
+		</div>
+		<div ng-controller="OffersController as offersCtrl"  ng-show="tabCtrl.isSet(3)" ng-init="">
+			<div class="row">
+				<div class="col-sm-2"></div>
+		  		<div class="col-sm-8" ng-show="offersCtrl.isToggled()">
+		  			<h3>Offers</h3>
+			  		<table class="table table-hover">
+						<thead>
+							<tr>
+								<th>Restaurant</th>
+								<th>Manager</th>
+								<th>Delivery</th>
+								<th>Warranty</th>
+								<th>Lasts until</th>
+								<th>Update</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr ng-repeat="offer in offersCtrl.offers">
+								<td>{{offer.bid.manager.restaurant.name}}</td>
+								<td>{{offer.bid.manager.email}}</td>
+								<td><input type="date" ng-model="offer.delivery" readonly/></td>
+								<td><input type="date" ng-model="offer.warranty" readonly/></td>
+								<td><input type="date" ng-model="offer.lastsUntil" readonly/></td>
+								<td><input  type="button" class="btn btn-info" value="Update" ng-click="offersCtrl.updateOffer(offer)"/></td>
+							</tr>
+						</tbody>
+					</table>
+		  		</div>
+		  		<div class="col-sm-2"></div>
+			</div>
+			<div class="row" ng-show="!offersCtrl.isToggled()">
+		  		<div class="col-sm-4">
+		  			<h3>Groceries</h3>
+			  		<table class="table table-hover">
+						<thead>
+							<tr>
+								<th>Label</th>
+								<th>Description</th>
+								<th>Price</th>
+								<th>Offer</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr ng-repeat="groceryOffer in offersCtrl.groceryOffers">
+								<td>{{groceryOffer.grocery.label}}</td>
+								<td>{{groceryOffer.grocery.description}}</td>
+								<td><input type="number" min="1" max="10000" ng-model="groceryOffer.price"/></td>
+								<td><input  type="button" class="btn btn-info" value="Offer" ng-click="offersCtrl.addGroceryOffer(groceryOffer)"/></td>
+							</tr>
+						</tbody>
+					</table>
+		  		</div>
+		  		<div class="col-sm-4">
+		  			<h3>Drinks</h3>
+			  		<table class="table table-hover">
+						<thead>
+							<tr>
+								<th>Label</th>
+								<th>Description</th>
+								<th>Price</th>
+								<th>Offer</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr ng-repeat="drinkOffer in offersCtrl.drinkOffers">
+								<td>{{drinkOffer.drink.label}}</td>
+								<td>{{drinkOffer.drink.description}}</td>
+								<td><input type="number" min="1" max="10000" ng-model="drinkOffer.price"/></td>
+								<td><input  type="button" class="btn btn-info" value="Offer" ng-click="offersCtrl.addDrinkOffer(drinkOffer)"/></td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+				<div class="col-sm-4">
+						<div class="panel panel-default">
+							<div class="panel-body">
+								<form name="addOfferForm" ng-submit="addOfferForm.$valid && offersCtrl.modifyOffer()" class="form-signin" novalidate >
+									<h3>Update offer.</h3>
+									<fieldset class="form-group">
+										<label class="control-label col-sm-3">Offer delivery:</label>
+										<div class="col-sm-9">
+											<input ng-model="offerDelivery.value" type="date" class="form-control" required></input>
+										</div>
+									</fieldset>
+									<fieldset class="form-group">
+										<label class="control-label col-sm-3">Offer warranty:</label>
+										<div class="col-sm-9">
+											<input ng-model="offerWarranty.value" type="date" class="form-control" required></input>
+										</div>
+									</fieldset>
+									<fieldset class="form-group">
+										<label class="control-label col-sm-3">Lasts until:</label>
+										<div class="col-sm-9">
+											<input ng-model="offerLastsUntil.value" type="date" class="form-control" required></input>
+										</div>
+									</fieldset>
+									<fieldset class="form-group">
+		                				<input  type="submit" class="btn btn-lg btn-primary btn-block pull-left" value="Update" />
+		                				<input  type="button" class="btn btn-lg btn-info btn-block pull-right" value="Cancel" ng-click="offersCtrl.cancelOffer()"/>
+		              				</fieldset>
+									<hr></hr>
+									<fieldset><div></div>{{offersCtrl.result}}</fieldset><br />
+								</form>
+								<h3>Drinks list</h3>
+						  		<table class="table table-hover">
+									<thead>
+										<tr>
+											<th>Label</th>
+											<th>Description</th>
+											<th>Price</th>
+											<th>Remove</th>
+										</tr>
+									</thead>
+									<tbody>
+										<tr ng-repeat="drinkOffer in offersCtrl.offer.drinkOffers">
+											<td>{{drinkOffer.drink.label}}</td>
+											<td>{{drinkOffer.drink.description}}</td>
+											<td>{{drinkOffer.price}}</td>
+											<td><input  type="button" class="btn btn-danger" value="Remove" ng-click="offersCtrl.removeDrinkOffer(drinkOffer)"/></td>
+										</tr>
+									</tbody>
+								</table>
+								<h3>Groceries list</h3>
+						  		<table class="table table-hover">
+									<thead>
+										<tr>
+											<th>Label</th>
+											<th>Description</th>
+											<th>Price</th>
+											<th>Remove</th>
+										</tr>
+									</thead>
+									<tbody>
+										<tr ng-repeat="groceryOffer in offersCtrl.offer.groceryOffers">
+											<td>{{groceryOffer.grocery.label}}</td>
+											<td>{{groceryOffer.grocery.description}}</td>
+											<td>{{groceryOffer.price}}</td>
+											<td><input  type="button" class="btn btn-danger" value="Remove" ng-click="offersCtrl.removeGroceryOffer(groceryOffer)"/></td>
 										</tr>
 									</tbody>
 								</table>

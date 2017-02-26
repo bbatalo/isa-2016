@@ -2,6 +2,7 @@ package project.controller;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -22,22 +23,33 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import project.domain.Bid;
 import project.domain.Dish;
 import project.domain.Drink;
+import project.domain.DrinkOffer;
 import project.domain.DrinksMenu;
 import project.domain.Grocery;
+import project.domain.GroceryOffer;
 import project.domain.Menu;
+import project.domain.Offer;
 import project.domain.Online;
+import project.domain.RestTable;
 import project.domain.Restaurant;
 import project.domain.RestaurantManager;
+import project.domain.SeatingArrangement;
+import project.domain.Segment;
 import project.domain.Supplier;
 import project.domain.SystemManager;
 import project.domain.User;
 import project.domain.dto.BidDTO;
 import project.service.BidService;
 import project.service.DishService;
+import project.service.DrinkOfferService;
 import project.service.DrinkService;
+import project.service.GroceryOfferService;
 import project.service.GroceryService;
+import project.service.OfferService;
 import project.service.OnlineService;
 import project.service.RestaurantService;
+import project.service.SegmentService;
+import project.service.TableService;
 import project.service.RestManService;
 
 @RequestMapping("/restmanager")
@@ -63,6 +75,21 @@ public class RestManController {
 	
 	@Autowired
 	private BidService bidService;
+	
+	@Autowired
+	private SegmentService segmentService;
+	
+	@Autowired
+	private TableService tableService;
+	
+	@Autowired
+	private OfferService offerService;
+	
+	@Autowired
+	private DrinkOfferService drinkOfferService;
+	
+	@Autowired
+	private GroceryOfferService groceryOfferService;
 	
 	@RequestMapping(value = "/load",
 			method = RequestMethod.GET,
@@ -165,7 +192,7 @@ public class RestManController {
 	public List<Dish> getDishes(@Context HttpServletRequest request, @RequestBody Menu menu){
 		return this.dishService.getDishesByMenuId(menu.getIdMenu());
 	}
-	//odavde
+	
 	@Transactional
 	@RequestMapping(value="/addDrink",
 			method = RequestMethod.POST,
@@ -236,7 +263,8 @@ public class RestManController {
 			consumes = MediaType.APPLICATION_JSON,
 			produces = MediaType.TEXT_PLAIN)
 	@ResponseBody
-	public String addBid(@Context HttpServletRequest request, @RequestBody BidDTO bid) throws ParseException{
+	public String addBid(@Context HttpServletRequest request, @RequestBody Bid bid) throws ParseException{
+		/*
 		Bid realBid = new Bid();
 		
 		SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
@@ -246,8 +274,140 @@ public class RestManController {
 		realBid.setGroceries(bid.getGroceries());
 		realBid.setDrinks(bid.getDrinks());
 		realBid.setManager(bid.getManager());
+		*/
+		bidService.addBid(bid);
 		
-		bidService.addBid(realBid);
+		return "OK";
+	}
+	
+	@Transactional
+	@RequestMapping(value="/addSegment",
+			method = RequestMethod.POST,
+			consumes = MediaType.APPLICATION_JSON,
+			produces = MediaType.TEXT_PLAIN)
+	@ResponseBody
+	public String addSegment(@RequestBody Segment segment){
+		
+		Segment s = segmentService.getSegmentByLabel(segment.getLabel());
+		
+		if(s == null){
+
+			segmentService.addSegment(segment);
+			
+			return "OK";
+		}
+		
+		return "Segment with that label already exists!";
+	}
+	
+	@Transactional
+	@RequestMapping(value="/removeSegment",
+			method = RequestMethod.POST,
+			consumes = MediaType.APPLICATION_JSON,
+			produces = MediaType.TEXT_PLAIN)
+	@ResponseBody
+	public String removeSegment(@RequestBody Segment segment){
+		
+		Segment s = segmentService.getSegmentByLabel(segment.getLabel());
+		
+		if(s != null){
+			
+			segmentService.deleteSegmentById(s.getIdSegment());
+			
+			return "Segment removed.";
+		}
+		
+		return "Segment not found!";
+	}
+	
+	@RequestMapping(value="/getSegments",
+			method = RequestMethod.POST,
+			consumes = MediaType.APPLICATION_JSON,
+			produces = MediaType.APPLICATION_JSON)
+	@ResponseBody
+	public List<Segment> getSegments(@Context HttpServletRequest request, @RequestBody SeatingArrangement seatingArrangement){
+		return this.segmentService.getSegmentsBySeatingId(seatingArrangement.getIdSeating());
+	}
+	
+	@Transactional
+	@RequestMapping(value="/addTable",
+			method = RequestMethod.POST,
+			consumes = MediaType.APPLICATION_JSON,
+			produces = MediaType.TEXT_PLAIN)
+	@ResponseBody
+	public String addTable(@RequestBody RestTable restTable){
+		
+		RestTable table = tableService.getTableByCode(restTable.getTableCode());
+		
+		
+		if(table == null){
+			Segment s = segmentService.getSegmentByLabel(restTable.getSegment().getLabel());
+			
+			restTable.setSegment(s);
+			
+			tableService.addTable(restTable);
+		
+			return "Table successfully added!";
+		}
+		
+		return "Unexpected error";
+	}
+	
+	@Transactional
+	@RequestMapping(value="/removeTable",
+			method = RequestMethod.POST,
+			consumes = MediaType.APPLICATION_JSON,
+			produces = MediaType.TEXT_PLAIN)
+	@ResponseBody
+	public String removeTable(@RequestBody RestTable restTable){
+		
+		tableService.deleteTableByCode(restTable.getTableCode());
+		
+		return "Table successfully removed!";
+	}
+	
+	@RequestMapping(value="/getTables",
+			method = RequestMethod.POST,
+			consumes = MediaType.APPLICATION_JSON,
+			produces = MediaType.APPLICATION_JSON)
+	@ResponseBody
+	public List<RestTable> getTables(@Context HttpServletRequest request, @RequestBody Segment segment){
+		return tableService.getTablesBySegmentId(segment.getIdSegment());
+	}
+	
+	@RequestMapping(value="/getOffers",
+			method = RequestMethod.POST,
+			consumes = MediaType.APPLICATION_JSON,
+			produces = MediaType.APPLICATION_JSON)
+	@ResponseBody
+	public List<Offer> getOffers(@Context HttpServletRequest request, @RequestBody Restaurant restaurant){
+		return offerService.getOffersByManagerId(restaurant.getRestaurantID());
+	}
+	
+	@Transactional
+	@RequestMapping(value="/acceptOffer",
+			method = RequestMethod.POST,
+			consumes = MediaType.APPLICATION_JSON,
+			produces = MediaType.TEXT_PLAIN)
+	@ResponseBody
+	public String acceptOffer(@Context HttpServletRequest request, @RequestBody Offer offer){
+		System.out.println(offer.getIdOffer());
+		
+		System.out.println(offer.getBid().idBid);
+		
+		Bid realBid = bidService.getBid(offer.getBid().idBid);
+		
+		List<Offer> realOffers = offerService.getOffersByBidId(realBid.getIdBid());
+		
+		for(Offer o : realOffers){
+			drinkOfferService.removeDrinkOfferByOfferId(o.getIdOffer());
+			
+			groceryOfferService.removeGroceryOfferByOfferId(o.getIdOffer());
+			
+			offerService.deleteOfferById(o.getIdOffer());
+		}
+		
+		bidService.deleteBidById(realBid.getIdBid());
 		
 		return "OK";
 	}

@@ -1,5 +1,6 @@
 package project.service;
 
+import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,6 +28,31 @@ public class OfferServiceImpl implements OfferService{
 	@Override
 	public List<Offer> getAllOffers() {
 		return offerRepository.findAllOffers();
+	}
+
+	@Override
+	public List<Offer> getOffersByManagerId(Long id) {
+		return offerRepository.findOffersByManagerId(id);
+	}
+
+	@Override
+	public List<Offer> getOffersBySupplierId(Long id) {
+		return offerRepository.findOffersBySupplierId(id);
+	}
+
+	@Override
+	public void updateDetails(Long id, Date delivery, Date warranty, Date lastsUntil) {
+		offerRepository.updateDetails(id, delivery, warranty, lastsUntil);
+	}
+
+	@Override
+	public Offer getOfferById(Long id) {
+		return offerRepository.findOfferById(id);
+	}
+
+	@Override
+	public List<Offer> getOffersByBidId(Long id) {
+		return offerRepository.findOffersByBidId(id);
 	}
 
 }

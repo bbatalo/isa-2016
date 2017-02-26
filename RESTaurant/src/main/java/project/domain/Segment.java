@@ -7,45 +7,96 @@ package project.domain;
 
 import java.util.*;
 
-/** @pdOid b474dffa-88f6-4902-ae3a-099d6e080045 */
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
+@Entity
 public class Segment {
-   /** @pdOid 4f6555f2-2406-40ad-a3c6-6b80ab1dad5f */
-   public long idSegment;
-   /** @pdOid a5193c17-810e-43cc-a6f4-2b0c34f53614 */
-   public java.lang.String label;
-   /** @pdOid 3800c1cb-1954-4388-8b16-576900fe3546 */
-   public java.lang.String description;
+	
+	@Id
+	@GeneratedValue
+	@Column(name="segment_id", nullable = false)
+	public long idSegment;
    
-   /** @pdRoleInfo migr=no name=Table assc=tablesInSegment coll=java.util.Collection impl=java.util.ArrayList mult=0..* */
-   public java.util.Collection<Table> tables;
-   /** @pdRoleInfo migr=no name=SeatingArrangement assc=segments mult=0..1 side=A */
-   public SeatingArrangement seating;
+	@Column(name="segment_label", nullable = false)
+	public String label;
    
+	@Column(name="segment_description")
+	public String description;
+	
+	@Column(name="segment_rows", nullable = false)
+	public long tableRows;
+	
+	@Column(name="segment_cols", nullable = false)
+	public long tableColumns;
    
-   /** @pdGenerated default getter */
+	@OneToMany(mappedBy="segment")
+	@JsonIgnore
+	public Set<RestTable> tables;
+	
+	@ManyToOne
+	@JoinColumn(name="seating_arrangement_id")
+	public SeatingArrangement seating;
+	
+	public Segment() {}
+
+	public long getIdSegment() {
+		return idSegment;
+	}
+
+	public void setIdSegment(long idSegment) {
+		this.idSegment = idSegment;
+	}
+
+	public String getLabel() {
+		return label;
+	}
+
+	public void setLabel(String label) {
+		this.label = label;
+	}
+
+	public String getDescription() {
+		return description;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
+	}
+
+	public SeatingArrangement getSeating() {
+		return seating;
+	}
+
+	public void setSeating(SeatingArrangement seating) {
+		this.seating = seating;
+	}
+   /*
    public java.util.Collection<Table> getTables() {
       if (tables == null)
          tables = new java.util.ArrayList<Table>();
       return tables;
    }
    
-   /** @pdGenerated default iterator getter */
    public java.util.Iterator getIteratorTables() {
       if (tables == null)
          tables = new java.util.ArrayList<Table>();
       return tables.iterator();
    }
    
-   /** @pdGenerated default setter
-     * @param newTables */
    public void setTables(java.util.Collection<Table> newTables) {
       removeAllTables();
       for (java.util.Iterator iter = newTables.iterator(); iter.hasNext();)
          addTables((Table)iter.next());
    }
    
-   /** @pdGenerated default add
-     * @param newTable */
    public void addTables(Table newTable) {
       if (newTable == null)
          return;
@@ -55,8 +106,6 @@ public class Segment {
          this.tables.add(newTable);
    }
    
-   /** @pdGenerated default remove
-     * @param oldTable */
    public void removeTables(Table oldTable) {
       if (oldTable == null)
          return;
@@ -65,18 +114,13 @@ public class Segment {
             this.tables.remove(oldTable);
    }
    
-   /** @pdGenerated default removeAll */
    public void removeAllTables() {
       if (tables != null)
          tables.clear();
    }
-   /** @pdGenerated default parent getter */
    public SeatingArrangement getSeating() {
       return seating;
    }
-   
-   /** @pdGenerated default parent setter
-     * @param newSeatingArrangement */
    public void setSeating(SeatingArrangement newSeatingArrangement) {
       if (this.seating == null || !this.seating.equals(newSeatingArrangement))
       {
@@ -93,5 +137,5 @@ public class Segment {
          }
       }
    }
-
+	*/
 }

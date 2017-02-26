@@ -45,6 +45,21 @@ insert into drinks_menu (restaurant) values (2)
 insert into drinks_menu (restaurant) values (3)
 insert into drinks_menu (restaurant) values (4)
 
+insert into seating_arrangement (restaurant) values (1)
+insert into seating_arrangement (restaurant) values (2)
+insert into seating_arrangement (restaurant) values (3)
+insert into seating_arrangement (restaurant) values (4)
+
+insert into segment (segment_label, segment_description, seating_arrangement_id, segment_cols, segment_rows) values ('Pusaci', 'Dim', 1, '5', '5')
+insert into segment (segment_label, segment_description, seating_arrangement_id, segment_cols, segment_rows) values ('Nepusaci', 'Nema dima', 1, '7', '7')
+insert into segment (segment_label, segment_description, seating_arrangement_id, segment_cols, segment_rows) values ('Balkon', 'Otvoreno', 1, '2', '4')
+
+insert into rest_table(segment_id, table_status, table_code, table_col, table_row) values (1, 'free', 'Pusaci00', 0, 0)
+insert into rest_table(segment_id, table_status, table_code, table_col, table_row) values (1, 'free', 'Pusaci11', 1, 1)
+insert into rest_table(segment_id, table_status, table_code, table_col, table_row) values (1, 'free', 'Pusaci22', 2, 2)
+insert into rest_table(segment_id, table_status, table_code, table_col, table_row) values (1, 'free', 'Pusaci33', 3, 3)
+insert into rest_table(segment_id, table_status, table_code, table_col, table_row) values (1, 'taken', 'Pusaci44', 4, 4)
+
 insert into drink (drink_label, drink_description, drink_price) values ('koka', 'crna', 100)
 insert into drink (drink_label, drink_description, drink_price) values ('fanta', 'sokata', 150)
 insert into drink (drink_label, drink_description, drink_price) values ('tekila', 'dva prsta', 200)

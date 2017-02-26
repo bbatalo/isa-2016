@@ -17,4 +17,9 @@ public class GroceryOfferServiceImpl implements GroceryOfferService{
 		return groceryOfferRepository.save(groceryOffer);
 	}
 
+	@Override
+	public void removeGroceryOfferByOfferId(Long id) {
+		groceryOfferRepository.removeGroceryOfferByOfferId(id);
+	}
+
 }
