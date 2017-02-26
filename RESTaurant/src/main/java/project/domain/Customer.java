@@ -9,6 +9,7 @@ import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
+import javax.persistence.OneToMany;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
@@ -41,11 +42,14 @@ public class Customer extends User {
     public java.util.Collection<Order> orders;
 	*/
 	
-	/*
-    public java.util.Collection<Request> incomingRequests;
+	@OneToMany(mappedBy="receiver")
+	@JsonIgnore
+    public List<Request> incomingRequests;
 
-    public java.util.Collection<Request> outcomingRequests;
-	*/
+	@OneToMany(mappedBy="sender")
+	@JsonIgnore
+    public List<Request> outcomingRequests;
+	
 	
 	@ManyToMany(fetch = FetchType.LAZY)
 	@JoinTable(name="Friends",
@@ -107,6 +111,22 @@ public class Customer extends User {
 
 	public void setFriendOf(List<Customer> friendOf) {
 		this.friendOf = friendOf;
+	}
+
+	public List<Request> getIncomingRequests() {
+		return incomingRequests;
+	}
+
+	public void setIncomingRequests(List<Request> incomingRequests) {
+		this.incomingRequests = incomingRequests;
+	}
+
+	public List<Request> getOutcomingRequests() {
+		return outcomingRequests;
+	}
+
+	public void setOutcomingRequests(List<Request> outcomingRequests) {
+		this.outcomingRequests = outcomingRequests;
 	}
 
 	

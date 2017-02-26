@@ -1,70 +1,64 @@
-/***********************************************************************
- * Module:  Request.java
- * Author:  Bojan
- * Purpose: Defines the Class Request
- ***********************************************************************/
 package project.domain;
 
-import java.util.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 
-/** @pdOid 2e37513c-0fe4-456a-ac1b-d6559703b56a */
+@Entity
 public class Request {
-   /** @pdOid 05415aad-38e9-4954-bb0f-18e122961a37 */
-   public long idRequest;
-   /** @pdOid 18dc195b-096b-47e3-bdc3-f9d9d2b57f2c */
-   public java.lang.String status;
-   
-   /** @pdRoleInfo migr=no name=Customer assc=incoming mult=1..1 side=A */
-   public Customer receiver;
-   /** @pdRoleInfo migr=no name=Customer assc=outcoming mult=1..1 side=A */
-   public Customer sender;
-   
-   
-   /** @pdGenerated default parent getter */
-   public Customer getReceiver() {
-      return receiver;
-   }
-   
-   /** @pdGenerated default parent setter
-     * @param newCustomer */
-   public void setReceiver(Customer newCustomer) {
-      if (this.receiver == null || !this.receiver.equals(newCustomer))
-      {
-         if (this.receiver != null)
-         {
-            Customer oldCustomer = this.receiver;
-            this.receiver = null;
-            //oldCustomer.removeIncomingRequests(this);
-         }
-         if (newCustomer != null)
-         {
-            this.receiver = newCustomer;
-            //this.receiver.addIncomingRequests(this);
-         }
-      }
-   }
-   /** @pdGenerated default parent getter */
-   public Customer getSender() {
-      return sender;
-   }
-   
-   /** @pdGenerated default parent setter
-     * @param newCustomer */
-   public void setSender(Customer newCustomer) {
-      if (this.sender == null || !this.sender.equals(newCustomer))
-      {
-         if (this.sender != null)
-         {
-            Customer oldCustomer = this.sender;
-            this.sender = null;
-            //oldCustomer.removeOutcomingRequests(this);
-         }
-         if (newCustomer != null)
-         {
-            this.sender = newCustomer;
-            //this.sender.addOutcomingRequests(this);
-         }
-      }
-   }
 
+	@Id
+	@GeneratedValue
+	@Column(name = "req_id", nullable = false)
+	private long id;
+
+	@Column(name = "req_status", nullable = false)
+    private String status;
+
+	@ManyToOne(optional=false)
+	@JoinColumn(name="req_receiver",  referencedColumnName="usr_id")
+    private Customer receiver;
+
+	@ManyToOne(optional=false)
+	@JoinColumn(name="req_sender",  referencedColumnName="usr_id")
+    private Customer sender;
+    
+    public Request() {}
+
+	public long getId() {
+		return id;
+	}
+
+	public void setId(long id) {
+		this.id = id;
+	}
+
+	public java.lang.String getStatus() {
+		return status;
+	}
+
+	public void setStatus(java.lang.String status) {
+		this.status = status;
+	}
+
+	public Customer getReceiver() {
+		return receiver;
+	}
+
+	public void setReceiver(Customer receiver) {
+		this.receiver = receiver;
+	}
+
+	public Customer getSender() {
+		return sender;
+	}
+
+	public void setSender(Customer sender) {
+		this.sender = sender;
+	}
+    
+    
 }

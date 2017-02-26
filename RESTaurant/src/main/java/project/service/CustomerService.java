@@ -19,4 +19,6 @@ public interface CustomerService {
 	void updateCustomerPassword(Customer customer);
 	
 	void updateCustomerDetails(Customer customer);
+	
+	Customer save(Customer customer);
 }

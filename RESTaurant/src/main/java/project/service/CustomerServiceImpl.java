@@ -57,6 +57,12 @@ public class CustomerServiceImpl implements CustomerService {
 		customerRepository.updateDetails(customer.getUserID(), customer.getName(), customer.getSurname(), customer.getAddress(), customer.getDateBirth());
 	}
 
+	@Override
+	public Customer save(Customer customer) {
+		Assert.notNull(customer, "Cannot be null");
+		return customerRepository.save(customer);
+	}
+
 	
 
 	

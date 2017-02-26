@@ -219,7 +219,7 @@
 		});
 		
 		control.loadCustomers = function() {
-			control.customers = []
+			control.customers = [];
 			
 			$http({
 				method: 'GET',
@@ -230,6 +230,137 @@
 				}
 			});
 		}
+		
+		control.sendRequest = function(id) {
+			var requestData = {};
+			requestData.senderID = customerService.getCustomer().userID;
+			requestData.receiverID = id;
+			
+			$http({
+				method: 'POST',
+				url: '/index/sendRequest',
+				headers: {
+					   'Content-Type': 'application/json',	   
+					 },
+				data: requestData
+			}).then(function success(response) {
+				status = response.data;
+				if (status == "Repeated") {
+					toastr["warning"]('You have already sent a request!');
+				} else if (status == 'Inbox') {
+					toastr["warning"]('Selected user has sent a request to YOU! Better check your requests inbox.');
+				}
+					
+			});
+		}
+	}]);
+	
+	app.controller('RequestsController', ['$scope', '$http', '$window', 'customerService', function($scope, $http, $window, customerService) { 
+		var control = this;
+		control.incoming = [];
+		control.outcoming = [];
+		
+		$scope.$watch('tabCtrl.tab', function(newValue) {
+			if (newValue == 5) {
+				
+				control.loadRequests()
+			}
+		});
+		
+		control.findInd = function(id, type) {
+			if (type == 'incoming') {
+				length = control.incoming.length;
+				for (i = 0; i < length; i++) {
+					if (control.incoming[i].requestID == id) {
+						return i;
+					}
+				}
+			} else if (type == 'outcoming'){
+				length = control.outcoming.length;
+				for (i = 0; i < length; i++) {
+					if (control.outcoming[i].requestID == id) {
+						return i;
+					}
+				}
+			}
+			return -1;
+		}
+		
+		control.loadRequests = function() {
+			control.incoming = [];
+			control.outcoming = [];
+			
+			$http({
+				method: 'GET',
+				url: '/index/loadRequests',
+			}).then(function success(response) {
+				if (response.data.length != 0) {
+					control.incoming = response.data[0];
+					control.outcoming = response.data[1];
+				
+				}
+			});
+		}
+		
+		control.accept = function(request) {
+			$http({
+				method: 'POST',
+				url: '/index/acceptRequest',
+				headers: {
+					   'Content-Type': 'application/json',	   
+					 },
+				data: request
+			}).then(function success(response) {
+				if (response.data == 'Success') {
+					
+				}
+			});
+		}
+		
+		control.decline = function(request) {
+
+		}
+		
+		control.setupWebsocket = function() {
+			var socket = new SockJS('/stomp');
+			var stompClient = Stomp.over(socket);
+			stompClient.connect({}, function(frame) {
+				var str = "requests?userID=" + customerService.getCustomer().userID;
+				stompClient.subscribe("/topic/" + str, function(data) {
+					var message = data.body;
+					req = angular.fromJson(message);
+					id = customerService.getCustomer().userID;
+					if (req.senderID == id) {
+						if (req.status == 'Pending') {
+							control.outcoming.push(req);
+							$scope.$apply();
+							toastr["success"]('Request sent to:' + req.receiverMail, "Request sent");
+						} else if (req.status == 'Accepted') {
+							ind = control.findInd(req.requestID, 'outcoming');
+							control.outcoming[ind].status = 'Accepted';
+							$scope.$apply;
+							toastr["success"]('User:' + req.receiverMail + ' accepted your friendship request.', "Request accepted!");
+						} else if (req.status == 'Declined') {
+							
+						}
+						
+					} else {
+						if (req.status == 'Pending') {
+							control.incoming.push(req);
+							$scope.$apply();
+							toastr["info"]('You have received a friendship request.');
+						} else if (req.status == 'Accepted') {
+							ind = control.findInd(req.requestID, 'incoming');
+							control.incoming[ind].status = 'Accepted';
+							$scope.$apply;
+							toastr["success"]('Friendship request from user:' + req.receiverMail + ' accepted.', "Request accepted!");
+						}
+					}
+				})
+			})
+		}
+		
+		this.setupWebsocket();
 	}]);
 	
 })();

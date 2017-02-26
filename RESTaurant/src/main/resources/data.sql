@@ -71,3 +71,9 @@ insert into chef (chf_type, usr_id) values ('Kineski', '9')
 
 insert into friends (usr_id, frd_id) values ('1', '2')
 insert into friends (usr_id, frd_id) values ('1', '3')
+
+insert into request (req_status, req_receiver, req_sender) values ('Pending', '1', '12')
+insert into request (req_status, req_receiver, req_sender) values ('Pending', '1', '13')
+insert into request (req_status, req_receiver, req_sender) values ('Pending', '15', '1')
+insert into request (req_status, req_receiver, req_sender) values ('Pending', '16', '1')
+insert into request (req_status, req_receiver, req_sender) values ('Pending', '17', '1')
