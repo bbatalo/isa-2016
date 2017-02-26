@@ -106,6 +106,11 @@
 		this.loadBids = function(){
 			$http.get('/supplier/getBids').then(function success(response) {
 				control.bids = response.data;
+				
+				for(it in control.bids){
+					control.bids[it].beginning = new Date(control.bids[it].beginning);
+					control.bids[it].end = new Date(control.bids[it].end);
+				}
 			}, function error(response) {
 				control.result = "Unknown error ocurred."
 			});
@@ -191,36 +196,37 @@
 			}
 			control.offer.groceryOffers.splice( index, 1 );
 		}
-		
-		this.formatDate = function(date){
-			ret = date;
-			var dd = ret.getDate();
-			var mm = ret.getMonth()+1; //January is 0!
-			var yyyy = ret.getFullYear();
 
-			if(dd<10) {
-			    dd='0'+dd
-			} 
-
-			if(mm<10) {
-			    mm='0'+mm
-			} 
-
-			ret = dd+'/'+mm+'/'+yyyy;
-			return ret;
-		}
-		
 		this.addOffer = function(){
-			control.offer.delivery = control.formatDate($scope.offerDelivery.value);
-			control.offer.warranty = control.formatDate($scope.offerWarranty.value);
-			control.offer.lastsUntil = control.formatDate($scope.offerLastsUntil.value);
+			control.offer.delivery = $scope.offerDelivery.value;
+			control.offer.warranty = $scope.offerWarranty.value;
+			control.offer.lastsUntil = $scope.offerLastsUntil.value;
 			control.offer.bid = control.bidToOffer;
 			
 			$http.post('/supplier/addOffer', control.offer).then(function success(response){
 				alert('Success!');
+				control.offer = {};
+				control.offer.bid = {};
+				control.offer.drinkOffers = [];
+				control.offer.groceryOffers = [];
+				control.bidToOffer = {};
+				control.drinkOffers = [];
+				control.groceryOffers = [];
+				control.toggleOffer = true;
 			}), function error(response){
 				control.result = "Unknown error ocurred.";
 			}
+		}
+		
+		this.cancelOffer = function(){
+			control.offer = {};
+			control.offer.bid = {};
+			control.offer.drinkOffers = [];
+			control.offer.groceryOffers = [];
+			control.bidToOffer = {};
+			control.drinkOffers = [];
+			control.groceryOffers = [];
+			control.toggleOffer = true;
 		}
 		
 		$scope.$watch('tabCtrl.isSet(2)', function() {

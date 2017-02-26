@@ -15,47 +15,47 @@ public class Area {
    public java.lang.String label;
    
    /** @pdRoleInfo migr=no name=Table assc=tablesInArea coll=java.util.Collection impl=java.util.ArrayList mult=0..* */
-   public java.util.Collection<Table> tables;
+   public java.util.Collection<RestTable> tables;
    /** @pdRoleInfo migr=no name=WaiterShift assc=areasInShifts coll=java.util.Collection impl=java.util.ArrayList mult=0..* side=A */
    public java.util.Collection<WaiterShift> waiterShifts;
    
    
    /** @pdGenerated default getter */
-   public java.util.Collection<Table> getTables() {
+   public java.util.Collection<RestTable> getTables() {
       if (tables == null)
-         tables = new java.util.ArrayList<Table>();
+         tables = new java.util.ArrayList<RestTable>();
       return tables;
    }
    
    /** @pdGenerated default iterator getter */
    public java.util.Iterator getIteratorTables() {
       if (tables == null)
-         tables = new java.util.ArrayList<Table>();
+         tables = new java.util.ArrayList<RestTable>();
       return tables.iterator();
    }
    
    /** @pdGenerated default setter
      * @param newTables */
-   public void setTables(java.util.Collection<Table> newTables) {
+   public void setTables(java.util.Collection<RestTable> newTables) {
       removeAllTables();
       for (java.util.Iterator iter = newTables.iterator(); iter.hasNext();)
-         addTables((Table)iter.next());
+         addTables((RestTable)iter.next());
    }
    
    /** @pdGenerated default add
      * @param newTable */
-   public void addTables(Table newTable) {
+   public void addTables(RestTable newTable) {
       if (newTable == null)
          return;
       if (this.tables == null)
-         this.tables = new java.util.ArrayList<Table>();
+         this.tables = new java.util.ArrayList<RestTable>();
       if (!this.tables.contains(newTable))
          this.tables.add(newTable);
    }
    
    /** @pdGenerated default remove
      * @param oldTable */
-   public void removeTables(Table oldTable) {
+   public void removeTables(RestTable oldTable) {
       if (oldTable == null)
          return;
       if (this.tables != null)

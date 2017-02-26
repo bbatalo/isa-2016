@@ -48,8 +48,8 @@
 							<tr ng-repeat="bid in bidsCtrl.bids">
 								<td>{{bid.manager.restaurant.name}}</td>
 								<td>{{bid.manager.email}}</td>
-								<td>{{bid.beginning}}</td>
-								<td>{{bid.end}}</td>
+								<td><input type="date" ng-model="bid.beginning" readonly/></td>
+								<td><input type="date" ng-model="bid.end" readonly/></td>
 								<td><input  type="button" class="btn btn-info" value="Offer" ng-click="bidsCtrl.createOffer(bid)"/></td>
 							</tr>
 						</tbody>
@@ -106,16 +106,26 @@
 								<form name="addOfferForm" ng-submit="addOfferForm.$valid && bidsCtrl.addOffer()" class="form-signin" novalidate >
 									<h3>Create offer.</h3>
 									<fieldset class="form-group">
-										<input ng-model="offerDelivery.value" type="date" class="form-control" required></input>
+										<label class="control-label col-sm-3">Offer delivery:</label>
+										<div class="col-sm-9">
+											<input ng-model="offerDelivery.value" type="date" class="form-control" required></input>
+										</div>
 									</fieldset>
 									<fieldset class="form-group">
-										<input ng-model="offerWarranty.value" type="date" class="form-control" required></input>
+										<label class="control-label col-sm-3">Offer warranty:</label>
+										<div class="col-sm-9">
+											<input ng-model="offerWarranty.value" type="date" class="form-control" required></input>
+										</div>
 									</fieldset>
 									<fieldset class="form-group">
-										<input ng-model="offerLastsUntil.value" type="date" class="form-control" required></input>
+										<label class="control-label col-sm-3">Lasts until:</label>
+										<div class="col-sm-9">
+											<input ng-model="offerLastsUntil.value" type="date" class="form-control" required></input>
+										</div>
 									</fieldset>
 									<fieldset class="form-group">
-		                				<input  type="submit" class="btn btn-lg btn-primary btn-block pull-right" value="Create" />
+		                				<input  type="submit" class="btn btn-lg btn-primary btn-block pull-left" value="Create" />
+		                				<input  type="button" class="btn btn-lg btn-info btn-block pull-right" value="Cancel" ng-click="bidsCtrl.cancelOffer()"/>
 		              				</fieldset>
 									<hr></hr>
 									<fieldset><div></div>{{bidsCtrl.result}}</fieldset><br />

@@ -26,8 +26,11 @@ import project.domain.DrinksMenu;
 import project.domain.Grocery;
 import project.domain.Menu;
 import project.domain.Online;
+import project.domain.RestTable;
 import project.domain.Restaurant;
 import project.domain.RestaurantManager;
+import project.domain.SeatingArrangement;
+import project.domain.Segment;
 import project.domain.Supplier;
 import project.domain.SystemManager;
 import project.domain.User;
@@ -38,6 +41,8 @@ import project.service.DrinkService;
 import project.service.GroceryService;
 import project.service.OnlineService;
 import project.service.RestaurantService;
+import project.service.SegmentService;
+import project.service.TableService;
 import project.service.RestManService;
 
 @RequestMapping("/restmanager")
@@ -63,6 +68,12 @@ public class RestManController {
 	
 	@Autowired
 	private BidService bidService;
+	
+	@Autowired
+	private SegmentService segmentService;
+	
+	@Autowired
+	private TableService tableService;
 	
 	@RequestMapping(value = "/load",
 			method = RequestMethod.GET,
@@ -165,7 +176,7 @@ public class RestManController {
 	public List<Dish> getDishes(@Context HttpServletRequest request, @RequestBody Menu menu){
 		return this.dishService.getDishesByMenuId(menu.getIdMenu());
 	}
-	//odavde
+	
 	@Transactional
 	@RequestMapping(value="/addDrink",
 			method = RequestMethod.POST,
@@ -236,7 +247,8 @@ public class RestManController {
 			consumes = MediaType.APPLICATION_JSON,
 			produces = MediaType.TEXT_PLAIN)
 	@ResponseBody
-	public String addBid(@Context HttpServletRequest request, @RequestBody BidDTO bid) throws ParseException{
+	public String addBid(@Context HttpServletRequest request, @RequestBody Bid bid) throws ParseException{
+		/*
 		Bid realBid = new Bid();
 		
 		SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
@@ -246,9 +258,104 @@ public class RestManController {
 		realBid.setGroceries(bid.getGroceries());
 		realBid.setDrinks(bid.getDrinks());
 		realBid.setManager(bid.getManager());
-		
-		bidService.addBid(realBid);
+		*/
+		bidService.addBid(bid);
 		
 		return "OK";
+	}
+	
+	@Transactional
+	@RequestMapping(value="/addSegment",
+			method = RequestMethod.POST,
+			consumes = MediaType.APPLICATION_JSON,
+			produces = MediaType.TEXT_PLAIN)
+	@ResponseBody
+	public String addSegment(@RequestBody Segment segment){
+		
+		Segment s = segmentService.getSegmentByLabel(segment.getLabel());
+		
+		if(s == null){
+
+			segmentService.addSegment(segment);
+			
+			return "OK";
+		}
+		
+		return "Segment with that label already exists!";
+	}
+	
+	@Transactional
+	@RequestMapping(value="/removeSegment",
+			method = RequestMethod.POST,
+			consumes = MediaType.APPLICATION_JSON,
+			produces = MediaType.TEXT_PLAIN)
+	@ResponseBody
+	public String removeSegment(@RequestBody Segment segment){
+		
+		Segment s = segmentService.getSegmentByLabel(segment.getLabel());
+		
+		if(s != null){
+			
+			segmentService.deleteSegmentById(s.getIdSegment());
+			
+			return "Segment removed.";
+		}
+		
+		return "Segment not found!";
+	}
+	
+	@RequestMapping(value="/getSegments",
+			method = RequestMethod.POST,
+			consumes = MediaType.APPLICATION_JSON,
+			produces = MediaType.APPLICATION_JSON)
+	@ResponseBody
+	public List<Segment> getSegments(@Context HttpServletRequest request, @RequestBody SeatingArrangement seatingArrangement){
+		return this.segmentService.getSegmentsBySeatingId(seatingArrangement.getIdSeating());
+	}
+	
+	@Transactional
+	@RequestMapping(value="/addTable",
+			method = RequestMethod.POST,
+			consumes = MediaType.APPLICATION_JSON,
+			produces = MediaType.TEXT_PLAIN)
+	@ResponseBody
+	public String addTable(@RequestBody RestTable restTable){
+		
+		RestTable table = tableService.getTableByCode(restTable.getTableCode());
+		
+		
+		if(table == null){
+			Segment s = segmentService.getSegmentByLabel(restTable.getSegment().getLabel());
+			
+			restTable.setSegment(s);
+			
+			tableService.addTable(restTable);
+		
+			return "Table successfully added!";
+		}
+		
+		return "Unexpected error";
+	}
+	
+	@Transactional
+	@RequestMapping(value="/removeTable",
+			method = RequestMethod.POST,
+			consumes = MediaType.APPLICATION_JSON,
+			produces = MediaType.TEXT_PLAIN)
+	@ResponseBody
+	public String removeTable(@RequestBody RestTable restTable){
+		
+		tableService.deleteTableByCode(restTable.getTableCode());
+		
+		return "Table successfully removed!";
+	}
+	
+	@RequestMapping(value="/getTables",
+			method = RequestMethod.POST,
+			consumes = MediaType.APPLICATION_JSON,
+			produces = MediaType.APPLICATION_JSON)
+	@ResponseBody
+	public List<RestTable> getTables(@Context HttpServletRequest request, @RequestBody Segment segment){
+		return tableService.getTablesBySegmentId(segment.getIdSegment());
 	}
 }

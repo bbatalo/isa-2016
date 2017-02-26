@@ -46,6 +46,9 @@ public class Restaurant implements Serializable{
 	public Menu menu;
 	
 	@OneToOne(mappedBy="restaurant")
+	public SeatingArrangement seatingArrangement;
+	
+	@OneToOne(mappedBy="restaurant")
 	public DrinksMenu drinksMenu;
 	
 	

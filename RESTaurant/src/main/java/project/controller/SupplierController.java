@@ -139,14 +139,14 @@ public class SupplierController {
 			method = RequestMethod.GET,
 			produces = MediaType.APPLICATION_JSON)
 	@ResponseBody
-	public List<BidDTO> getBids(@Context HttpServletRequest request){
+	public List<Bid> getBids(@Context HttpServletRequest request){
 		
-		List<Bid> tmp = bidService.getAllBids();
-		List<BidDTO> ret = new ArrayList<BidDTO>();
+		//List<Bid> ret = bidService.getAllBids();
+		//List<BidDTO> ret = new ArrayList<BidDTO>();
 		
 
-		SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
-		
+		//SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+		/*
 		for(Bid b : tmp){
 			BidDTO bidDTO = new BidDTO();
 			bidDTO.setIdBid(b.getIdBid());
@@ -158,8 +158,8 @@ public class SupplierController {
 			
 			ret.add(bidDTO);
 		}
-		
-		return ret;
+		*/
+		return bidService.getAllBids();
 	}
 	
 	@RequestMapping(value="/addOffer",
@@ -167,29 +167,28 @@ public class SupplierController {
 			consumes = MediaType.APPLICATION_JSON,
 			produces = MediaType.TEXT_PLAIN)
 	@ResponseBody
-	public String addOffer(@Context HttpServletRequest request, @RequestBody OfferDTO offerDTO) throws ParseException{
-		Offer realOffer = new Offer();
+	public String addOffer(@Context HttpServletRequest request, @RequestBody Offer offer) throws ParseException{
+		//Offer realOffer = new Offer();
 		
-		for(DrinkOffer drinkOffer : offerDTO.getDrinkOffers()){
+		for(DrinkOffer drinkOffer : offer.getDrinkOffers()){
 			drinkOfferService.addDrinkOffer(drinkOffer);
 		}
 		
-		for(GroceryOffer groceryOffer : offerDTO.getGroceryOffers()){
+		for(GroceryOffer groceryOffer : offer.getGroceryOffers()){
 			groceryOfferService.addGroceryOffer(groceryOffer);
 		}
 		
-		SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
-		
+		/*
 		realOffer.setDelivery(sdf.parse(offerDTO.getDelivery()));
 		realOffer.setWarranty(sdf.parse(offerDTO.getWarranty()));
 		realOffer.setLastsUntil(sdf.parse(offerDTO.getLastsUntil()));
 		realOffer.setGroceryOffers(offerDTO.getGroceryOffers());
 		realOffer.setDrinkOffers(offerDTO.getDrinkOffers());
+		*/
+		//Bid bid = bidService.getBid(offer.getBid().getIdBid());
 		
-		Bid realBid = bidService.getBid(offerDTO.getBid().getIdBid());
-		
-		realOffer.setBid(realBid);
-		offerService.addOffer(realOffer);
+		//offer.setBid(bid);
+		offerService.addOffer(offer);
 		
 		return "OK";
 	}
