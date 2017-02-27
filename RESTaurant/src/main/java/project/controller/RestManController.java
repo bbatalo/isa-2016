@@ -39,6 +39,8 @@ import project.domain.Supplier;
 import project.domain.SystemManager;
 import project.domain.User;
 import project.domain.dto.BidDTO;
+import project.domain.dto.OfferAcceptedDTO;
+import project.messaging.OfferMessenger;
 import project.service.BidService;
 import project.service.DishService;
 import project.service.DrinkOfferService;
@@ -90,6 +92,9 @@ public class RestManController {
 	
 	@Autowired
 	private GroceryOfferService groceryOfferService;
+	
+	@Autowired
+	private OfferMessenger offerMessenger;
 	
 	@RequestMapping(value = "/load",
 			method = RequestMethod.GET,
@@ -398,6 +403,15 @@ public class RestManController {
 		Bid realBid = bidService.getBid(offer.getBid().idBid);
 		
 		List<Offer> realOffers = offerService.getOffersByBidId(realBid.getIdBid());
+		
+		Offer realOffer = offerService.getOfferById(offer.getIdOffer());
+		
+		OfferAcceptedDTO dto = new OfferAcceptedDTO();
+		dto.setManagerName(realOffer.getBid().getManager().getName());
+		dto.setManagerSurname(realOffer.getBid().getManager().getSurname());
+		dto.setRestaurantName(realOffer.getBid().getManager().getRestaurant().getName());
+		dto.setReceiverID(realOffer.getSupplier().getUserID());
+		offerMessenger.sendOfferAcceptedTo(dto);
 		
 		for(Offer o : realOffers){
 			drinkOfferService.removeDrinkOfferByOfferId(o.getIdOffer());

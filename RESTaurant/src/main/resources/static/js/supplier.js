@@ -413,6 +413,25 @@
 		$scope.$watch('tabCtrl.isSet(3)', function() {
 			control.loadOffers();
 		});
+		
+		this.setupWebsocket = function() {
+			
+			var socket = new SockJS('/stomp');
+			var stompClient = Stomp.over(socket);
+			
+			stompClient.connect({}, function(frame) {
+				var str = "requests?userID=" + supplierService.getSupplier().userID;
+				stompClient.subscribe("/topic/" + str, function(data) {
+					var message = data.body;
+					acceptedOffer = angular.fromJson(message);
+					toastr["info"]('Your offer for restaurant ' + 
+							acceptedOffer.restaurantName + ' was accepted by ' + 
+							acceptedOffer.managerName + ' ' + acceptedOffer.managerSurname);
+				})
+			})
+		}
+		
+		this.setupWebsocket();
 	}]);
 	
 	app.controller('ProfileController', ['$scope', '$http', '$window', 'supplierService', function($scope, $http, $window, supplierService) {
