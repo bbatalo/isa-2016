@@ -1,5 +1,5 @@
 (function(){
-	var app = angular.module('restmanager', []);
+	var app = angular.module('restmanager', ['mwl.calendar', 'ngAnimate', 'ui.bootstrap', 'colorpicker.module']);
 	
 	app.controller("TabController", function(){
 	    this.tab = 1;
@@ -596,4 +596,149 @@
 			control.toggleArrange = false;
 		}
 	}]);
+	
+	
+	// ZA KALENDAR
+	
+	
+	
+	app.controller('KitchenSinkCtrl', function(moment, alertGagi, calendarConfig) {
+
+	    var vm = this;
+
+	    vm.calendarView = 'month';
+	    vm.viewDate = new Date();
+	    var actions = [{
+	      label: '<i class=\'glyphicon glyphicon-pencil\'></i>',
+	      onClick: function(args) {
+	    	  alertGagi.show('Edited', args.calendarEvent);
+	      }
+	    }, {
+	      label: '<i class=\'glyphicon glyphicon-remove\'></i>',
+	      onClick: function(args) {
+	    	  alertGagi.show('Deleted', args.calendarEvent);
+	      }
+	    }];
+	    vm.events = [
+	      {
+	        title: 'An event',
+	        color: calendarConfig.colorTypes.warning,
+	        startsAt: moment().startOf('week').subtract(2, 'days').add(8, 'hours').toDate(),
+	        endsAt: moment().startOf('week').add(1, 'week').add(9, 'hours').toDate(),
+	        draggable: true,
+	        resizable: true,
+	        actions: actions
+	      }, {
+	        title: '<i class="glyphicon glyphicon-asterisk"></i> <span class="text-primary">Another event</span>, with a <i>html</i> title',
+	        color: calendarConfig.colorTypes.info,
+	        startsAt: moment().subtract(1, 'day').toDate(),
+	        endsAt: moment().add(5, 'days').toDate(),
+	        draggable: true,
+	        resizable: true,
+	        actions: actions
+	      }, {
+	        title: 'This is a really long event title that occurs on every year',
+	        color: calendarConfig.colorTypes.important,
+	        startsAt: moment().startOf('day').add(7, 'hours').toDate(),
+	        endsAt: moment().startOf('day').add(19, 'hours').toDate(),
+	        recursOn: 'year',
+	        draggable: true,
+	        resizable: true,
+	        actions: actions
+	      }
+	    ];
+
+	    vm.cellIsOpen = true;
+
+	    vm.addEvent = function() {
+	      vm.events.push({
+	        title: 'New event',
+	        startsAt: moment().startOf('day').toDate(),
+	        endsAt: moment().endOf('day').toDate(),
+	        color: calendarConfig.colorTypes.important,
+	        draggable: true,
+	        resizable: true
+	      });
+	    };
+
+	    vm.eventClicked = function(event) {
+	    	alertGagi.show('Clicked', event);
+	    };
+
+	    vm.eventEdited = function(event) {
+	    	alertGagi.show('Edited', event);
+	    };
+
+	    vm.eventDeleted = function(event) {
+	    	alertGagi.show('Deleted', event);
+	    };
+
+	    vm.eventTimesChanged = function(event) {
+	    	alertGagi.show('Dropped or resized', event);
+	    };
+
+	    vm.toggle = function($event, field, event) {
+	      $event.preventDefault();
+	      $event.stopPropagation();
+	      event[field] = !event[field];
+	    };
+
+	    vm.timespanClicked = function(date, cell) {
+
+	      if (vm.calendarView === 'month') {
+	        if ((vm.cellIsOpen && moment(date).startOf('day').isSame(moment(vm.viewDate).startOf('day'))) || cell.events.length === 0 || !cell.inMonth) {
+	          vm.cellIsOpen = false;
+	        } else {
+	          vm.cellIsOpen = true;
+	          vm.viewDate = date;
+	        }
+	      } else if (vm.calendarView === 'year') {
+	        if ((vm.cellIsOpen && moment(date).startOf('month').isSame(moment(vm.viewDate).startOf('month'))) || cell.events.length === 0) {
+	          vm.cellIsOpen = false;
+	        } else {
+	          vm.cellIsOpen = true;
+	          vm.viewDate = date;
+	        }
+	      }
+
+	    };
+	});
+	
+	app.controller("ListController", ['$scope', '$http',function($scope, $http){
+		this.arbeit = {};
+		$scope.parameter = {};
+		$scope.listing = {};
+		
+		$scope.fillArbeit = function() {
+			
+			$http({
+				method: 'POST',
+				url: '/employee/getRole',
+				headers: {
+					   'Content-Type': 'text/plain'
+					 },
+					 data: $scope.parameter
+			}).then(function success(response) {
+				if (response.data != null) {
+					this.arbeit = response.data
+					 angular.forEach(this.arbeit, function(value, key){
+						 $scope.listing[$scope.listing.length]=value.name + " " + value.surname;
+					      
+					   });
+				}
+			});
+		}
+		
+		$scope.blisters = [{id:1,name:"Bartender"},{id:2,name:"Chef"},{id:3,name:"Waiter"}];
+
+		  $scope.changedValue = function(item) {
+			  $scope.parameter=item.name;
+			  $scope.fillArbeit();
+		  }  
+		  
+
+	}]);
+	
+	
+	
 })();

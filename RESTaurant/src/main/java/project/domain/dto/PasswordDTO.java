@@ -1,6 +1,7 @@
 package project.domain.dto;
 
 import project.domain.Customer;
+import project.domain.Employee;
 import project.domain.Supplier;
 
 public class PasswordDTO {
@@ -48,6 +49,14 @@ public class PasswordDTO {
 		Supplier ret = new Supplier();
 		ret.setUserID(userID);
 		ret.setPassword(newPass);
+		return ret;
+	}
+	
+	public Employee generateEmployee() {
+		Employee ret = new Employee();
+		ret.setUserID(userID);
+		ret.setPassword(newPass);
+		ret.setPassChanged(true);
 		return ret;
 	}
 }

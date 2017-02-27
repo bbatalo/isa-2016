@@ -40,7 +40,7 @@ public class Employee extends User {
 	@Column(name = "emp_size_shoes", nullable = false)
     private int sizeShoes;
 
-	protected Employee() {}
+	public Employee() {}
 	
 	public String getName() {
 		return name;
