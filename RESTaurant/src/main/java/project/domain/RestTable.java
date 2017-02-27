@@ -5,15 +5,17 @@
  ***********************************************************************/
 package project.domain;
 
-import java.util.*;
+import java.util.List;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
 public class RestTable {
@@ -62,8 +64,12 @@ public class RestTable {
 	@JoinColumn(name="segment_id")
 	public Segment segment;
     
+	@ManyToMany(mappedBy = "tables")
+	@JsonIgnore
+    public List<Reservation> reservations;
+	
 	public RestTable() {}
-   //public Reservation reservation;
+   
 
 	public long getIdTable() {
 		return idTable;
@@ -88,27 +94,14 @@ public class RestTable {
 	public void setSegment(Segment segment) {
 		this.segment = segment;
 	}
+
+	public List<Reservation> getReservations() {
+		return reservations;
+	}
+
+	public void setReservations(List<Reservation> reservations) {
+		this.reservations = reservations;
+	}
    
-   /*
-   public Reservation getReservation() {
-      return reservation;
-   }
-   
-   public void setReservation(Reservation newReservation) {
-      if (this.reservation == null || !this.reservation.equals(newReservation))
-      {
-         if (this.reservation != null)
-         {
-            Reservation oldReservation = this.reservation;
-            this.reservation = null;
-            oldReservation.removeTables(this);
-         }
-         if (newReservation != null)
-         {
-            this.reservation = newReservation;
-            this.reservation.addTables(this);
-         }
-      }
-   }
-   */
+    
 }

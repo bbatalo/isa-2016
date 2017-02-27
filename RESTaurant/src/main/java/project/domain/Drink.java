@@ -1,10 +1,6 @@
-/***********************************************************************
- * Module:  Drink.java
- * Author:  Bojan
- * Purpose: Defines the Class Drink
- ***********************************************************************/
 package project.domain;
 
+import java.util.List;
 import java.util.Set;
 
 import javax.persistence.Column;
@@ -46,6 +42,10 @@ public class Drink {
 	@JsonIgnore
 	public Set<DrinkOffer> drinkOffers;
 	
+	@OneToMany(mappedBy="drink")
+	@JsonIgnore
+    private List<DrinkOrder> drinkOrders;
+	
 	public Drink() {}
 
 	public long getIdDrink() {
@@ -79,172 +79,48 @@ public class Drink {
 	public void setPrice(float price) {
 		this.price = price;
 	}
+
+	public List<DrinkOrder> getDrinkOrders() {
+		return drinkOrders;
+	}
+
+	public void setDrinkOrders(List<DrinkOrder> drinkOrders) {
+		this.drinkOrders = drinkOrders;
+	}
+
+	public DrinksMenu getDrinksMenu() {
+		return drinksMenu;
+	}
+
+	public void setDrinksMenu(DrinksMenu drinksMenu) {
+		this.drinksMenu = drinksMenu;
+	}
+
+	public Set<Bid> getBids() {
+		return bids;
+	}
+
+	public void setBids(Set<Bid> bids) {
+		this.bids = bids;
+	}
+
+	public Set<DrinkOffer> getDrinkOffers() {
+		return drinkOffers;
+	}
+
+	public void setDrinkOffers(Set<DrinkOffer> drinkOffers) {
+		this.drinkOffers = drinkOffers;
+	}
+	
 	
 	
    /*
    public java.util.Collection<DrinkRating> ratings;
    public java.util.Collection<DrinksMenu> drinkMenu;
-   public java.util.Collection<DrinksOrder> drinkOrders;
+   */
+	
+	
    
    
-   public java.util.Collection<DrinkRating> getRatings() {
-      if (ratings == null)
-         ratings = new java.util.ArrayList<DrinkRating>();
-      return ratings;
-   }
-   
-   public java.util.Iterator getIteratorRatings() {
-      if (ratings == null)
-         ratings = new java.util.ArrayList<DrinkRating>();
-      return ratings.iterator();
-   }
-   
-   public void setRatings(java.util.Collection<DrinkRating> newRatings) {
-      removeAllRatings();
-      for (java.util.Iterator iter = newRatings.iterator(); iter.hasNext();)
-         addRatings((DrinkRating)iter.next());
-   }
-   
-   public void addRatings(DrinkRating newDrinkRating) {
-      if (newDrinkRating == null)
-         return;
-      if (this.ratings == null)
-         this.ratings = new java.util.ArrayList<DrinkRating>();
-      if (!this.ratings.contains(newDrinkRating))
-      {
-         this.ratings.add(newDrinkRating);
-         newDrinkRating.setDrink(this);      
-      }
-   }
-   
-   public void removeRatings(DrinkRating oldDrinkRating) {
-      if (oldDrinkRating == null)
-         return;
-      if (this.ratings != null)
-         if (this.ratings.contains(oldDrinkRating))
-         {
-            this.ratings.remove(oldDrinkRating);
-            oldDrinkRating.setDrink((Drink)null);
-         }
-   }
-   
-   public void removeAllRatings() {
-      if (ratings != null)
-      {
-         DrinkRating oldDrinkRating;
-         for (java.util.Iterator iter = getIteratorRatings(); iter.hasNext();)
-         {
-            oldDrinkRating = (DrinkRating)iter.next();
-            iter.remove();
-            oldDrinkRating.setDrink((Drink)null);
-         }
-      }
-   }
-   public java.util.Collection<DrinksMenu> getDrinkMenu() {
-      if (drinkMenu == null)
-         drinkMenu = new java.util.ArrayList<DrinksMenu>();
-      return drinkMenu;
-   }
-   
-   public java.util.Iterator getIteratorDrinkMenu() {
-      if (drinkMenu == null)
-         drinkMenu = new java.util.ArrayList<DrinksMenu>();
-      return drinkMenu.iterator();
-   }
-   
-   public void setDrinkMenu(java.util.Collection<DrinksMenu> newDrinkMenu) {
-      removeAllDrinkMenu();
-      for (java.util.Iterator iter = newDrinkMenu.iterator(); iter.hasNext();)
-         addDrinkMenu((DrinksMenu)iter.next());
-   }
-   
-   public void addDrinkMenu(DrinksMenu newDrinksMenu) {
-      if (newDrinksMenu == null)
-         return;
-      if (this.drinkMenu == null)
-         this.drinkMenu = new java.util.ArrayList<DrinksMenu>();
-      if (!this.drinkMenu.contains(newDrinksMenu))
-      {
-         this.drinkMenu.add(newDrinksMenu);
-         newDrinksMenu.addDrinks(this);      
-      }
-   }
-   
-   public void removeDrinkMenu(DrinksMenu oldDrinksMenu) {
-      if (oldDrinksMenu == null)
-         return;
-      if (this.drinkMenu != null)
-         if (this.drinkMenu.contains(oldDrinksMenu))
-         {
-            this.drinkMenu.remove(oldDrinksMenu);
-            oldDrinksMenu.removeDrinks(this);
-         }
-   }
-   
-   public void removeAllDrinkMenu() {
-      if (drinkMenu != null)
-      {
-         DrinksMenu oldDrinksMenu;
-         for (java.util.Iterator iter = getIteratorDrinkMenu(); iter.hasNext();)
-         {
-            oldDrinksMenu = (DrinksMenu)iter.next();
-            iter.remove();
-            oldDrinksMenu.removeDrinks(this);
-         }
-      }
-   }
-   public java.util.Collection<DrinksOrder> getDrinkOrders() {
-      if (drinkOrders == null)
-         drinkOrders = new java.util.ArrayList<DrinksOrder>();
-      return drinkOrders;
-   }
-   
-   public java.util.Iterator getIteratorDrinkOrders() {
-      if (drinkOrders == null)
-         drinkOrders = new java.util.ArrayList<DrinksOrder>();
-      return drinkOrders.iterator();
-   }
-   
-   public void setDrinkOrders(java.util.Collection<DrinksOrder> newDrinkOrders) {
-      removeAllDrinkOrders();
-      for (java.util.Iterator iter = newDrinkOrders.iterator(); iter.hasNext();)
-         addDrinkOrders((DrinksOrder)iter.next());
-   }
-   
-   public void addDrinkOrders(DrinksOrder newDrinksOrder) {
-      if (newDrinksOrder == null)
-         return;
-      if (this.drinkOrders == null)
-         this.drinkOrders = new java.util.ArrayList<DrinksOrder>();
-      if (!this.drinkOrders.contains(newDrinksOrder))
-      {
-         this.drinkOrders.add(newDrinksOrder);
-         newDrinksOrder.addDrinks(this);      
-      }
-   }
-   
-   public void removeDrinkOrders(DrinksOrder oldDrinksOrder) {
-      if (oldDrinksOrder == null)
-         return;
-      if (this.drinkOrders != null)
-         if (this.drinkOrders.contains(oldDrinksOrder))
-         {
-            this.drinkOrders.remove(oldDrinksOrder);
-            oldDrinksOrder.removeDrinks(this);
-         }
-   }
-   
-   public void removeAllDrinkOrders() {
-      if (drinkOrders != null)
-      {
-         DrinksOrder oldDrinksOrder;
-         for (java.util.Iterator iter = getIteratorDrinkOrders(); iter.hasNext();)
-         {
-            oldDrinksOrder = (DrinksOrder)iter.next();
-            iter.remove();
-            oldDrinksOrder.removeDrinks(this);
-         }
-      }
-   }
-	*/
+  
 }

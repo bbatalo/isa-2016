@@ -15,7 +15,7 @@ public class WaiterSwitch {
    public java.util.Date switchTime;
    
    /** @pdRoleInfo migr=no name=Order assc=orderSwitch mult=0..1 */
-   public Order orders;
+   public RestOrder orders;
    /** @pdRoleInfo migr=no name=Waiter assc=taken mult=0..1 side=A */
    public Waiter taken;
    /** @pdRoleInfo migr=no name=Waiter assc=given mult=0..1 side=A */

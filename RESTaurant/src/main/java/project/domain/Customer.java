@@ -32,9 +32,11 @@ public class Customer extends User {
 	
 	public Customer() {}
 
-	/*
-    public java.util.Collection<Reservation> reservations;
+	@OneToMany(mappedBy="customer")
+	@JsonIgnore
+    private List<Reservation> reservations;
 
+    /*
     public java.util.Collection<Invite> invites;
 
     public VisitHistory history;
@@ -127,6 +129,14 @@ public class Customer extends User {
 
 	public void setOutcomingRequests(List<Request> outcomingRequests) {
 		this.outcomingRequests = outcomingRequests;
+	}
+
+	public List<Reservation> getReservations() {
+		return reservations;
+	}
+
+	public void setReservations(List<Reservation> reservations) {
+		this.reservations = reservations;
 	}
 
 	

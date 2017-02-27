@@ -23,23 +23,4 @@ public class Invite {
       return reservation;
    }
    
-   /** @pdGenerated default parent setter
-     * @param newReservation */
-   public void setReservation(Reservation newReservation) {
-      if (this.reservation == null || !this.reservation.equals(newReservation))
-      {
-         if (this.reservation != null)
-         {
-            Reservation oldReservation = this.reservation;
-            this.reservation = null;
-            oldReservation.removeInvite(this);
-         }
-         if (newReservation != null)
-         {
-            this.reservation = newReservation;
-            this.reservation.addInvite(this);
-         }
-      }
-   }
-
 }
