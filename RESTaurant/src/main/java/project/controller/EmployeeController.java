@@ -59,7 +59,7 @@ public class EmployeeController {
 			} else {
 				number = EmployeeRole.WAITER;
 			}
-			List<Employee> lista = employeeService.getAllByRole(number);
+			List<Employee> lista = employeeService.getAll();
 			return new ResponseEntity<List<Employee>>(lista, HttpStatus.OK);
 		}
 		

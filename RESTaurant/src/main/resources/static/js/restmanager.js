@@ -754,9 +754,10 @@
 	});
 	
 	app.controller("ListController", ['$scope', '$http',function($scope, $http){
-		this.arbeit = {};
+		$scope.arbeit = {};
 		$scope.parameter = {};
-		$scope.listing = {};
+		$scope.listing = [];
+		$scope.mapa = [];
 		
 		$scope.fillArbeit = function() {
 			
@@ -769,11 +770,22 @@
 					 data: $scope.parameter
 			}).then(function success(response) {
 				if (response.data != null) {
-					this.arbeit = response.data
-					 angular.forEach(this.arbeit, function(value, key){
-						 $scope.listing[$scope.listing.length]=value.name + " " + value.surname;
-					      
+					$scope.listing = [];
+					$scope.arbeit = response.data
+					 angular.forEach($scope.arbeit, function(value, key){
+						 var fullname = value.name + " " + value.surname;
+						 var par = 
+	                     {
+								 name : fullname,
+								 role : value.role,
+								 uid : value.userID
+	                     }
+						 $scope.listing.push(par);
+						 
+						 
 					   });
+
+					
 				}
 			});
 		}
@@ -784,7 +796,7 @@
 			  $scope.parameter=item.name;
 			  $scope.fillArbeit();
 		  }  
-		  
+		  $scope.fillArbeit();
 
 	}]);
 	

@@ -634,7 +634,6 @@
       <tr>
         <th>Employee</th>
         <th>Area</th>
-        <th>Role</th>
         <th>Starts at</th>
         <th>Ends at</th>
         <th>Remove</th>
@@ -644,16 +643,11 @@
     <tbody>
       <tr ng-repeat="event in vm.events track by $index">
         <td>
-          <select ng-model="testModel" ng-options="state for state in listing">
+          <select ng-model="state" ng-options="state.name as state.name for state in listing">
           </select>
         </td>
         <td>
           <input class="form-control" colorpicker type="text" ng-model="event.color.primary">
-        </td>
-        <td>
-          <select ng-model="blisterSelected" ng-change="changedValue(blisterSelected)" 
-            data-ng-options="blister as blister.name for blister in blisters">
-          </select>
         </td>
         <td>
           <p class="input-group" style="max-width: 250px">
