@@ -157,12 +157,12 @@
 							<td>{{inc.senderName}}</td>
 							<td>{{inc.senderSurname}}</td>
 							<td>
-								<button class="btn btn-primary" ng-click="requestsCtrl.accept(inc)">
+								<button class="btn btn-primary" ng-click="requestsCtrl.accept(inc)" ng-disabled="inc.status != 'Pending'">
 								     Accept
 								 </button>
 							</td>
 							<td>
-								<button class="btn btn-danger" ng-click="requestsCtrl.decline(inc)">
+								<button class="btn btn-danger" ng-click="requestsCtrl.decline(inc)" ng-disabled="inc.status != 'Pending'">
 								     Decline
 								 </button>
 							</td>

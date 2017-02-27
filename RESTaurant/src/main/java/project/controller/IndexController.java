@@ -140,7 +140,8 @@ public class IndexController {
 			List<Customer> retVal = new ArrayList<Customer>();
 			List<Customer> requested = new ArrayList<Customer>();
 			for (Request r : customer.getOutcomingRequests()) {
-				requested.add(r.getReceiver());
+				if (r.getStatus().equals("Pending"))
+					requested.add(r.getReceiver());
 			}
 			
 			for (Customer c : customers) {
@@ -200,11 +201,23 @@ public class IndexController {
 			req.setReceiver(receiver);
 			req.setStatus("Pending");
 			
-			if (requestService.getAllByCombination(sender, receiver).size() != 0)
-				return new ResponseEntity<String>("Repeated", HttpStatus.OK);
-				
-			if (requestService.getAllByCombination(receiver, sender).size() != 0)
-				return new ResponseEntity<String>("Inbox", HttpStatus.OK);
+			List<Request> outcoming = requestService.getAllByCombination(sender, receiver);
+			if (outcoming.size() != 0) {
+				for (Request r : outcoming) {
+					if (r.getStatus().equals("Pending")) {
+						return new ResponseEntity<String>("Repeated", HttpStatus.OK);
+					}
+				}
+			}
+			
+			List<Request> incoming = requestService.getAllByCombination(receiver, sender);
+			if (incoming.size() != 0) {
+				for (Request r : incoming) {
+					if (r.getStatus().equals("Pending")) {
+						return new ResponseEntity<String>("Inbox", HttpStatus.OK);
+					}
+				}
+			}
 			
 			requestService.save(req);
 			
@@ -233,6 +246,10 @@ public class IndexController {
 			if (receiver.getFriendOf().contains(sender))
 				return new ResponseEntity<String>("Already accepted", HttpStatus.OK);
 			
+			Request req = requestService.getRequest(dto.getRequestID());
+			req.setStatus("Accepted");
+			requestService.save(req);
+			
 			receiver.getFriendOf().add(sender);
 			customerService.save(receiver);
 			
@@ -255,22 +272,18 @@ public class IndexController {
 			Customer sender = customerService.getCustomerById(dto.getSenderID());
 			Customer receiver = customerService.getCustomerById(dto.getReceiverID());
 			
-			Request req = new Request();
-			req.setSender(sender);
-			req.setReceiver(receiver);
-			req.setStatus("Pending");
+			dto.setStatus("Declined");
 			
-			if (requestService.getAllByCombination(sender, receiver).size() != 0)
-				return new ResponseEntity<String>("Repeated", HttpStatus.OK);
-				
-			if (requestService.getAllByCombination(receiver, sender).size() != 0)
-				return new ResponseEntity<String>("Inbox", HttpStatus.OK);
+			Request req = requestService.getRequest(dto.getRequestID());
+			if (req.getStatus().equals("Declined"))
+				return new ResponseEntity<String>("Already declined", HttpStatus.OK);
 			
+			req.setStatus("Declined");
 			requestService.save(req);
 			
-			RequestDTO tmp = new RequestDTO(req);
-			requestMessenger.sendRequestTo(tmp);
-			requestMessenger.sendUpdateTo(tmp);
+			requestMessenger.sendRequestTo(dto);
+			requestMessenger.sendUpdateTo(dto);
+			
 			return new ResponseEntity<String>("Success", HttpStatus.OK);
 		} else {
 			return null;

@@ -312,13 +312,28 @@
 				data: request
 			}).then(function success(response) {
 				if (response.data == 'Success') {
-					
+
+				} else if (response.data == "Already accepted") {
+					toastr["warning"]('You have already accepted this request!');
 				}
 			});
 		}
 		
 		control.decline = function(request) {
+			$http({
+				method: 'POST',
+				url: '/index/declineRequest',
+				headers: {
+					   'Content-Type': 'application/json',	   
+					 },
+				data: request
+			}).then(function success(response) {
+				if (response.data == 'Success') {
 
+				} else if (response.data == 'Already declined') {
+					toastr["warning"]('You have already declined this request!');
+				}
+			});
 		}
 		
 		control.setupWebsocket = function() {
@@ -338,10 +353,13 @@
 						} else if (req.status == 'Accepted') {
 							ind = control.findInd(req.requestID, 'outcoming');
 							control.outcoming[ind].status = 'Accepted';
-							$scope.$apply;
+							$scope.$apply();
 							toastr["success"]('User:' + req.receiverMail + ' accepted your friendship request.', "Request accepted!");
 						} else if (req.status == 'Declined') {
-							
+							ind = control.findInd(req.requestID, 'outcoming');
+							control.outcoming[ind].status = 'Declined';
+							$scope.$apply();
+							toastr["error"]('User:' + req.receiverMail + ' declined your friendship request.', "Request declined!");
 						}
 						
 					} else {
@@ -352,8 +370,13 @@
 						} else if (req.status == 'Accepted') {
 							ind = control.findInd(req.requestID, 'incoming');
 							control.incoming[ind].status = 'Accepted';
-							$scope.$apply;
-							toastr["success"]('Friendship request from user:' + req.receiverMail + ' accepted.', "Request accepted!");
+							$scope.$apply();
+							toastr["success"]('Friendship request from user:' + req.senderMail + ' accepted.', "Request accepted!");
+						} else if (req.status == 'Declined') {
+							ind = control.findInd(req.requestID, 'incoming');
+							control.incoming[ind].status = 'Declined';
+							$scope.$apply();
+							toastr["error"]('Friendship request from user:' + req.senderMail + ' declined.', "Request declined!");
 						}
 					}
 				})
