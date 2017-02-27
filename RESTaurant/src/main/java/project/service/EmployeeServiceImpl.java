@@ -62,6 +62,11 @@ public class EmployeeServiceImpl implements EmployeeService {
 		employeeRepository.updateDetails(employee.getUserID(), employee.getName(), employee.getSurname(), employee.getDateBirth(), employee.getSizeCloth(), employee.getSizeShoes());
 	}
 
+	@Override
+	public List<Employee> getEmployeesByRestaurantId(Long id) {
+		return employeeRepository.findEmployeesByRestaurantId(id);
+	}
+
 	
 
 	

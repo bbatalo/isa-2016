@@ -12,6 +12,8 @@ import java.util.Date;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Inheritance;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 
 @Entity
 @Inheritance(strategy = JOINED)
@@ -98,9 +100,17 @@ public class Employee extends User {
 		this.sizeShoes = sizeShoes;
 	}
 	
-	
-   
-   //public Restaurant restaurant;
+	@ManyToOne
+	@JoinColumn(name="rst_id")
+	public Restaurant restaurant;
+
+	public Restaurant getRestaurant() {
+		return restaurant;
+	}
+
+	public void setRestaurant(Restaurant restaurant) {
+		this.restaurant = restaurant;
+	}
    
    /*
    public Restaurant getRestaurant() {

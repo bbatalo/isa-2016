@@ -25,6 +25,7 @@ import project.domain.Dish;
 import project.domain.Drink;
 import project.domain.DrinkOffer;
 import project.domain.DrinksMenu;
+import project.domain.Employee;
 import project.domain.Grocery;
 import project.domain.GroceryOffer;
 import project.domain.Menu;
@@ -45,6 +46,7 @@ import project.service.BidService;
 import project.service.DishService;
 import project.service.DrinkOfferService;
 import project.service.DrinkService;
+import project.service.EmployeeService;
 import project.service.GroceryOfferService;
 import project.service.GroceryService;
 import project.service.OfferService;
@@ -52,6 +54,7 @@ import project.service.OnlineService;
 import project.service.RestaurantService;
 import project.service.SegmentService;
 import project.service.TableService;
+import project.service.UserService;
 import project.service.RestManService;
 
 @RequestMapping("/restmanager")
@@ -95,6 +98,12 @@ public class RestManController {
 	
 	@Autowired
 	private OfferMessenger offerMessenger;
+	
+	@Autowired
+	private UserService userService;
+	
+	@Autowired
+	private EmployeeService employeeService;
 	
 	@RequestMapping(value = "/load",
 			method = RequestMethod.GET,
@@ -424,5 +433,43 @@ public class RestManController {
 		bidService.deleteBidById(realBid.getIdBid());
 		
 		return "OK";
+	}
+	
+	@Transactional
+	@RequestMapping(value="/addEmployee",
+			method = RequestMethod.POST,
+			consumes = MediaType.APPLICATION_JSON,
+			produces = MediaType.TEXT_PLAIN)
+	@ResponseBody
+	public String addEmployee(@RequestBody Employee employee){
+		User u = userService.getUser(employee.getEmail());
+		
+		if(employee.getRestaurant() != null){
+			Restaurant r = this.restaurantService.getRestaurantByName(employee.getRestaurant().getName());
+			if(r != null)
+				employee.setRestaurant(r);
+			else
+				return "No such restaurant.";
+		}
+		
+		if(u == null){
+
+			employee.setUserType(project.domain.UserType.EMPLOYEE);
+			//restManService.addRestaurantManager(rm);
+			employeeService.addEmployee(employee);
+			
+			return "OK";
+		}
+		
+		return "User email already exists!";
+	}
+	
+	@RequestMapping(value="/getEmployees",
+			method = RequestMethod.POST,
+			consumes = MediaType.APPLICATION_JSON,
+			produces = MediaType.APPLICATION_JSON)
+	@ResponseBody
+	public List<Employee> getEmployees(@Context HttpServletRequest request, @RequestBody Restaurant restaurant){
+		return employeeService.getEmployeesByRestaurantId(restaurant.getRestaurantID());
 	}
 }

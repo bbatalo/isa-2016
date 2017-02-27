@@ -597,6 +597,55 @@
 		}
 	}]);
 	
+	app.controller("EmployeeController", ['$scope', '$http', '$window', 'restaurantService', function($scope, $http, $window, restaurantService){
+		var control = this;
+		control.employee = {};
+		control.employees = [];
+		control.roles = [{
+			id : 0,
+			label : 'Bartender'
+		}, {
+			id : 1,
+			label : 'Waiter'
+		}, {
+			id : 2,
+			label : 'Chef'
+		}];
+		control.result = "";
+		
+		this.register = function(){
+			control.employee.restaurant = restaurantService.getRestaurant();
+			
+			$http.post('/restmanager/addEmployee', this.employee).then(function success(response) {
+				control.result = response.data;
+				if(control.result === "OK"){
+					control.employees.push(control.employee);
+					control.employee = {};
+				}else if(control.result === "No such restaurant."){
+					control.employee.restaurant.name = "";
+				}
+			}, function error(response) {
+				control.result = "Unknown error ocurred.";
+			});
+			
+		};
+		
+		this.getEmployees = function(){
+			$http.post('/restmanager/getEmployees', restaurantService.getRestaurant()).then(function success(response){
+				control.employees = response.data;
+				
+				for(it in control.employees){
+					control.employees[it].dateBirth = new Date(control.employees[it].dateBirth);
+				}
+			}), function error(response){
+				control.result = "Unknown error ocurred."
+			}
+		};
+
+		$scope.$watch('tab.isSet(8)', function() {
+			control.getEmployees();
+		});
+	}]);
 	
 	// ZA KALENDAR
 	

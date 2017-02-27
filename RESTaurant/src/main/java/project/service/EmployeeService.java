@@ -11,6 +11,8 @@ public interface EmployeeService {
 	
 	List<Employee> getAllByRole(EmployeeRole role);
 	
+	List<Employee> getEmployeesByRestaurantId(Long id);
+	
 	Employee getEmployeeById(Long id);
 	
 	void deleteEmployeeById(Long id);

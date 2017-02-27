@@ -21,6 +21,9 @@ public interface EmployeeRepository extends Repository<Employee, Long> {
 	@Query("select e from Employee e where e.role = ?1")
 	public List<Employee> getAllByRole(EmployeeRole role);
 	
+	@Query("select e from Employee e where e.restaurant.restaurantID = ?1")
+	public List<Employee> findEmployeesByRestaurantId(Long id);
+	
 	@Modifying
 	@Query("delete from Employee e where e.userID = ?1")
 	public void removeEmployeeById(Long id);

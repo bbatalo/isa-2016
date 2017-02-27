@@ -42,6 +42,10 @@ public class Restaurant implements Serializable{
 	@JsonIgnore
 	public Set<RestaurantManager> restaurantManagers;
 	
+	@OneToMany(mappedBy="restaurant")
+	@JsonIgnore
+	public Set<Employee> employees;
+	
 	@OneToOne(mappedBy="restaurant")
 	public Menu menu;
 	

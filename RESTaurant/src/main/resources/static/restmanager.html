@@ -39,6 +39,7 @@
 		    			<li ng-class="{active:tab.isSet(5)}"><a class="navbar-brand" href ng-click="tab.setTab(5)">Bids</a></li>
 		    			<li ng-class="{active:tab.isSet(6)}"><a class="navbar-brand" href ng-click="tab.setTab(6)">Offers</a></li>
 		    			<li ng-class="{active:tab.isSet(7)}"><a class="navbar-brand" href ng-click="tab.setTab(7)">Seating arrangement</a></li>
+		    			<li ng-class="{active:tab.isSet(8)}"><a class="navbar-brand" href ng-click="tab.setTab(8)">Employees</a></li>	
 		    			<li ng-class="{active:tab.isSet(9)}"><a class="navbar-brand" href ng-click="tab.setTab(9)">Shifts</a></li>
 		    		</ul>
 	    		</section>
@@ -471,6 +472,90 @@
 						</table>
 					</div>
 					<div class="col-sm-1"></div>
+			  	</div>
+		  	</div>
+		  	<div ng-controller="EmployeeController as employeeCtrl" ng-show="tab.isSet(8)">
+				<div class="row">
+			  		<div class="col-sm-4"></div>
+			  		<div class="col-sm-4">
+						<div class="panel panel-default">
+							<div class="panel-body">
+								<form name="addEmployeeForm" ng-submit="addEmployeeForm.$valid && employeeCtrl.register()" class="form-signin" novalidate >
+									<h3>Register employee.</h3>
+									<fieldset class="form-group">
+										<input ng-model="employeeCtrl.employee.email" type="email" class="form-control" placeholder="Email:" required></input>
+									</fieldset>
+									<fieldset class="form-group">
+										<input ng-model="employeeCtrl.employee.password" type="password" class="form-control" placeholder="Password:" required></input>
+									</fieldset>
+									<fieldset class="form-group">
+										<input ng-model="employeeCtrl.employee.name" type="text" class="form-control" placeholder="Name:" required></input>
+									</fieldset>
+									<fieldset class="form-group">
+										<input ng-model="employeeCtrl.employee.surname" type="text" class="form-control" placeholder="Surname:" required></input>
+									</fieldset>
+									<fieldset class="form-group">
+										<select ng-model="employeeCtrl.employee.role" class="form-control" required>
+											<option ng-repeat="role in employeeCtrl.roles" ng-value="role.id">{{role.label}}</option>
+										</select>
+									</fieldset>
+									<fieldset class="form-group">
+										<label class="control-label col-sm-3">Date of birth:</label>
+				  						<div class="col-sm-9">
+											<input ng-model="employeeCtrl.employee.dateBirth" type="date" class="form-control" required></input>
+										</div>
+									</fieldset>
+									<fieldset class="form-group">
+										<label class="control-label col-sm-3">Cloth size:</label>
+				  						<div class="col-sm-9">
+											<input ng-model="employeeCtrl.employee.sizeCloth" type="number" min="1" class="form-control" required></input>
+										</div>
+									</fieldset>
+									<fieldset class="form-group">
+										<label class="control-label col-sm-3">Shoes size:</label>
+				  						<div class="col-sm-9">
+											<input ng-model="employeeCtrl.employee.sizeShoes" type="number" min="1" class="form-control" required></input>
+										</div>
+									</fieldset>
+									<fieldset class="form-group">
+		                				<input  type="submit" class="btn btn-lg btn-primary btn-block pull-right" value="Register" />
+		              				</fieldset>
+									<fieldset><div></div>{{employeeCtrl.result}}</fieldset><br />
+								</form>
+							</div>
+						</div>
+			  		</div>
+			  		<div class="col-sm-4"></div>
+			  	</div>
+			  	<div class="row">
+			  		<div class="col-sm-2"></div>
+			  		<div class="col-sm-8">
+				  		<table class="table table-hover">
+							<thead>
+								<tr>
+									<th>Email</th>
+									<th>Name</th>
+									<th>Surname</th>
+									<th>Role</th>
+									<th>Date birth</th>
+									<th>Size cloth</th>
+									<th>Size shoes</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr ng-repeat="employee in employeeCtrl.employees">
+									<td>{{employee.email}}</td>
+									<td>{{employee.name}}</td>
+									<td>{{employee.surname}}</td>
+									<td>{{employee.role}}</td>
+									<td><input type="date" ng-model="employee.dateBirth" readonly/></td>
+									<td>{{employee.sizeCloth}}</td>
+									<td>{{employee.sizeShoes}}</td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+					<div class="col-sm-2"></div>
 			  	</div>
 		  	</div>
 		  	<div ng-show="tab.isSet(9)"><div ng-controller="KitchenSinkCtrl as vm">

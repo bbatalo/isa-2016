@@ -87,9 +87,9 @@ insert into restaurant_manager (rsm_name, rsm_surname, usr_id, rst_id) values ('
 insert into supplier (sup_label, sup_desc, sup_pass_changed, usr_id) values ('Dostava', 'ispred sam', false, '10')
 insert into supplier (sup_label, sup_desc, sup_pass_changed, usr_id) values ('Test', 'ispred sam', false, '11')
 
-insert into employee (emp_name, emp_surname, emp_role, emp_pass_changed, emp_date_birth, emp_size_cloth, emp_size_shoes, usr_id) values ('Milica', 'Stanković', '0', false, '1995-5-5', '40', '38', '7')
-insert into employee (emp_name, emp_surname, emp_role, emp_pass_changed, emp_date_birth, emp_size_cloth, emp_size_shoes, usr_id) values ('Ognjen', 'Velisavčić', '1', false, '1995-5-5', '46', '45', '8')
-insert into employee (emp_name, emp_surname, emp_role, emp_pass_changed, emp_date_birth, emp_size_cloth, emp_size_shoes, usr_id) values ('Marija', 'Kovačević', '2', false, '1995-5-5', '38', '36', '9')
+insert into employee (emp_name, emp_surname, emp_role, emp_pass_changed, emp_date_birth, emp_size_cloth, emp_size_shoes, usr_id, rst_id) values ('Milica', 'Stanković', '0', false, '1995-5-5', '40', '38', '7', 1)
+insert into employee (emp_name, emp_surname, emp_role, emp_pass_changed, emp_date_birth, emp_size_cloth, emp_size_shoes, usr_id, rst_id) values ('Ognjen', 'Velisavčić', '1', false, '1995-5-5', '46', '45', '8', 1)
+insert into employee (emp_name, emp_surname, emp_role, emp_pass_changed, emp_date_birth, emp_size_cloth, emp_size_shoes, usr_id, rst_id) values ('Marija', 'Kovačević', '2', false, '1995-5-5', '38', '36', '9', 1)
 	
 insert into bartender (bar_cocktails, usr_id) values (true, '7')
 insert into waiter (wtr_trial, usr_id) values (true, '8')
