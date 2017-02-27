@@ -45,6 +45,17 @@ insert into drinks_menu (restaurant) values (2)
 insert into drinks_menu (restaurant) values (3)
 insert into drinks_menu (restaurant) values (4)
 
+insert into dish (dish_label, dish_description, dish_price, menu_id) values ('Cartmans chilli', 'Scott Tenormans parents', 100, 1)
+insert into dish (dish_label, dish_description, dish_price, menu_id) values ('Creme fraiche', 'Randy Marsh', 200, 1)
+insert into dish (dish_label, dish_description, dish_price, menu_id) values ('Taco-Flavored Kisses', 'Hennifer Lopez', 300, 1)
+insert into dish (dish_label, dish_description, dish_price, menu_id) values ('Fish sticks', 'Kanye West', 400, 1)
+
+
+insert into drink (drink_label, drink_description, drink_price, drinks_menu_id) values ('Mountain Dew', 'Shaka Brah', 100, 1)
+insert into drink (drink_label, drink_description, drink_price, drinks_menu_id) values ('Bloody Mary', 'hm', 200, 1)
+insert into drink (drink_label, drink_description, drink_price, drinks_menu_id) values ('Vinjak', 'Rubin', 300, 1)
+insert into drink (drink_label, drink_description, drink_price, drinks_menu_id) values ('Rakija', 'Sljiva', 400, 1)
+
 insert into seating_arrangement (restaurant) values (1)
 insert into seating_arrangement (restaurant) values (2)
 insert into seating_arrangement (restaurant) values (3)
@@ -60,10 +71,10 @@ insert into rest_table(segment_id, table_status, table_code, table_col, table_ro
 insert into rest_table(segment_id, table_status, table_code, table_col, table_row) values (1, 'free', 'Pusaci33', 3, 3)
 insert into rest_table(segment_id, table_status, table_code, table_col, table_row) values (1, 'taken', 'Pusaci44', 4, 4)
 
-insert into drink (drink_label, drink_description, drink_price) values ('koka', 'crna', 100)
-insert into drink (drink_label, drink_description, drink_price) values ('fanta', 'sokata', 150)
-insert into drink (drink_label, drink_description, drink_price) values ('tekila', 'dva prsta', 200)
-insert into drink (drink_label, drink_description, drink_price) values ('vinjak', 'rubin', 250)
+insert into drink (drink_label, drink_description, drink_price) values ('koka-por', 'crna', 100)
+insert into drink (drink_label, drink_description, drink_price) values ('fanta-por', 'sokata', 150)
+insert into drink (drink_label, drink_description, drink_price) values ('tekila-por', 'dva prsta', 200)
+insert into drink (drink_label, drink_description, drink_price) values ('vinjak-por', 'rubin', 250)
 
 insert into grocery (grocery_label, grocery_description) values ('paradajz', 'crven')
 insert into grocery (grocery_label, grocery_description) values ('kupus', 'zelen')
