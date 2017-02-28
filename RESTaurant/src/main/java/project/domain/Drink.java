@@ -112,6 +112,9 @@ public class Drink {
 		this.drinkOffers = drinkOffers;
 	}
 	
+	public void addRating(int rating, Restaurant restaurant){
+	}
+	
 	
 	
    /*

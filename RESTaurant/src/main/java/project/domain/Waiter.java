@@ -18,6 +18,10 @@ public class Waiter extends Employee {
 	public void setTrial(boolean trial) {
 		this.trial = trial;
 	}
+	
+	public void addRating(int rating){
+		
+	}
 
 	
    /*

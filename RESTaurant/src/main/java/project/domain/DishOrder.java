@@ -64,6 +64,10 @@ public class DishOrder {
 		this.dish = dish;
 	}
 	
+	public void setRatings(int rating){
+		
+	}
+	
 	
    
 }

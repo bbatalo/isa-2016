@@ -14,15 +14,15 @@ public class Chef extends Employee {
 	private static final long serialVersionUID = -8112031432823488140L;
 	
 	@Column(name = "chf_type", nullable = false)
-    private String type;
+    private DishType type;
 
 	protected Chef() {}
 	
-	public String getType() {
+	public DishType getType() {
 		return type;
 	}
 
-	public void setType(String type) {
+	public void setType(DishType type) {
 		this.type = type;
 	}
 
@@ -43,6 +43,10 @@ public class Chef extends Employee {
 
 	public void setDishOrders(List<DishOrder> dishOrders) {
 		this.dishOrders = dishOrders;
+	}
+	
+	public void addRating(int rating){
+		
 	}
    
     

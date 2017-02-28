@@ -13,7 +13,7 @@ public class Visit {
    public long idVisit;
    
    /** @pdRoleInfo migr=no name=Rating assc=rating mult=0..1 */
-   public Rating rating;
+ //  public Rating rating;
    /** @pdRoleInfo migr=no name=VisitHistory assc=visits mult=0..1 side=A */
    public VisitHistory visitHistory;
    /** @pdRoleInfo migr=no name=Reservation assc=reserved mult=0..1 side=A */

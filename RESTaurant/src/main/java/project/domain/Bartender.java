@@ -37,6 +37,10 @@ public class Bartender extends Employee {
 	public void setDrinkOrder(List<DrinkOrder> drinkOrder) {
 		this.drinkOrder = drinkOrder;
 	}
+	
+	public void addRating(int rating){
+		
+	}
    	
    /*
     * 

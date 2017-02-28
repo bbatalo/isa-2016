@@ -1,45 +1,80 @@
 /***********************************************************************
  * Module:  DishRating.java
- * Author:  Bojan
+ * Author:  Dusan hehe
  * Purpose: Defines the Class DishRating
  ***********************************************************************/
 package project.domain;
 
 import java.util.*;
 
-/** @pdOid fec3a856-2514-4bc0-b8bb-571f9995d07d */
+import javax.persistence.Column;
+
+
 public class DishRating {
-   /** @pdOid 1f11a110-1b97-4b0a-9203-4027e5fb736c */
+
+   @Column(name = "dshr_id", nullable = false)
    public long idDishRating;
-   /** @pdOid 89d7898f-7217-400a-b2c1-9ebcb5b7cd4e */
-   public short rating;
+
+   @Column(name = "dshr_rate", nullable = false)
+   public int rating;
    
-   /** @pdRoleInfo migr=no name=Rating assc=dishRating mult=0..1 side=A */
-   public Rating mainRating;
-   /** @pdRoleInfo migr=no name=Dish assc=dishesRating mult=0..1 side=A */
+   @Column(name = "dshr_dsh", nullable = false)
    public Dish dish;
    
+   @Column(name = "dshr_rst", nullable = false)
+   public Restaurant restauran;
    
-   /** @pdGenerated default parent getter */
-   public Dish getDish() {
-      return dish;
-   }
-   /*
-   public void setDish(Dish newDish) {
-      if (this.dish == null || !this.dish.equals(newDish))
-      {
-         if (this.dish != null)
-         {
-            Dish oldDish = this.dish;
-            this.dish = null;
-            oldDish.removeRatings(this);
-         }
-         if (newDish != null)
-         {
-            this.dish = newDish;
-            this.dish.addRatings(this);
-         }
-      }
-   }
-	*/
+   @Column(name = "dshr_num", nullable = false)
+   public int numberOfRates;
+
+public long getIdDishRating() {
+	return idDishRating;
+}
+
+public void setIdDishRating(long idDishRating) {
+	this.idDishRating = idDishRating;
+}
+
+public int getRating() {
+	return rating;
+}
+
+public void setRating(int rating) {
+	this.rating = rating;
+}
+
+public Dish getDish() {
+	return dish;
+}
+
+public void setDish(Dish dish) {
+	this.dish = dish;
+}
+
+public Restaurant getRestauran() {
+	return restauran;
+}
+
+public void setRestauran(Restaurant restauran) {
+	this.restauran = restauran;
+}
+
+public int getNumberOfRates() {
+	return numberOfRates;
+}
+
+public void setNumberOfRates(int numberOfRates) {
+	this.numberOfRates = numberOfRates;
+}
+   
+public void addRating(int rating) {
+	int rates = this.numberOfRates;
+	int compute = rates * this.rating;
+	this.numberOfRates = ++rates;
+	compute = compute + rating;
+	int newRating = compute / this.numberOfRates;
+	this.rating = newRating;
+	
+}
+ 
 }

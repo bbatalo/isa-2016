@@ -7,64 +7,96 @@ package project.domain;
 
 import java.util.*;
 
+import javax.persistence.Column;
+
 /** @pdOid 12aea99d-e037-434f-bcc3-a3fabdcb9fb4 */
 public class ChefRating {
-   /** @pdOid eea635d2-8307-4596-b324-6e5b71966418 */
-   public long idChefRating;
-   /** @pdOid ac55f277-13f1-45c5-803d-2a26de9be7b4 */
-   public short rating;
-   
-   /** @pdRoleInfo migr=no name=ServiceRating assc=chefRating mult=0..1 side=A */
-   public ServiceRating serviceRating;
-   /** @pdRoleInfo migr=no name=Chef assc=chefRatings mult=0..1 side=A */
-   public Chef chef;
-   
-   
-   /** @pdGenerated default parent getter */
-   public ServiceRating getServiceRating() {
-      return serviceRating;
-   }
-   
-   /** @pdGenerated default parent setter
-     * @param newServiceRating */
-   public void setServiceRating(ServiceRating newServiceRating) {
-      if (this.serviceRating == null || !this.serviceRating.equals(newServiceRating))
-      {
-         if (this.serviceRating != null)
-         {
-            ServiceRating oldServiceRating = this.serviceRating;
-            this.serviceRating = null;
-            oldServiceRating.removeChefRatings(this);
-         }
-         if (newServiceRating != null)
-         {
-            this.serviceRating = newServiceRating;
-            this.serviceRating.addChefRatings(this);
-         }
-      }
-   }
-   /** @pdGenerated default parent getter */
-   public Chef getChef() {
-      return chef;
-   }
-   
-   /** @pdGenerated default parent setter
-     * @param newChef */
-   public void setChef(Chef newChef) {
-      if (this.chef == null || !this.chef.equals(newChef))
-      {
-         if (this.chef != null)
-         {
-            Chef oldChef = this.chef;
-            this.chef = null;
-            //oldChef.removeRatings(this);
-         }
-         if (newChef != null)
-         {
-            this.chef = newChef;
-            //this.chef.addRatings(this);
-         }
-      }
-   }
+	@Column(name = "chfr_id", nullable = false)
+	   public long idChefRating;
+
+	   @Column(name = "chfr_rate", nullable = false)
+	   public int rating;
+	   
+	   @Column(name = "chfr_wtr", nullable = false)
+	   public Chef chef;
+	   
+	   @Column(name = "chfr_num", nullable = false)
+	   public int numberOfRates;
+	   
+	   
+
+
+
+
+
+
+	public long getIdChefRating() {
+		return idChefRating;
+	}
+
+
+
+
+	public void setIdChefRating(long idChefRating) {
+		this.idChefRating = idChefRating;
+	}
+
+
+
+
+	public Chef getChef() {
+		return chef;
+	}
+
+
+
+
+	public void setChef(Chef chef) {
+		this.chef = chef;
+	}
+
+
+
+
+	public int getRating() {
+		return rating;
+	}
+
+
+
+
+	public void setRating(int rating) {
+		this.rating = rating;
+	}
+
+
+
+
+
+
+
+	public int getNumberOfRates() {
+		return numberOfRates;
+	}
+
+
+
+
+	public void setNumberOfRates(int numberOfRates) {
+		this.numberOfRates = numberOfRates;
+	}
+
+
+
+
+public void addRating(int rating) {
+		int rates = this.numberOfRates;
+		int compute = rates * this.rating;
+		this.numberOfRates = ++rates;
+		compute = compute + rating;
+		int newRating = compute / this.numberOfRates;
+		this.rating = newRating;
+		
+	}
 
 }

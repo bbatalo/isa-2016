@@ -135,6 +135,7 @@
 	app.controller("TabController", ['$scope',function($scope){
 		$scope.selected = {};
 	    $scope.selected.tab = 7;
+	    this.tab = $scope.selected.tab;
 
 	    this.isSet = function(checkTab) {
 	      return $scope.selected.tab === checkTab;
@@ -145,6 +146,7 @@
 	    this.setTab = function(setTab) {
 	    	if(proba!=6){
 	    		$scope.selected.tab = setTab;
+	    		this.tab = $scope.selected.tab;
 	    	} else {
 	    		window.alert("It is necessary that you change your password!");
 	    	}
@@ -154,6 +156,7 @@
 	    
 	    $scope.$on('handleBroadcast', function() {
 		       $scope.selected.tab = 6;
+		       this.tab = $scope.selected.tab;
 		      });
 
 	}]);
@@ -356,9 +359,11 @@
 			}
 		};
 		
-		$scope.$watch('tabCtrl.isSet(2)', function() {
+		
+		$scope.$watch('tabCtrl.tab', function(newValue) {
+			if(newValue == 2){
 				control.getSegments();
-
+			}
 		});
 		
 		

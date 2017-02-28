@@ -33,8 +33,12 @@ public class Dish {
 	@JsonIgnore
 	private List<DishOrder> dishOrders;
 	
+	@Column(name="dish_type", nullable = false)
+	public DishType type;
+	
 	//public java.util.Collection<DishRating> ratings;
 	
+
 	@ManyToOne
 	@JoinColumn(name="menu_id")
 	public Menu menu;
@@ -87,6 +91,17 @@ public class Dish {
 
 	public void setDishOrders(List<DishOrder> dishOrders) {
 		this.dishOrders = dishOrders;
+	}
+	
+	public DishType getType() {
+		return type;
+	}
+
+	public void setType(DishType type) {
+		this.type = type;
+	}
+	
+	public void addRating(int rating, Restaurant restaurant){
 	}
 	
 	

@@ -1,45 +1,112 @@
 /***********************************************************************
  * Module:  DrinkRating.java
- * Author:  Bojan
+ * Author:  Dusan hehe
  * Purpose: Defines the Class DrinkRating
  ***********************************************************************/
 package project.domain;
 
 import java.util.*;
 
-/** @pdOid e57e561e-1267-4517-b6d9-ffd26b0cf55d */
+import javax.persistence.Column;
+
+
 public class DrinkRating {
-   /** @pdOid 46ed0eb2-cb37-4acf-a14f-75ee9d2266da */
-   public long idDrinkRating;
-   /** @pdOid 90a761ef-3d18-45a0-82ab-1de777b4464b */
-   public short rating;
+
+	@Column(name = "dnkr_id", nullable = false)
+	   public long idDrinkRating;
+
+	   @Column(name = "dnkr_rate", nullable = false)
+	   public int rating;
+	   
+	   @Column(name = "dnkr_dnk", nullable = false)
+	   public Drink drink;
+	   
+	   @Column(name = "dnkr_rst", nullable = false)
+	   public Restaurant restauran;
+	   
+	   @Column(name = "dnkr_num", nullable = false)
+	   public int numberOfRates;
+	   
+	   
    
-   /** @pdRoleInfo migr=no name=Rating assc=drinkRatings mult=0..1 side=A */
-   public Rating mainRating;
-   /** @pdRoleInfo migr=no name=Drink assc=drinkRating mult=0..1 side=A */
-   public Drink drink;
    
-   
-   /** @pdGenerated default parent getter */
-   public Drink getDrink() {
-      return drink;
-   }
-   /*
-   public void setDrink(Drink newDrink) {
-      if (this.drink == null || !this.drink.equals(newDrink))
-      {
-         if (this.drink != null)
-         {
-            Drink oldDrink = this.drink;
-            this.drink = null;
-            oldDrink.removeRatings(this);
-         }
-         if (newDrink != null)
-         {
-            this.drink = newDrink;
-            this.drink.addRatings(this);
-         }
-      }
-   }
-	*/
+   public long getIdDrinkRating() {
+		return idDrinkRating;
+	}
+
+
+
+
+	public void setIdDrinkRating(long idDrinkRating) {
+		this.idDrinkRating = idDrinkRating;
+	}
+
+
+
+
+	public int getRating() {
+		return rating;
+	}
+
+
+
+
+	public void setRating(int rating) {
+		this.rating = rating;
+	}
+
+
+
+
+	public Drink getDrink() {
+		return drink;
+	}
+
+
+
+
+	public void setDrink(Drink drink) {
+		this.drink = drink;
+	}
+
+
+
+
+	public Restaurant getRestauran() {
+		return restauran;
+	}
+
+
+
+
+	public void setRestauran(Restaurant restauran) {
+		this.restauran = restauran;
+	}
+
+
+
+
+	public int getNumberOfRates() {
+		return numberOfRates;
+	}
+
+
+
+
+	public void setNumberOfRates(int numberOfRates) {
+		this.numberOfRates = numberOfRates;
+	}
+
+
+
+
+public void addRating(int rating) {
+		int rates = this.numberOfRates;
+		int compute = rates * this.rating;
+		this.numberOfRates = ++rates;
+		compute = compute + rating;
+		int newRating = compute / this.numberOfRates;
+		this.rating = newRating;
+		
+	}
 }

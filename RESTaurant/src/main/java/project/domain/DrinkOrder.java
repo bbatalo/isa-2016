@@ -72,6 +72,10 @@ public class DrinkOrder {
 		this.order = order;
 	}
 	
+	public void setRatings(int rating){
+		
+	}
+	
 	
 
 }

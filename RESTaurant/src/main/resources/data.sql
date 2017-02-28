@@ -45,10 +45,10 @@ insert into drinks_menu (restaurant) values (2)
 insert into drinks_menu (restaurant) values (3)
 insert into drinks_menu (restaurant) values (4)
 
-insert into dish (dish_label, dish_description, dish_price, menu_id) values ('Cartmans chilli', 'Scott Tenormans parents', 100, 1)
-insert into dish (dish_label, dish_description, dish_price, menu_id) values ('Creme fraiche', 'Randy Marsh', 200, 1)
-insert into dish (dish_label, dish_description, dish_price, menu_id) values ('Taco-Flavored Kisses', 'Hennifer Lopez', 300, 1)
-insert into dish (dish_label, dish_description, dish_price, menu_id) values ('Fish sticks', 'Kanye West', 400, 1)
+insert into dish (dish_label, dish_description, dish_price, menu_id, dish_type) values ('Cartmans chilli', 'Scott Tenormans parents', 100, 1, '1')
+insert into dish (dish_label, dish_description, dish_price, menu_id, dish_type) values ('Creme fraiche', 'Randy Marsh', 200, 1, '2')
+insert into dish (dish_label, dish_description, dish_price, menu_id, dish_type) values ('Taco-Flavored Kisses', 'Hennifer Lopez', 300, 1, '3')
+insert into dish (dish_label, dish_description, dish_price, menu_id, dish_type) values ('Fish sticks', 'Kanye West', 400, 1, '2')
 
 
 insert into drink (drink_label, drink_description, drink_price, drinks_menu_id) values ('Mountain Dew', 'Shaka Brah', 100, 1)
@@ -98,7 +98,7 @@ insert into employee (emp_name, emp_surname, emp_role, emp_pass_changed, emp_dat
 	
 insert into waiter (wtr_trial, usr_id) values (true, '7')
 insert into bartender (bar_cocktails, usr_id) values (true, '8')
-insert into chef (chf_type, usr_id) values ('Kineski', '9')
+insert into chef (chf_type, usr_id) values ('4', '9')
 
 insert into friends (usr_id, frd_id) values ('1', '2')
 insert into friends (usr_id, frd_id) values ('1', '3')

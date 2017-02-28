@@ -112,6 +112,9 @@ public class Restaurant implements Serializable{
 		this.reservations = reservations;
 	}
 	
+	public void addRating(int rating){
+	}
+	
 	
 	//public Set<RestaurantManager> getRestaurantManagers() {
 	//	return restaurantManagers;
