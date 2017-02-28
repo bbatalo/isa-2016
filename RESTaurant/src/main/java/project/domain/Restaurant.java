@@ -58,6 +58,9 @@ public class Restaurant implements Serializable{
 	@OneToOne(mappedBy="restaurant")
 	public DrinksMenu drinksMenu;
 	
+	@OneToMany(mappedBy="restaurant")
+	@JsonIgnore
+	private List<Reservation> reservations;
 	
 	public Restaurant(){}
 
@@ -100,6 +103,15 @@ public class Restaurant implements Serializable{
 	public void setDescription(String description) {
 		this.description = description;
 	}
+
+	public List<Reservation> getReservations() {
+		return reservations;
+	}
+
+	public void setReservations(List<Reservation> reservations) {
+		this.reservations = reservations;
+	}
+	
 	
 	//public Set<RestaurantManager> getRestaurantManagers() {
 	//	return restaurantManagers;

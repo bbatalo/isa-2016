@@ -40,7 +40,69 @@
 	    		</ul>
 	  		</div>
 		</nav>
-		<div ng-show="tabCtrl.isSet(1)">RESTORANI IDEMO</div>
+		<div ng-show="tabCtrl.isSet(1)" ng-controller="ReservationsController as reservationsCtrl">
+			<div class="col-sm-2"></div>
+			<div class="col-sm-6">
+				<div ng-show="reservationsCtrl.phase == 1">
+					<table class="table table-hover">
+						<thead>
+							<tr>
+								<th>Type</th>
+								<th>Name</th>
+								<th>Description</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr ng-repeat="rest in reservationsCtrl.restaurants">
+								<td>{{rest.type}}</td>
+								<td>{{rest.name}}</td>
+								<td>{{rest.description}}</td>
+								<td>
+									<button class="btn btn-primary" ng-click="reservationsCtrl.select(rest.restaurantID)">
+										Reserve
+									</button>
+								</td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+				<div ng-show="reservationsCtrl.phase == 2">
+					<div class="panel panel-default">
+				  		<div class="panel-heading">Details</div>
+					  	<div class="panel-body">
+					  		<form name="termForm" class="form-horizontal" ng-submit="termForm.$valid && reservationsCtrl.term()" novalidate>
+					  			<div class="form-group">
+					  				<label class="control-label col-sm-3">Date:</label>
+					  				<div class="col-sm-9">
+					  					<input ng-model="reservationsCtrl.form.date" type="date" class="form-control" placeholder="Select date:" required></input>
+					  				</div>
+					  			</div>
+					  			<div class="form-group">
+					  				<label class="control-label col-sm-3">Time:</label>
+					  				<div class="col-sm-9">
+					  					<input ng-model="reservationsCtrl.form.time" type="time" class="form-control" placeholder="Select time:" required></input>
+					  				</div>
+					  			</div>
+					  			<div class="form-group">
+					  				<label class="control-label col-sm-3">Duration:</label>
+					  				<div class="col-sm-9">
+					  					<input ng-model="reservationsCtrl.form.duration" type="number" min="0" step="1" class="form-control" placeholder="Select duration:" required></input>
+					  				</div>
+					  			</div>
+								<div class="form-group col-sm-2">
+			                			<input  type="submit" class="btn btn-md btn-primary pull-right" value="Proceed" />
+			              		</div>
+					  		</form>
+					  	</div>
+				  	</div>
+				</div>
+				<div ng-show="reservationsCtrl.phase == 3">stolovi</div>
+				<div ng-show="reservationsCtrl.phase == 4">prijatelji</div>
+				<div ng-show="reservationsCtrl.phase == 5">porudzba</div>
+				<div ng-show="reservationsCtrl.phase == 6">potvrda</div>
+			</div>
+			<div class="col-sm-4"></div>
+		</div>
 		<div ng-show="tabCtrl.isSet(2)" ng-controller="FriendsController as friendsCtrl">
 			<div class="row">
 					<div class="col-sm-2">

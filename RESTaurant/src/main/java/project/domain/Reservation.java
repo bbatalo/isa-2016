@@ -21,7 +21,7 @@ public class Reservation {
 	@Id
 	@GeneratedValue
 	@Column(name = "res_id", nullable = false)
-    private long id;
+    private Long id;
 
 	//datum samo, recimo sa 00:00 vremenom, pocetak dana
 	@Column(name = "res_date", nullable = false)
@@ -36,6 +36,9 @@ public class Reservation {
 	//trajanje izrazeno u satima
 	@Column(name = "res_duration", nullable = false)
     private short duration;
+	
+	@Column(name = "res_status", nullable = false)
+	private String status;
 	
 	//stolovi restorana u kojem je izvrsena rezervacija
 	//moze da ti posluzi da skontas koji konobar/konobari treba da bude zaduzen/i za porudzbine
@@ -60,13 +63,17 @@ public class Reservation {
 	@JoinColumn(name="res_customer",  referencedColumnName="usr_id")
     private Customer customer;
    
+    @ManyToOne(optional=false)
+	@JoinColumn(name="res_restaurant",  referencedColumnName="rst_id")
+    private Restaurant restaurant;
+    
     public Reservation() {}
 
-	public long getId() {
+	public Long getId() {
 		return id;
 	}
 
-	public void setId(long id) {
+	public void setId(Long id) {
 		this.id = id;
 	}
 
@@ -93,6 +100,14 @@ public class Reservation {
 	public void setDuration(short duration) {
 		this.duration = duration;
 	}
+	
+	public String getStatus() {
+		return status;
+	}
+
+	public void setStatus(String status) {
+		this.status = status;
+	}
 
 	public List<RestTable> getTables() {
 		return tables;
@@ -116,6 +131,14 @@ public class Reservation {
 
 	public void setCustomer(Customer customer) {
 		this.customer = customer;
+	}
+
+	public Restaurant getRestaurant() {
+		return restaurant;
+	}
+
+	public void setRestaurant(Restaurant restaurant) {
+		this.restaurant = restaurant;
 	}
     
     
