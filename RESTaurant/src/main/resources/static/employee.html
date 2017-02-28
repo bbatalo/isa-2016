@@ -107,7 +107,29 @@
 
   
 </div></div>
-		<div ng-show="tabCtrl.isSet(2)">LABIRINT LUDI</div>
+		<div ng-controller="SeatingController as seatingCtrl" ng-show="tabCtrl.isSet(2)">
+		<div class="row">
+			  		<div class="col-sm-1"></div>
+			  		<div class="col-sm-8">
+			  			<h3>Arrange tables.</h3>
+
+				  		<div ng-repeat="segment in seatingCtrl.segmenti">
+				  		{{segment.label}}
+				  		<table>
+							<tbody>
+							
+								<tr ng-repeat="tableRow in segment.tables">
+									<td ng-repeat="tableCol in tableRow">
+										<input  type="button" ng-class="tableCol.tableClass" ng-value="tableCol.status"/>
+									</td>
+								</tr>
+							</tbody>
+						</table>
+						</div>
+					</div>
+					<div class="col-sm-1"></div>
+			  	</div>
+		</div>
 		<div ng-show="tabCtrl.isSet(3)">NARUDZBINE JOS LUDJE</div>
 		<div ng-show="tabCtrl.isSet(4)">OBROCI</div>
 		<div ng-show="tabCtrl.isSet(5)">PIVCE ZA ZIVCE</div>

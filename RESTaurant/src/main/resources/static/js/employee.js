@@ -5,6 +5,7 @@
 	var viewDate = new Date();
 	
 	app.service('employeeService', function() {
+		var restaurant = {};
 		var employee = {};
 		
 		var setEmployee = function(newEmployee) {
@@ -13,6 +14,31 @@
 		
 		var getEmployee = function() {
 			return employee;
+		}
+		
+		var setRestaurant = function(newRestaurant) {
+			restaurant = newRestaurant;
+		}
+		
+		var getRestaurant = function() {
+			return restaurant;
+		}
+		
+		var getRestaurantSeating = function(){
+			return restaurant.seatingArrangement;
+		}
+		
+		var getRestaurantDetails = function() {
+			var tmp = {};
+			tmp.restaurantID = restaurant.restaurantID;
+			tmp.name = restaurant.name;
+			tmp.type = restaurant.type;
+			tmp.description = restaurant.description;
+			return tmp;
+		}
+		
+		var getRestaurantMenu = function(){
+			return restaurant.menu;
 		}
 		
 		var getEmployeeDetails = function() {
@@ -44,7 +70,12 @@
 		    getEmployee: getEmployee,
 		    getEmployeeDetails: getEmployeeDetails,
 		    setEmployeeEmail: setEmployeeEmail,
-		    setEmployeeDetails: setEmployeeDetails
+		    setEmployeeDetails: setEmployeeDetails,
+		    setRestaurant: setRestaurant,
+		    getRestaurant: getRestaurant,
+		    getRestaurantDetails: getRestaurantDetails,
+		    getRestaurantMenu: getRestaurantMenu,
+		    getRestaurantSeating: getRestaurantSeating
 		  };
 	});
 	
@@ -84,6 +115,7 @@
 			}).then(function success(response) {
 				if (response.data.email != null) {
 					employeeService.setEmployee(response.data);
+					employeeService.setRestaurant(response.data.restaurant);
 					radnik = response.data;
 					$window.type = radnik.role;
 					$rootScope.type = $window.type;
@@ -222,32 +254,6 @@
 	      }
 	    }];
 	    vm.events = [
-	      {
-	        title: 'An event',
-	        color: calendarConfig.colorTypes.warning,
-	        startsAt: moment().startOf('week').subtract(2, 'days').add(8, 'hours').toDate(),
-	        endsAt: moment().startOf('week').add(1, 'week').add(9, 'hours').toDate(),
-	        draggable: true,
-	        resizable: true,
-	        actions: actions
-	      }, {
-	        title: '<i class="glyphicon glyphicon-asterisk"></i> <span class="text-primary">Another event</span>, with a <i>html</i> title',
-	        color: calendarConfig.colorTypes.info,
-	        startsAt: moment().subtract(1, 'day').toDate(),
-	        endsAt: moment().add(5, 'days').toDate(),
-	        draggable: true,
-	        resizable: true,
-	        actions: actions
-	      }, {
-	        title: 'This is a really long event title that occurs on every year',
-	        color: calendarConfig.colorTypes.important,
-	        startsAt: moment().startOf('day').add(7, 'hours').toDate(),
-	        endsAt: moment().startOf('day').add(19, 'hours').toDate(),
-	        recursOn: 'year',
-	        draggable: true,
-	        resizable: true,
-	        actions: actions
-	      }
 	    ];
 
 	    vm.cellIsOpen = true;
@@ -264,19 +270,15 @@
 	    };
 
 	    vm.eventClicked = function(event) {
-	      alert.show('Clicked', event);
 	    };
 
 	    vm.eventEdited = function(event) {
-	      alert.show('Edited', event);
 	    };
 
 	    vm.eventDeleted = function(event) {
-	      alert.show('Deleted', event);
 	    };
 
 	    vm.eventTimesChanged = function(event) {
-	      alert.show('Dropped or resized', event);
 	    };
 
 	    vm.toggle = function($event, field, event) {
@@ -305,6 +307,117 @@
 
 	    };
 	});
+	
+	
+	
+	// GAGIJEVO SEATING SOKOCALO
+	
+	app.controller('SeatingController', ['$scope', '$http', '$window', 'employeeService', function($scope, $http, $window, employeeService) {
+		var control = this;
+		control.segment = {};
+		control.segments = [];
+		control.segmenti = [];
+		control.result = "";
+		control.selectedSegment = {};
+		control.tables = {};
+
+		
+		//Instanciranje matrice stolova, stolovi su inicajlno prazni(nema stolova)
+		this.matrix = function(segment){
+			var arr = [];
+			for (var i = 0; i < segment.tableRows; ++i){
+				var columns = [];
+				for (var j = 0; j < segment.tableColumns; ++j){
+					var table = {};
+					table.status = "empty";
+					table.segment = segment;
+					table.tableCode = table.segment.label + i + j;
+					table.tableRow = i;
+					table.tableCol = j;
+					table.tableClass = control.setTableClass(table);
+					columns[j] = table;
+				}
+				arr[i] = columns;
+			}
+			return arr;
+		}
+		
+		
+		this.getSegments = function(){
+			$http.post('/restmanager/getSegments', employeeService.getRestaurantSeating()).then(function success(response){
+				control.segments = response.data;
+				control.segmenti = response.data;
+				for (var i=0; i<control.segments.length; i++){
+					$scope.arrangeTables(control.segments[i],i);
+					control.segmenti[i].tables = control.tables;
+				}
+			}), function error(response){
+				control.result = "Unknown error ocurred.";
+			}
+		};
+		
+		$scope.$watch('tabCtrl.isSet(2)', function() {
+				control.getSegments();
+
+		});
+		
+		
+		//Uzimaju se svi stolovi nekog segmenta
+		$scope.arrangeTables = function(segment,i){
+
+			var cache = [];
+			segment2 = JSON.stringify(segment, function(key, value) {
+			    if (typeof value === 'object' && value !== null) {
+			        if (cache.indexOf(value) !== -1) {
+			            // Circular reference found, discard key
+			            return;
+			        }
+			        // Store value in our collection
+			        cache.push(value);
+			    }
+			    return value;
+			});
+
+			control.selectedSegment = segment;
+			control.tables = control.matrix(segment);
+				
+			$http.post('/restmanager/getTables', segment2).then(function success(response){
+				for(it in response.data){
+
+					//Svi stolovi iz segmenta se postavljaju na svoje pozicije
+					control.segmenti[i].tables[response.data[it].tableRow][response.data[it].tableCol] = response.data[it];
+					control.segmenti[i].tables[response.data[it].tableRow][response.data[it].tableCol].tableClass = control.setTableClass(response.data[it]);
+				}
+			}), function error(response){
+				control.result = "Unknown error ocurred.";
+			}
+
+			
+
+		}
+		
+		
+		//ovom metodom postavljas klasu buttona koji prikazuje sto
+		this.setTableClass = function(table){
+			if(table.status === "empty")
+				return "btn btn-default";
+			else if(table.status === "free")
+				return "btn btn-success";
+			else if(table.status === "taken")
+				return "btn btn-danger";
+		}
+		
+		this.goBack = function(){
+			control.selectedSegment = {};
+			control.tables = {};
+			
+
+		}
+	}]);
+	
+	
+	
+	// KRAJ GAGIJEVOG SOKOCALA
 	
 	
 	
