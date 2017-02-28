@@ -386,5 +386,91 @@
 		this.setupWebsocket();
 	}]);
 	
+	app.controller('ReservationsController', ['$scope', '$http', '$window', 'customerService', function($scope, $http, $window, customerService) {
+		var control = this;
+		control.restaurants = [];
+		control.phase = 1;
+		control.reserv = {};
+		control.form = {};
+		control.sockets = [];
+		
+		control.isSet = function(checkPhase) {
+			return control.phase === checkPhase;
+		};
+
+		control.setPhase = function(setPhase) {
+			control.Phase = setPhase;
+		};
+		    
+		$scope.$watch('tabCtrl.tab', function(newValue) {
+			if (newValue == 1) {	
+				control.loadRestaurants();
+			}
+		});
+		
+		control.loadRestaurants = function() {
+			control.phase = 1;
+			$http({
+				method: 'GET',
+				url: '/reservations/getRestaurants',
+			}).then(function success(response) {
+				if (response.data.length != 0) {
+					control.restaurants = response.data;
+				}
+			});
+		}
+		
+		control.select = function(id) {
+			control.clean();
+			control.phase = 2;
+			control.reserv.restID = id;
+		}
+		
+		control.term = function() {
+			control.reserv.date = control.form.date;
+			control.reserv.time = control.form.time;
+			control.reserv.duration = control.form.duration;
+			$http({
+				method: 'POST',
+				url: '/reservations/term',
+				headers: {
+					   'Content-Type': 'application/json',	   
+					 },
+				data: control.reserv
+			}).then(function success(response) {
+				if (response.data != null) {
+					if (response.data.status == "Setup") {
+						control.reserv = response.data;
+						control.phase = 3;
+					} else if (response.data.status == "Wrong date") {
+						toastr["error"]('You cannot make a reservation in the past.', "Check date!");
+					} else if (response.data.statys == "Wrong time") {
+						toastr["error"]('You cannot make a reservation in the past.', "Check time!");
+					}
+				}
+			});
+			
+			
+		}
+		
+		control.clean = function() {
+			control.reserv = {};
+			control.form = {};
+			var requestData = {};
+			requestData.userID = customerService.getCustomer().userID;
+			
+			$http({
+				method: 'POST',
+				url: '/reservations/clean',
+				headers: {
+					   'Content-Type': 'application/json',	   
+					 },
+				data: requestData
+			}).then(function success(response) {
+				
+			});
+			
+		}
+	}]);
 })();
 
