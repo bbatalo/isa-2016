@@ -8,10 +8,13 @@ package project.domain;
 import java.util.*;
 
 import javax.persistence.Column;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
 
 
 public class DishRating {
-
+	@Id
+	@GeneratedValue
    @Column(name = "dshr_id", nullable = false)
    public long idDishRating;
 

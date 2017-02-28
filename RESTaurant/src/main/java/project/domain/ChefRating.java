@@ -8,10 +8,14 @@ package project.domain;
 import java.util.*;
 
 import javax.persistence.Column;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
 
 /** @pdOid 12aea99d-e037-434f-bcc3-a3fabdcb9fb4 */
 public class ChefRating {
-	@Column(name = "chfr_id", nullable = false)
+		@Id
+		@GeneratedValue
+		@Column(name = "chfr_id", nullable = false)
 	   public long idChefRating;
 
 	   @Column(name = "chfr_rate", nullable = false)

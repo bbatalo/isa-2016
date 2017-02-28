@@ -10,11 +10,14 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import java.util.*;
 
 import javax.persistence.Column;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
 
 
 public class ServiceRating {
 
-   
+	@Id
+	@GeneratedValue
    @Column(name = "svcr_id", nullable = false)
    public long idServiceRaing;
    

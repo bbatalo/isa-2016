@@ -3,10 +3,13 @@ package project.domain;
 import java.util.List;
 
 import javax.persistence.Column;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
 
 public class OrderRating {
 	
-
+		@Id
+		@GeneratedValue
 	   @Column(name = "ordr_id", nullable = false)
 	   public long idServiceRaing;
 	   

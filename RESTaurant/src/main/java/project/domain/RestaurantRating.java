@@ -8,9 +8,13 @@ package project.domain;
 import java.util.*;
 
 import javax.persistence.Column;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
 
 
 public class RestaurantRating {
+	@Id
+	@GeneratedValue
 	@Column(name = "rstr_id", nullable = false)
 	   public long idRestaurantRating;
 
