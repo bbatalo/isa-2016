@@ -45,6 +45,10 @@
 			return restaurant.seatingArrangement;
 		}
 		
+		var getRestaurantSchedule = function(){
+			return restaurant.schedule;
+		}
+		
 		var getRestaurantDetails = function() {
 			var tmp = {};
 			tmp.restaurantID = restaurant.restaurantID;
@@ -73,7 +77,8 @@
 		    getRestaurantDrinksMenu: getRestaurantDrinksMenu,
 		    setRestaurantManager: setRestaurantManager,
 		    getRestaurantManager: getRestaurantManager,
-		    getRestaurantSeating: getRestaurantSeating
+		    getRestaurantSeating: getRestaurantSeating,
+		    getRestaurantSchedule: getRestaurantSchedule
 		  };
 	});
 	
@@ -170,8 +175,9 @@
 			}
 		}
 
-		$scope.$watch('tab.isSet(2)', function() {
-			control.form = JSON.parse(JSON.stringify(restaurantService.getRestaurantDetails()));
+		$scope.$watch('tab.tab', function(newValue) {
+			if(newValue == 2)
+				control.form = JSON.parse(JSON.stringify(restaurantService.getRestaurantDetails()));
 		});
 
 	}]);
@@ -204,8 +210,10 @@
 			
 		};
 		
-		$scope.$watch('tab.isSet(3)', function() {
-			control.getDishes();
+		$scope.$watch('tab.tab', function(newValue) {
+			if(newValue == 3){
+				control.getDishes();
+			}
 		});
 		
 		this.removeDish = function(dish){
@@ -257,8 +265,9 @@
 			
 		};
 		
-		$scope.$watch('tab.isSet(4)', function() {
-			control.getDrinks();
+		$scope.$watch('tab.tab', function(newValue) {
+			if(newValue == 5)
+				control.getDrinks();
 		});
 		
 		this.removeDrink = function(drink){
@@ -391,9 +400,11 @@
 				alert('End date needs to be after begin date.');
 		}
 		
-		$scope.$watch('tab.isSet(5)', function() {
-			control.getAllDrinks();
-			control.getAllGroceries();
+		$scope.$watch('tab.tab', function(newValue) {
+			if(newValue == 5){
+				control.getAllDrinks();
+				control.getAllGroceries();
+			}
 		});
 	}]);
 	
@@ -439,8 +450,10 @@
 			control.toggleContent = true;
 		}
 		
-		$scope.$watch('tab.isSet(6)', function() {
-			control.loadOffers();
+		$scope.$watch('tab.tab', function(newValue) {
+			if(newValue == 6){
+				control.loadOffers();
+			}
 		});
 	}]);
 	
@@ -498,8 +511,10 @@
 			}
 		};
 		
-		$scope.$watch('tab.isSet(7)', function() {
-			control.getSegments();
+		$scope.$watch('tab.tab', function(newValue) {
+			if(newValue == 7){
+				control.getSegments();
+			}
 		});
 		
 		this.removeSegment = function(segment){
@@ -642,8 +657,10 @@
 			}
 		};
 
-		$scope.$watch('tab.isSet(8)', function() {
-			control.getEmployees();
+		$scope.$watch('tab.tab', function(newValue) {
+			if(newValue == 8){
+				control.getEmployees();
+			}
 		});
 	}]);
 	
@@ -676,24 +693,8 @@
 	        endsAt: moment().startOf('week').add(1, 'week').add(9, 'hours').toDate(),
 	        draggable: true,
 	        resizable: true,
-	        actions: actions
-	      }, {
-	        title: '<i class="glyphicon glyphicon-asterisk"></i> <span class="text-primary">Another event</span>, with a <i>html</i> title',
-	        color: calendarConfig.colorTypes.info,
-	        startsAt: moment().subtract(1, 'day').toDate(),
-	        endsAt: moment().add(5, 'days').toDate(),
-	        draggable: true,
-	        resizable: true,
-	        actions: actions
-	      }, {
-	        title: 'This is a really long event title that occurs on every year',
-	        color: calendarConfig.colorTypes.important,
-	        startsAt: moment().startOf('day').add(7, 'hours').toDate(),
-	        endsAt: moment().startOf('day').add(19, 'hours').toDate(),
-	        recursOn: 'year',
-	        draggable: true,
-	        resizable: true,
-	        actions: actions
+	        actions: actions,
+	        alreadyAdded: false
 	      }
 	    ];
 
@@ -706,7 +707,8 @@
 	        endsAt: moment().endOf('day').toDate(),
 	        color: calendarConfig.colorTypes.important,
 	        draggable: true,
-	        resizable: true
+	        resizable: true,
+	        alreadyAdded: false
 	      });
 	    };
 
@@ -753,11 +755,110 @@
 	    };
 	});
 	
-	app.controller("ListController", ['$scope', '$http',function($scope, $http){
+	app.controller("ShiftController", ['$scope', '$http', 'restaurantService', function($scope, $http, restaurantService){
+		var control = this;
+		control.shift = {};
 		$scope.arbeit = {};
 		$scope.parameter = {};
-		$scope.listing = [];
+		control.employees = [];
+		control.segments = [];
 		$scope.mapa = [];
+		
+		//----novi deo
+		control.shifts = [];
+		control.employee = {};
+		control.segment = {};
+		control.shiftBegins = new Date();
+		control.shiftEnds = new Date();
+		control.event = {
+			id: 0,
+			title: 'New shift.',
+	        startsAt: new Date(),
+	        endsAt: new Date(),
+	        draggable: true,
+	        resizable: true,
+		};
+		control.showSegment = false;
+		control.newShift = false;
+		//---novi deo
+		
+		control.events = [];
+		
+		this.checkIfWaiter = function(employee){
+			if(employee.role === "WAITER")
+				control.showSegment = true;
+			else{
+				control.showSegment = false;
+			}
+		}
+		
+		this.isWaiter = function(){
+			return control.showSegment;
+		}
+		
+		this.isNewShift = function(){
+			return control.newShift;
+		}
+		
+		this.register = function(){
+				var shift = {};
+				shift.employee = control.employee;
+				shift.segment = control.segment;
+				shift.schedule = restaurantService.getRestaurantSchedule();
+				shift.shiftBegins = control.event.startsAt;
+				shift.shiftEnds = control.event.endsAt;
+				
+				$http.post('/restmanager/addShift', shift).then(function success(response){
+					if(response.data !== null){
+						alert('Success!');
+						control.event.id = response.data.idShift;
+						control.event.title = control.employee.email;
+						control.shifts.push(response.data);
+						control.events.push(control.event);
+						
+						control.employee = {};
+						control.segment = {};
+						control.shiftBegins = new Date();
+						control.shiftEnds = new Date();
+						control.event = {
+							id: 0,
+							title: 'New shift.',
+					        startsAt: new Date(),
+					        endsAt: new Date(),
+					        draggable: true,
+					        resizable: true,
+						};
+						control.showSegment = false;
+						control.newShift = false;
+					}else{
+						alert('Error');
+					}
+					
+				}), function error(response){
+					control.result = "Unknown error ocurred.";
+				}
+		}
+		
+		this.cancelShift = function(){
+			control.employee = {};
+			control.segment = {};
+			control.shiftBegins = new Date();
+			control.shiftEnds = new Date();
+			control.event = {
+				id: 0,
+				title: 'New shift.',
+		        startsAt: new Date(),
+		        endsAt: new Date(),
+		        draggable: true,
+		        resizable: true,
+			};
+			control.showSegment = false;
+			control.newShift = false;
+		}
+		
+		control.addEvent = function() {
+			control.newShift = true;
+		};
 		
 		$scope.fillArbeit = function() {
 			
@@ -770,19 +871,10 @@
 					 data: $scope.parameter
 			}).then(function success(response) {
 				if (response.data != null) {
-					$scope.listing = [];
+					control.employees = [];
 					$scope.arbeit = response.data
 					 angular.forEach($scope.arbeit, function(value, key){
-						 var fullname = value.name + " " + value.surname;
-						 var par = 
-	                     {
-								 name : fullname,
-								 role : value.role,
-								 uid : value.userID
-	                     }
-						 $scope.listing.push(par);
-						 
-						 
+						 control.employees.push(value);
 					   });
 
 					
@@ -790,14 +882,72 @@
 			});
 		}
 		
-		$scope.blisters = [{id:1,name:"Bartender"},{id:2,name:"Chef"},{id:3,name:"Waiter"}];
-
-		  $scope.changedValue = function(item) {
-			  $scope.parameter=item.name;
-			  $scope.fillArbeit();
-		  }  
+		$scope.$watch('tab.tab', function(newValue) {
+				
+				if(newValue !== 9)
+					return;
+			
+				$http.post('/restmanager/getSegments', restaurantService.getRestaurantSeating()).then(function success(response){
+					control.segments = response.data;
+				}), function error(response){
+					control.result = "Unknown error ocurred.";
+				}
+				
+				$http.post('/restmanager/getShifts', restaurantService.getRestaurantSchedule()).then(function success(response){
+					control.shifts = response.data;
+					for(it in response.data){
+						
+						event = {
+						        id: response.data[it].idShift,
+								title: response.data[it].employee.email,
+						        startsAt: new Date(response.data[it].shiftBegins),
+						        endsAt: new Date(response.data[it].shiftEnds),
+						        draggable: true,
+						        resizable: true,
+						      }
+						
+						control.events.push(event);
+					}
+				}), function error(response){
+					control.result = "Unknown error ocurred.";
+				}
+		});
+		
+		$scope.changedValue = function(item) {
+		  $scope.parameter=item.name;
 		  $scope.fillArbeit();
-
+		}  
+		
+		$scope.fillArbeit();
+		
+		this.removeShift = function(event){
+			
+			var shift = {};
+			shift.idShift = event.id;
+			
+			$http.post('/restmanager/removeShift', shift).then(function success(response){
+				alert(response.data);
+				
+				var index = -1;		
+				var shiftsArr = eval( control.shifts );
+				for( var i = 0; i < shiftsArr.length; i++ ) {
+					if( shiftsArr[i].idShift === event.id ) {
+						index = i;
+						break;
+					}
+				}
+				if( index === -1 ) {
+					alert( "Something gone wrong" );
+				}else{
+					control.shifts.splice( index, 1 );
+					control.events.splice(index, 1);
+				}
+				
+			}), function error(response){
+				control.result = "Unknown error ocurred.";
+			}
+		}
+		
 	}]);
 	
 	

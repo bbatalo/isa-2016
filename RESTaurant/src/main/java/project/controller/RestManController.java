@@ -26,6 +26,7 @@ import project.domain.Drink;
 import project.domain.DrinkOffer;
 import project.domain.DrinksMenu;
 import project.domain.Employee;
+import project.domain.EmployeeRole;
 import project.domain.Grocery;
 import project.domain.GroceryOffer;
 import project.domain.Menu;
@@ -36,12 +37,15 @@ import project.domain.Restaurant;
 import project.domain.RestaurantManager;
 import project.domain.SeatingArrangement;
 import project.domain.Segment;
+import project.domain.Shift;
 import project.domain.Supplier;
 import project.domain.SystemManager;
 import project.domain.User;
+import project.domain.WorkSchedule;
 import project.domain.dto.BidDTO;
 import project.domain.dto.OfferAcceptedDTO;
 import project.messaging.OfferMessenger;
+import project.repository.ShiftRepository;
 import project.service.BidService;
 import project.service.DishService;
 import project.service.DrinkOfferService;
@@ -53,8 +57,10 @@ import project.service.OfferService;
 import project.service.OnlineService;
 import project.service.RestaurantService;
 import project.service.SegmentService;
+import project.service.ShiftService;
 import project.service.TableService;
 import project.service.UserService;
+import project.service.WorkScheduleService;
 import project.service.RestManService;
 
 @RequestMapping("/restmanager")
@@ -104,6 +110,9 @@ public class RestManController {
 	
 	@Autowired
 	private EmployeeService employeeService;
+	
+	@Autowired
+	private ShiftService shiftService;
 	
 	@RequestMapping(value = "/load",
 			method = RequestMethod.GET,
@@ -471,5 +480,55 @@ public class RestManController {
 	@ResponseBody
 	public List<Employee> getEmployees(@Context HttpServletRequest request, @RequestBody Restaurant restaurant){
 		return employeeService.getEmployeesByRestaurantId(restaurant.getRestaurantID());
+	}
+	
+	@Transactional
+	@RequestMapping(value="/addShift",
+			method = RequestMethod.POST,
+			consumes = MediaType.APPLICATION_JSON,
+			produces = MediaType.APPLICATION_JSON)
+	@ResponseBody
+	public Shift addShift(@RequestBody Shift shift){
+		
+		Employee e = employeeService.getEmployeeById(shift.getEmployee().getUserID());
+		
+		Segment s = null;
+
+		if(e.getRole() == EmployeeRole.WAITER){
+			s = segmentService.getSegmentByLabel(shift.getSegment().getLabel());
+		}
+		shift.setEmployee(e);
+		shift.setSegment(s);
+		
+		Shift ret = shiftService.addShift(shift);
+		
+		return ret;
+	}
+	
+	@Transactional
+	@RequestMapping(value="/removeShift",
+			method = RequestMethod.POST,
+			consumes = MediaType.APPLICATION_JSON,
+			produces = MediaType.TEXT_PLAIN)
+	@ResponseBody
+	public String removeShift(@RequestBody Shift shift){
+		Shift s = shiftService.getShiftById(shift.getIdShift());
+		
+		if(s != null){
+			shiftService.deleteShiftById(shift.getIdShift());
+			
+			return "Shift removed.";
+		}
+		
+		return "Shift not found!";
+	}
+	
+	@RequestMapping(value="/getShifts",
+			method = RequestMethod.POST,
+			consumes = MediaType.APPLICATION_JSON,
+			produces = MediaType.APPLICATION_JSON)
+	@ResponseBody
+	public List<Shift> getShifts(@Context HttpServletRequest request, @RequestBody WorkSchedule schedule){
+		return shiftService.getShiftsByWorkScheduleId(schedule.getIdSchedule());
 	}
 }

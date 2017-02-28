@@ -61,6 +61,11 @@ insert into seating_arrangement (restaurant) values (2)
 insert into seating_arrangement (restaurant) values (3)
 insert into seating_arrangement (restaurant) values (4)
 
+insert into work_schedule (restaurant) values (1)
+insert into work_schedule (restaurant) values (2)
+insert into work_schedule (restaurant) values (3)
+insert into work_schedule (restaurant) values (4)
+
 insert into segment (segment_label, segment_description, seating_arrangement_id, segment_cols, segment_rows) values ('Pusaci', 'Dim', 1, '5', '5')
 insert into segment (segment_label, segment_description, seating_arrangement_id, segment_cols, segment_rows) values ('Nepusaci', 'Nema dima', 1, '7', '7')
 insert into segment (segment_label, segment_description, seating_arrangement_id, segment_cols, segment_rows) values ('Balkon', 'Otvoreno', 1, '2', '4')
@@ -87,12 +92,12 @@ insert into restaurant_manager (rsm_name, rsm_surname, usr_id, rst_id) values ('
 insert into supplier (sup_label, sup_desc, sup_pass_changed, usr_id) values ('Dostava', 'ispred sam', false, '10')
 insert into supplier (sup_label, sup_desc, sup_pass_changed, usr_id) values ('Test', 'ispred sam', false, '11')
 
-insert into employee (emp_name, emp_surname, emp_role, emp_pass_changed, emp_date_birth, emp_size_cloth, emp_size_shoes, usr_id, rst_id) values ('Milica', 'Stanković', '0', false, '1995-5-5', '40', '38', '7', 1)
-insert into employee (emp_name, emp_surname, emp_role, emp_pass_changed, emp_date_birth, emp_size_cloth, emp_size_shoes, usr_id, rst_id) values ('Ognjen', 'Velisavčić', '1', false, '1995-5-5', '46', '45', '8', 1)
-insert into employee (emp_name, emp_surname, emp_role, emp_pass_changed, emp_date_birth, emp_size_cloth, emp_size_shoes, usr_id, rst_id) values ('Marija', 'Kovačević', '2', false, '1995-5-5', '38', '36', '9', 1)
+insert into employee (emp_name, emp_surname, emp_role, emp_pass_changed, emp_date_birth, emp_size_cloth, emp_size_shoes, usr_id, rst_id) values ('Milica', 'Stanković', '1', false, '1995-5-5', '40', '38', '7', 1)
+insert into employee (emp_name, emp_surname, emp_role, emp_pass_changed, emp_date_birth, emp_size_cloth, emp_size_shoes, usr_id, rst_id) values ('Ognjen', 'Velisavčić', '2', false, '1995-5-5', '46', '45', '8', 1)
+insert into employee (emp_name, emp_surname, emp_role, emp_pass_changed, emp_date_birth, emp_size_cloth, emp_size_shoes, usr_id, rst_id) values ('Marija', 'Kovačević', '0', false, '1995-5-5', '38', '36', '9', 1)
 	
-insert into bartender (bar_cocktails, usr_id) values (true, '7')
-insert into waiter (wtr_trial, usr_id) values (true, '8')
+insert into waiter (wtr_trial, usr_id) values (true, '7')
+insert into bartender (bar_cocktails, usr_id) values (true, '8')
 insert into chef (chf_type, usr_id) values ('Kineski', '9')
 
 insert into friends (usr_id, frd_id) values ('1', '2')

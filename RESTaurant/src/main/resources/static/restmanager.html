@@ -558,7 +558,7 @@
 					<div class="col-sm-2"></div>
 			  	</div>
 		  	</div>
-		  	<div ng-show="tab.isSet(9)"><div ng-controller="KitchenSinkCtrl as vm">
+		  	<div ng-show="tab.isSet(9)" ng-controller="ShiftController as shiftCtrl"><div ng-controller="KitchenSinkCtrl as vm">
   <h2 class="text-center">{{ vm.calendarTitle }}</h2>
 
   <div class="row">
@@ -601,7 +601,7 @@
   <br>
 
   <mwl-calendar
-    events="vm.events"
+    events="shiftCtrl.events"
     view="vm.calendarView"
     view-title="vm.calendarTitle"
     view-date="vm.viewDate"
@@ -622,97 +622,126 @@
     Edit shifts
     <button
       class="btn btn-primary pull-right"
-      ng-click="vm.addEvent()">
+      ng-click="shiftCtrl.addEvent()">
       Add new
     </button>
     <div class="clearfix"></div>
   </h3>
-
-  <table class="table table-bordered" ng-controller="ListController as listCtrl">
-
-    <thead>
+	
+	<div class="row" ng-show="shiftCtrl.isNewShift()">
+ 		<div class="col-sm-4"></div>
+	 		<div class="col-sm-4">
+			<div class="panel panel-default">
+				<div class="panel-body">
+					<form name="addShiftForm" ng-submit="addShiftForm.$valid && shiftCtrl.register()" class="form-signin" novalidate >
+						<h3>Add shift.</h3>
+						<fieldset class="form-group">
+							<select ng-model="shiftCtrl.employee" class="form-control" ng-options="employee.email for employee in shiftCtrl.employees" ng-change="shiftCtrl.checkIfWaiter(shiftCtrl.employee)" required>
+          					</select>
+						</fieldset>
+						<fieldset class="form-group" ng-show="shiftCtrl.isWaiter()">
+							<select ng-model="shiftCtrl.segment" class="form-control" ng-options="segment.label for segment in shiftCtrl.segments" >
+          					</select>
+          				</fieldset>
+          				<fieldset class="form-group">
+          					<p class="input-group" style="max-width: 250px">
+					            <input
+					              type="text"
+					              class="form-control"
+					              readonly
+					              uib-datepicker-popup="dd MMMM yyyy"
+					              ng-model="shiftCtrl.event.startsAt"
+					              is-open="shiftCtrl.event.startOpen"
+					              close-text="Close" >
+					            <span class="input-group-btn">
+					              <button
+					                type="button"
+					                class="btn btn-default"
+					                ng-click="vm.toggle($event, 'startOpen', shiftCtrl.event)">
+					                <i class="glyphicon glyphicon-calendar"></i>
+					              </button>
+					            </span>
+					          </p>
+					          <div
+					            uib-timepicker
+					            ng-model="shiftCtrl.event.startsAt"
+					            hour-step="1"
+					            minute-step="15"
+					            show-meridian="true">
+					          </div>
+          				</fieldset class="form-group">
+          				<fieldset>
+          					<p class="input-group" style="max-width: 250px">
+					            <input
+					              type="text"
+					              class="form-control"
+					              readonly
+					              uib-datepicker-popup="dd MMMM yyyy"
+					              ng-model="shiftCtrl.event.endsAt"
+					              is-open="shiftCtrl.event.endOpen"
+					              close-text="Close">
+					            <span class="input-group-btn">
+					              <button
+					                type="button"
+					                class="btn btn-default"
+					                ng-click="vm.toggle($event, 'endOpen', shiftCtrl.event)">
+					                <i class="glyphicon glyphicon-calendar"></i>
+					              </button>
+					            </span>
+					          </p>
+					          <div
+					            uib-timepicker
+					            ng-model="shiftCtrl.event.endsAt"
+					            hour-step="1"
+					            minute-step="15"
+					            show-meridian="true">
+					          </div>
+          				</fieldset>
+						<fieldset class="form-group">
+	              			<input  type="submit" class="btn btn-lg btn-primary btn-block pull-right" value="Register" />
+	              			<input  type="button" class="btn btn-lg btn-primary btn-block pull-right" value="Cancel" ng-click="shiftCtral.cancelShift()" />
+	            		</fieldset>
+						<hr></hr>
+					</form>
+				</div>
+			</div>
+ 		</div>
+ 		<div class="col-sm-4"></div>
+ 	</div>
+	
+  <table class="table table-bordered">
+  	<thead>
       <tr>
         <th>Employee</th>
-        <th>Area</th>
+        <th>Color</th>
         <th>Starts at</th>
         <th>Ends at</th>
         <th>Remove</th>
       </tr>
     </thead>
-
     <tbody>
-      <tr ng-repeat="event in vm.events track by $index">
+      <tr ng-repeat="event in shiftCtrl.events track by $index">
         <td>
-          <select ng-model="state" ng-options="state.name as state.name for state in listing">
-          </select>
+        	{{event.title}}
         </td>
         <td>
           <input class="form-control" colorpicker type="text" ng-model="event.color.primary">
         </td>
         <td>
-          <p class="input-group" style="max-width: 250px">
-            <input
-              type="text"
-              class="form-control"
-              readonly
-              uib-datepicker-popup="dd MMMM yyyy"
-              ng-model="event.startsAt"
-              is-open="event.startOpen"
-              close-text="Close" >
-            <span class="input-group-btn">
-              <button
-                type="button"
-                class="btn btn-default"
-                ng-click="vm.toggle($event, 'startOpen', event)">
-                <i class="glyphicon glyphicon-calendar"></i>
-              </button>
-            </span>
-          </p>
-          <div
-            uib-timepicker
-            ng-model="event.startsAt"
-            hour-step="1"
-            minute-step="15"
-            show-meridian="true">
-          </div>
+        	<input type="date" ng-model="event.startsAt" readonly/>
         </td>
         <td>
-          <p class="input-group" style="max-width: 250px">
-            <input
-              type="text"
-              class="form-control"
-              readonly
-              uib-datepicker-popup="dd MMMM yyyy"
-              ng-model="event.endsAt"
-              is-open="event.endOpen"
-              close-text="Close">
-            <span class="input-group-btn">
-              <button
-                type="button"
-                class="btn btn-default"
-                ng-click="vm.toggle($event, 'endOpen', event)">
-                <i class="glyphicon glyphicon-calendar"></i>
-              </button>
-            </span>
-          </p>
-          <div
-            uib-timepicker
-            ng-model="event.endsAt"
-            hour-step="1"
-            minute-step="15"
-            show-meridian="true">
-          </div>
+        	<input type="date" ng-model="event.endsAt" readonly/>
         </td>
         <td>
           <button
             class="btn btn-danger"
-            ng-click="vm.events.splice($index, 1)">
+            ng-click="shiftCtrl.removeShift(event)">
             Delete
           </button>
         </td>
       </tr>
     </tbody>
-
   </table>
 </div></div>
 	</body>

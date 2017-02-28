@@ -8,12 +8,16 @@ package project.domain;
 import static javax.persistence.InheritanceType.JOINED;
 
 import java.util.Date;
+import java.util.Set;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Inheritance;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
 @Inheritance(strategy = JOINED)
@@ -41,7 +45,11 @@ public class Employee extends User {
 
 	@Column(name = "emp_size_shoes", nullable = false)
     private int sizeShoes;
-
+	
+	@OneToMany(mappedBy="employee")
+	@JsonIgnore
+	private Set<Shift> shifts;
+	
 	public Employee() {}
 	
 	public String getName() {

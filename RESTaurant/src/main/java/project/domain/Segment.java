@@ -45,6 +45,10 @@ public class Segment {
 	@JoinColumn(name="seating_arrangement_id")
 	public SeatingArrangement seating;
 	
+	@OneToMany(mappedBy="segment")
+	@JsonIgnore
+	public Set<Shift> shifts;
+	
 	public Segment() {}
 
 	public long getIdSegment() {

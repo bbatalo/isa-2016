@@ -54,7 +54,7 @@ public class DailySchedule {
       if (!this.shifts.contains(newShift))
       {
          this.shifts.add(newShift);
-         newShift.setDailySchedule(this);      
+    //     newShift.setDailySchedule(this);      
       }
    }
    
@@ -67,7 +67,7 @@ public class DailySchedule {
          if (this.shifts.contains(oldShift))
          {
             this.shifts.remove(oldShift);
-            oldShift.setDailySchedule((DailySchedule)null);
+           // oldShift.setDailySchedule((DailySchedule)null);
          }
    }
    
@@ -80,7 +80,7 @@ public class DailySchedule {
          {
             oldShift = (Shift)iter.next();
             iter.remove();
-            oldShift.setDailySchedule((DailySchedule)null);
+           // oldShift.setDailySchedule((DailySchedule)null);
          }
       }
    }
@@ -151,23 +151,5 @@ public class DailySchedule {
       return schedule;
    }
    
-   /** @pdGenerated default parent setter
-     * @param newWorkSchedule */
-   public void setSchedule(WorkSchedule newWorkSchedule) {
-      if (this.schedule == null || !this.schedule.equals(newWorkSchedule))
-      {
-         if (this.schedule != null)
-         {
-            WorkSchedule oldWorkSchedule = this.schedule;
-            this.schedule = null;
-            oldWorkSchedule.removeDailySchedule(this);
-         }
-         if (newWorkSchedule != null)
-         {
-            this.schedule = newWorkSchedule;
-            this.schedule.addDailySchedule(this);
-         }
-      }
-   }
 
 }

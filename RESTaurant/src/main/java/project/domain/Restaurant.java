@@ -53,10 +53,21 @@ public class Restaurant implements Serializable{
 	public SeatingArrangement seatingArrangement;
 	
 	@OneToOne(mappedBy="restaurant")
+	public WorkSchedule schedule;
+	
+	@OneToOne(mappedBy="restaurant")
 	public DrinksMenu drinksMenu;
 	
 	
 	public Restaurant(){}
+
+	public WorkSchedule getSchedule() {
+		return schedule;
+	}
+
+	public void setSchedule(WorkSchedule schedule) {
+		this.schedule = schedule;
+	}
 
 	public long getRestaurantID() {
 		return restaurantID;
