@@ -125,6 +125,9 @@
 			if(bid.end < new Date()){
 				toastr["error"]("This bid has expired!");
 				return;
+			}else if(bid.hasOffer){
+				toastr["error"]('This bid has expired!');
+				return;
 			}
 			
 			control.toggleOffer = false;
@@ -208,16 +211,21 @@
 			control.offer.lastsUntil = $scope.offerLastsUntil.value;
 			control.offer.bid = control.bidToOffer;
 			control.offer.supplier = supplierService.getSupplier();
+			control.offer.status = "Waiting";
 			$http.post('/supplier/addOffer', control.offer).then(function success(response){
-				toastr["success"]('Bid successfully offered!');
-				control.offer = {};
-				control.offer.bid = {};
-				control.offer.drinkOffers = [];
-				control.offer.groceryOffers = [];
-				control.bidToOffer = {};
-				control.drinkOffers = [];
-				control.groceryOffers = [];
-				control.toggleOffer = true;
+				if(response.data === "OK"){
+					toastr["success"]('Bid successfully offered!');
+					control.offer = {};
+					control.offer.bid = {};
+					control.offer.drinkOffers = [];
+					control.offer.groceryOffers = [];
+					control.bidToOffer = {};
+					control.drinkOffers = [];
+					control.groceryOffers = [];
+					control.toggleOffer = true;
+				}else{
+					toastr["error"]('That bid already has an offer.');
+				}
 			}), function error(response){
 				control.result = "Unknown error ocurred.";
 			}
@@ -271,6 +279,9 @@
 		this.updateOffer = function(offer){
 			if(offer.bid.end < new Date()){
 				toastr["error"]("This bid has expired!");
+				return;
+			}else if(offer.status !== "Waiting"){
+				toastr["error"]('This bid has expired!');
 				return;
 			}
 			
@@ -370,12 +381,14 @@
 		}
 		
 		this.modifyOffer = function(){
+			
 			control.offer.idOffer = control.offerToUpdate.idOffer;
 			control.offer.delivery = $scope.offerDelivery.value;
 			control.offer.warranty = $scope.offerWarranty.value;
 			control.offer.lastsUntil = $scope.offerLastsUntil.value;
 			control.offer.bid = control.offerToUpdate.bid;
 			control.offer.supplier = control.offerToUpdate.supplier;
+			control.offer.status = "Waiting";
 			$http.post('/supplier/updateOffer', control.offer).then(function success(response){
 				toastr["success"]('Offer successfully updated!');
 				
@@ -425,19 +438,15 @@
 					var message = data.body;
 					acceptedOffer = angular.fromJson(message);
 					
-					var index = -1;		
-					var offerArr = eval( control.offers );
-					for( var i = 0; i < offerArr.length; i++ ) {
-						if( offerArr[i].bid.idBid === acceptedOffer.bidId ) {
-							index = i;
-							break;
+					for(it in control.offers){
+						if(control.offers[it].idOffer === acceptedOffer.offerId){
+							if(acceptedOffer.accepted){
+								control.offers[it].status = "Accepted";
+							}else{
+								control.offers[it].status = "Refused";
+							}
 						}
 					}
-					if( index === -1 ) {
-						toastr["error"]( "Something gone wrong" );
-					}
-					control.offers.splice( index, 1 );
-					
 					
 					$scope.$apply();
 					if(acceptedOffer.accepted){

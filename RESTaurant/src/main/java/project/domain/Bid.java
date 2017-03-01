@@ -33,6 +33,17 @@ public class Bid {
 	@Column(name="big_end")
 	public Date end;
 	
+	@Column(name="bid_has_offer")
+	public boolean hasOffer;
+	
+	public boolean isHasOffer() {
+		return hasOffer;
+	}
+
+	public void setHasOffer(boolean hasOffer) {
+		this.hasOffer = hasOffer;
+	}
+
 	@ManyToMany
 	@JoinTable(name = "bid_drinks", joinColumns = {
 			@JoinColumn(name = "drink_id", nullable = false, updatable = false) },

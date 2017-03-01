@@ -11,6 +11,16 @@ public class OfferAcceptedDTO {
 	
 	public Long bidId;
 	
+	public Long offerId;
+	
+	public Long getOfferId() {
+		return offerId;
+	}
+
+	public void setOfferId(Long offerId) {
+		this.offerId = offerId;
+	}
+
 	public boolean accepted;
 	
 	public boolean isAccepted() {

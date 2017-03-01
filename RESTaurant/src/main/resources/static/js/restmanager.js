@@ -572,18 +572,9 @@
 		this.acceptOffer = function(offer){
 			$http.post('/restmanager/acceptOffer', offer).then(function success(response) {
 				if(response.data === "OK"){
-
-					var tmp = [];
-					
-					for(it in control.offers) {
-						if(control.offers[it].bid.idBid !== offer.bid.idBid) {
-							tmp.push(control.offers[it]);
-						}
-					}
-					
-					control.offers = tmp;
-					
-					toastr["success"]('Offer accepted');
+					toastr["success"]('Offer accepted.');
+				}else{
+					toastr["error"]('Bid already has an offer.');
 				}
 			}, function error(response) {
 				control.result = "Unknown error ocurred."

@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Isolation;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -317,17 +318,7 @@ public class RestManController {
 			produces = MediaType.TEXT_PLAIN)
 	@ResponseBody
 	public String addBid(@Context HttpServletRequest request, @RequestBody Bid bid) throws ParseException{
-		/*
-		Bid realBid = new Bid();
-		
-		SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
-
-		realBid.setBeginning(sdf.parse(bid.getBeginning()));
-		realBid.setEnd(sdf.parse(bid.getEnd()));
-		realBid.setGroceries(bid.getGroceries());
-		realBid.setDrinks(bid.getDrinks());
-		realBid.setManager(bid.getManager());
-		*/
+		bid.setHasOffer(false);
 		bidService.addBid(bid);
 		
 		return "OK";
@@ -437,7 +428,7 @@ public class RestManController {
 		return offerService.getOffersByManagerId(restaurant.getRestaurantID());
 	}
 	
-	@Transactional
+	@org.springframework.transaction.annotation.Transactional(isolation=Isolation.SERIALIZABLE)
 	@RequestMapping(value="/acceptOffer",
 			method = RequestMethod.POST,
 			consumes = MediaType.APPLICATION_JSON,
@@ -450,6 +441,10 @@ public class RestManController {
 		
 		Bid realBid = bidService.getBid(offer.getBid().idBid);
 		
+		if(realBid.hasOffer){
+			return "notOK";
+		}
+		
 		List<Offer> realOffers = offerService.getOffersByBidId(realBid.getIdBid());
 		
 		
@@ -461,23 +456,27 @@ public class RestManController {
 			dto.setRestaurantName(realOffer.getBid().getManager().getRestaurant().getName());
 			dto.setReceiverID(realOffer.getSupplier().getUserID());
 			dto.setBidId(realBid.idBid);
+			dto.setOfferId(o.getIdOffer());
 			
 			if(offer.getIdOffer() == o.getIdOffer()){
 				dto.setAccepted(true);
+				o.setStatus("Accepted");
 			}else{
 				dto.setAccepted(false);
+				o.setStatus("Refused");
 			}
 			
 			offerMessenger.sendOfferAcceptedTo(dto);
 			
-			drinkOfferService.removeDrinkOfferByOfferId(o.getIdOffer());
+			//drinkOfferService.removeDrinkOfferByOfferId(o.getIdOffer());
 			
-			groceryOfferService.removeGroceryOfferByOfferId(o.getIdOffer());
+			//groceryOfferService.removeGroceryOfferByOfferId(o.getIdOffer());
 			
-			offerService.deleteOfferById(o.getIdOffer());
+			//offerService.deleteOfferById(o.getIdOffer());
 		}
 		
-		bidService.deleteBidById(realBid.getIdBid());
+		realBid.setHasOffer(true);
+		//bidService.deleteBidById(realBid.getIdBid());
 		
 		return "OK";
 	}
