@@ -42,7 +42,7 @@
 		</nav>
 		<div ng-show="tabCtrl.isSet(1)" ng-controller="ReservationsController as reservationsCtrl">
 			<div class="col-sm-2"></div>
-			<div class="col-sm-6">
+			<div class="col-sm-8">
 				<div ng-show="reservationsCtrl.phase == 1">
 					<table class="table table-hover">
 						<thead>
@@ -96,12 +96,175 @@
 					  	</div>
 				  	</div>
 				</div>
-				<div ng-show="reservationsCtrl.phase == 3">stolovi</div>
-				<div ng-show="reservationsCtrl.phase == 4">prijatelji</div>
-				<div ng-show="reservationsCtrl.phase == 5">porudzba</div>
-				<div ng-show="reservationsCtrl.phase == 6">potvrda</div>
-			</div>
-			<div class="col-sm-4"></div>
+				<div ng-show="reservationsCtrl.phase == 3">
+					<div class="col-sm-2"></div>
+			  		<div class="col-sm-8">
+			  			<h3>Segments</h3>
+				  		<table class="table table-hover">
+							<thead>
+								<tr>
+									<th>Label</th>
+									<th>Description</th>
+									<th>Table rows</th>
+									<th>Table columns</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr ng-repeat="segment in reservationsCtrl.segments">
+									<td>{{segment.label}}</td>
+									<td>{{segment.description}}</td>
+									<td>{{segment.tableRows}}</td>
+									<td>{{segment.tableColumns}}</td>
+									<td><input type="button" class="btn btn-primary" value="Select" ng-click="reservationsCtrl.confirmSegment(segment)"/></td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+					<div class="col-sm-2"></div>
+				</div>
+				<div ng-show="reservationsCtrl.phase == 4">
+			  		<div class="col-sm-6">
+			  			<h3>Select tables.</h3>
+			  			<br/>
+			  			<input  type="button" class="btn btn-info" value="Go Back" ng-click="reservationsCtrl.goBack()"/>
+			  			<br/>
+				  		<table class="luksuz">
+							<tbody>
+								<tr ng-repeat="tableRow in reservationsCtrl.tables">
+									<td ng-repeat="tableCol in tableRow">
+										<input ng-disable="tableCol.status=='empty' || tableCol.status=='taken'" type="button" ng-class="tableCol.tableClass" ng-value="tableCol.status" ng-click="reservationsCtrl.selectTable(tableCol)"/>
+									</td>
+								</tr>
+							</tbody>
+						</table>
+						<br/>
+						<input type="button" class="btn btn-primary" value="Proceed" ng-click="reservationsCtrl.confirmTables()"/>
+					</div>
+					<div class="col-sm-6"></div>
+				</div>
+				<div ng-show="reservationsCtrl.phase == 5"><input  type="button" class="btn btn-danger" value="Add" ng-click="reservationsCtrl.confirmFriends()"/></div>
+				<div ng-show="reservationsCtrl.phase == 6">
+					<div class="col-sm-5">
+			  			<h3>Menu</h3>
+				  		<table class="table table-hover">
+							<thead>
+								<tr>
+									<th>Label</th>
+									<th>Description</th>
+									<th>Price</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr ng-repeat="dish in reservationsCtrl.restaurant.dishes">
+									<td>{{dish.label}}</td>
+									<td>{{dish.description}}</td>
+									<td>{{dish.price}}</td>
+									<td><input type="button" class="btn btn-primary" value="Add" ng-click="reservationsCtrl.orderDish(dish)"/></td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+					<div class="col-sm-2"></div>
+					<div class="col-sm-5">
+						<h3>Selected</h3>
+						<input type="button" class="btn btn-primary" value="Proceed" ng-click="reservationsCtrl.confirmDishes()"/>
+				  		<table class="table table-hover">
+							<thead>
+								<tr>
+									<th>Label</th>
+									<th>Description</th>
+									<th>Price</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr ng-repeat="dish in reservationsCtrl.restaurant.orderedDishes">
+									<td>{{dish.label}}</td>
+									<td>{{dish.description}}</td>
+									<td>{{dish.price}}</td>
+									<td><input  type="button" class="btn btn-danger" value="Remove" ng-click="reservationsCtrl.removeDish(dish)"/></td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+					
+				</div>
+				<div ng-show="reservationsCtrl.phase == 7">
+					<div class="col-sm-5">
+			  			<h3>Drinks</h3>
+				  		<table class="table table-hover">
+							<thead>
+								<tr>
+									<th>Label</th>
+									<th>Description</th>
+									<th>Price</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr ng-repeat="drink in reservationsCtrl.restaurant.drinks">
+									<td>{{drink.label}}</td>
+									<td>{{drink.description}}</td>
+									<td>{{drink.price}}</td>
+									<td><input  type="button" class="btn btn-primary" value="Add" ng-click="reservationsCtrl.orderDrink(drink)"/></td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+					<div class="col-sm-2"></div>
+					<div class="col-sm-5">
+						<h3>Selected</h3>
+						<input  type="button" class="btn btn-primary" value="Proceed" ng-click="reservationsCtrl.confirmDrinks()"/>
+				  		<table class="table table-hover">
+							<thead>
+								<tr>
+									<th>Label</th>
+									<th>Description</th>
+									<th>Price</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr ng-repeat="drink in reservationsCtrl.restaurant.orderedDrinks">
+									<td>{{drink.label}}</td>
+									<td>{{drink.description}}</td>
+									<td>{{drink.price}}</td>
+									<td><input  type="button" class="btn btn-danger" value="Remove" ng-click="reservationsCtrl.removeDrink(drink)"/></td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+					<div class="col-sm-4"></div>
+				</div>
+				<div ng-show="reservationsCtrl.phase == 8">
+					<div class="panel-group">
+				  		<div class="panel panel-default">
+				  			<div class="panel-heading">Finish reservation</div>
+					  		<div class="panel-body">
+					  			<form name="tableForm" class="form-horizontal" ng-submit="reservationsCtrl.finish()" novalidate>
+					  				<div class="form-group">
+					  					<label class="control-label col-sm-4">Order for table:</label>
+					  					<div class="col-sm-8">
+						  					<select class="form-control"
+	      										ng-options="table.tableCode for table in reservationsCtrl.options track by table.id"
+	      										ng-model="reservationsCtrl.selected">
+	      									</select>
+						  				</div>
+					  				</div>
+					  				<div class="form-group">
+					  					<label class="control-label col-sm-4">Ready on arrival:</label>
+					  					<div class="col-sm-8">
+						  					<input type="checkbox" ng-model="reservationsCtrl.onArrival">
+						  				</div>
+					  				</div>
+					  				<div class="col-sm-10"></div>
+									<div class="form-group col-sm-2">
+			                				<input  type="submit" class="btn btn-md btn-primary pull-right" value="Finish" />
+			              			</div>
+					  			</form>
+					  		</div>
+				  		</div>
+		  			</div>
+				</div>
+				
+			<div class="col-sm-2"></div>
 		</div>
 		<div ng-show="tabCtrl.isSet(2)" ng-controller="FriendsController as friendsCtrl">
 			<div class="row">
@@ -231,7 +394,6 @@
 						</tr>
 					</tbody>
 				</table>
-				
 			</div>
 			<div class="col-sm-2"></div>
 			<div class="col-sm-5">

@@ -393,6 +393,8 @@
 		control.reserv = {};
 		control.form = {};
 		control.sockets = [];
+		control.segments = [];
+		control.tables = {};
 		
 		control.isSet = function(checkPhase) {
 			return control.phase === checkPhase;
@@ -441,21 +443,169 @@
 				if (response.data != null) {
 					if (response.data.status == "Setup") {
 						control.reserv = response.data;
+						control.loadSegments(control.reserv.restID);
 						control.phase = 3;
 					} else if (response.data.status == "Wrong date") {
 						toastr["error"]('You cannot make a reservation in the past.', "Check date!");
-					} else if (response.data.statys == "Wrong time") {
+					} else if (response.data.status == "Wrong time") {
 						toastr["error"]('You cannot make a reservation in the past.', "Check time!");
 					}
 				}
 			});
 			
+		}
+		
+		control.confirmSegment = function(segment) {
+			control.reserv.segmentID = segment.idSegment;
 			
+			control.getTables(segment);
+			control.phase = 4;
+		}
+		
+		
+		control.loadSegments = function(id) {
+			$http({
+				method: 'GET',
+				url: '/reservations/getSegments?id=' + id,
+			}).then(function success(response) {
+				control.segments = response.data;
+			});
+		}
+		
+		control.selectTable = function(table) {
+			control.reserv.currentTableCode = table.tableCode;
+			if(table.status === "free") {
+				$http({
+					method: 'POST',
+					url: '/reservations/selectTable',
+					headers: {
+						   'Content-Type': 'application/json',	   
+						 },
+					data: control.reserv
+				}).then(function success(response) {
+					
+					if (response.data == "Success") {
+						table.status = "selected";
+						table.tableClass = control.setTableClass(table);
+						control.reserv.tableCodes.push(table.tableCode);
+					} else {
+						toastr["error"]('Someone reserved that table in the meantime...', "Choose another table!");
+					}
+				});
+			}
+		}
+		
+		control.confirmTables = function() {
+			control.restaurant = {};
+			$http({
+				method: 'GET',
+				url: '/reservations/getDrinks?id=' + control.reserv.restID,
+			}).then(function success(response) {
+				control.restaurant.drinks = response.data;
+			});
+			$http({
+				method: 'GET',
+				url: '/reservations/getDishes?id=' + control.reserv.restID,
+			}).then(function success(response) {
+				control.restaurant.dishes = response.data;
+			});
+			control.restaurant.orderedDishes = [];
+			control.restaurant.orderedDrinks = [];
+			control.phase = 5;
+		}
+		
+		control.confirmFriends = function() {
+			control.phase = 6;
+			//DODAJ PRIJATELJE JOOOJ
+		}
+		
+		control.confirmDishes = function() {
+			control.phase = 7;
+		}
+		
+		control.orderDish = function(dish) {
+			control.restaurant.orderedDishes.push(dish);
+		}
+		
+		control.removeDish = function(dish) {	
+			
+		}
+		
+		control.confirmDrinks = function() {
+			control.options = [];
+			for (i = 0; i < control.reserv.tableCodes.length; i++) {
+				option = {};
+				option.id = i;
+				option.tableCode = control.reserv.tableCodes[i];
+				control.options.push(option);
+			}
+			control.selected = control.options[0];
+			control.onArrival = false;
+			control.phase = 8;
+		}
+		
+		control.orderDrink = function(drink) {
+			control.restaurant.orderedDrinks.push(drink);
+		}
+		
+		control.removeDrink = function(drink) {
+			
+		}
+
+		control.finish = function() {
+			control.reserv.onArrival = control.onArrival;
+			control.reserv.dishes = [];
+			control.reserv.drinks = [];
+			for (i = 0; i < control.restaurant.orderedDishes.length; i++) {
+				control.reserv.dishes.push(control.restaurant.orderedDishes[i].idDish);
+			}
+			for (i = 0; i < control.restaurant.orderedDrinks.length; i++) {
+				control.reserv.drinks.push(control.restaurant.orderedDrinks[i].idDrink);
+			}
+			control.reserv.currentTableCode = control.selected.tableCode;
+			
+			$http({
+				method: 'POST',
+				url: '/reservations/finish',
+				headers: {
+					   'Content-Type': 'application/json',	   
+					 },
+				data: control.reserv
+			}).then(function success(response) {
+				toastr["success"]('EYYYYYY', "EYYYYY!");
+			});
+		}
+		
+		control.getTables = function(segment){
+			control.tables = control.matrix(segment);
+			control.reserv.tableCodes = [];
+			$http({
+				method: 'POST',
+				url: '/reservations/getTables',
+				headers: {
+					   'Content-Type': 'application/json',	   
+					 },
+				data: control.reserv
+			}).then(function success(response) {
+				for(it in response.data){
+					control.tables[response.data[it].tableRow][response.data[it].tableCol] = response.data[it];
+					control.tables[response.data[it].tableRow][response.data[it].tableCol].tableClass = control.setTableClass(response.data[it]);
+				}
+			});
+		}
+		
+		this.goBack = function(){
+			control.reserv.segmentID = -1;
+			control.tables = {};
+			
+			control.phase = 3;
 		}
 		
 		control.clean = function() {
 			control.reserv = {};
 			control.form = {};
+			control.segments = [];
+			control.tables = {};
 			var requestData = {};
 			requestData.userID = customerService.getCustomer().userID;
 			
@@ -469,7 +619,36 @@
 			}).then(function success(response) {
 				
 			});
-			
+		}
+		
+		control.matrix = function(segment){
+			var arr = [];
+			for (var i = 0; i < segment.tableRows; ++i){
+				var columns = [];
+				for (var j = 0; j < segment.tableColumns; ++j){
+					var table = {};
+					table.status = "empty";
+					table.segment = segment;
+					table.tableCode = table.segment.label + i + j;
+					table.tableRow = i;
+					table.tableCol = j;
+					table.tableClass = control.setTableClass(table);
+					columns[j] = table;
+				}
+				arr[i] = columns;
+			}
+			return arr;
+		}
+		
+		control.setTableClass = function(table){
+			if(table.status === "empty")
+				return "btn btn-default";
+			else if(table.status === "free")
+				return "btn btn-success";
+			else if(table.status === "taken")
+				return "btn btn-danger";
+			else if (table.status === "selected")
+				return "btn btn-info";
 		}
 	}]);
 })();

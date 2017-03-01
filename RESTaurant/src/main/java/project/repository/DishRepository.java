@@ -20,4 +20,7 @@ public interface DishRepository extends Repository<Dish, Long>{
 	@Modifying
 	@Query("delete from Dish d where d.idDish = ?1")
 	public void removeDishById(Long id);
+	
+	@Query("select d from Dish d where d.idDish = ?1")
+	public Dish findDishById(Long id);
 }

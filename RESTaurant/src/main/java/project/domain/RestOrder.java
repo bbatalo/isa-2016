@@ -19,7 +19,7 @@ public class RestOrder {
 	@Id
 	@GeneratedValue
 	@Column(name = "ord_id", nullable = false)
-    private long id;
+    private Long id;
 
 	//da budem iskren, ni ne secam se zasto je ovo ovde, vidi da li sluzi icemu
 	@Column(name = "ord_time", nullable = true)
@@ -40,12 +40,12 @@ public class RestOrder {
 	@JoinColumn(name="ord_reservation",  referencedColumnName="res_id")
     private Reservation reservation;
 
-    //ovo sam izbacio jer je mozda suvisno, ostvaruje se posredna veza preko rezervacije
-    /*
-    @ManyToOne(optional=false)
-	@JoinColumn(name="ord_restaurant",  referencedColumnName="usr_id")
-    private Restaurant restaurant;
-	*/
+    @ManyToOne(optional = false)
+	@JoinColumn(name="ord_table",  referencedColumnName="table_id")
+    private RestTable table;
+    
+    @Column(name = "ord_arrival", nullable = false)
+    private boolean onArrival;
     
     @ManyToOne(optional = false)
 	@JoinColumn(name="ord_customer",  referencedColumnName="usr_id")
@@ -53,11 +53,11 @@ public class RestOrder {
    
     public RestOrder() {}
 
-	public long getId() {
+	public Long getId() {
 		return id;
 	}
 
-	public void setId(long id) {
+	public void setId(Long id) {
 		this.id = id;
 	}
 
@@ -107,6 +107,22 @@ public class RestOrder {
 
 	public void setCustomer(Customer customer) {
 		this.customer = customer;
+	}
+
+	public RestTable getTable() {
+		return table;
+	}
+
+	public void setTable(RestTable table) {
+		this.table = table;
+	}
+
+	public boolean isOnArrival() {
+		return onArrival;
+	}
+
+	public void setOnArrival(boolean onArrival) {
+		this.onArrival = onArrival;
 	}
     
     

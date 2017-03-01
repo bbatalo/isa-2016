@@ -39,4 +39,9 @@ public class DrinkServiceImpl implements DrinkService{
 		return drinkRepository.findAllDrinks();
 	}
 
+	@Override
+	public Drink getDrinkById(Long id) {
+		return drinkRepository.findDrinkById(id);
+	}
+
 }

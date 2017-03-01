@@ -13,12 +13,12 @@ public class DishOrder {
 	@Id
 	@GeneratedValue
 	@Column(name = "odr_id", nullable = false)
-    private long id;
+    private Long id;
 
 	@Column(name = "odr_status", nullable = false)
     private String status;
 
-	@ManyToOne(optional = false)
+	@ManyToOne(optional = true)
 	@JoinColumn(name="odr_chef",  referencedColumnName="usr_id")
     private Chef chef;
 
@@ -32,11 +32,11 @@ public class DishOrder {
 	
 	public DishOrder() {}
 
-	public long getId() {
+	public Long getId() {
 		return id;
 	}
 
-	public void setId(long id) {
+	public void setId(Long id) {
 		this.id = id;
 	}
 
@@ -66,6 +66,14 @@ public class DishOrder {
 	
 	public void setRatings(int rating){
 		
+	}
+
+	public RestOrder getOrder() {
+		return order;
+	}
+
+	public void setOrder(RestOrder order) {
+		this.order = order;
 	}
 	
 	

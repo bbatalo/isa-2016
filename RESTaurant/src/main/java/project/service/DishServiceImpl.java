@@ -33,5 +33,11 @@ public class DishServiceImpl implements DishService{
 	public void deleteDishById(Long id) {
 		this.dishRepository.removeDishById(id);
 	}
+
+	@Override
+	public Dish getDishById(Long id) {
+		return dishRepository.findDishById(id);
+	}
+	
 	
 }
