@@ -9,6 +9,26 @@ public class OfferAcceptedDTO {
 	
 	public String restaurantName;
 	
+	public Long bidId;
+	
+	public boolean accepted;
+	
+	public boolean isAccepted() {
+		return accepted;
+	}
+
+	public void setAccepted(boolean accepted) {
+		this.accepted = accepted;
+	}
+
+	public Long getBidId() {
+		return bidId;
+	}
+
+	public void setBidId(Long bidId) {
+		this.bidId = bidId;
+	}
+
 	public OfferAcceptedDTO() {}
 
 	public Long getReceiverID() {

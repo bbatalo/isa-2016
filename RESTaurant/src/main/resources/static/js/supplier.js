@@ -123,7 +123,7 @@
 		
 		this.createOffer = function(bid){
 			if(bid.end < new Date()){
-				alert("This bid has expired!");
+				toastr["error"]("This bid has expired!");
 				return;
 			}
 			
@@ -182,7 +182,7 @@
 				}
 			}
 			if( index === -1 ) {
-				alert( "Something gone wrong" );
+				toastr["error"]( "Something gone wrong" );
 			}
 			control.offer.drinkOffers.splice( index, 1 );
 		}
@@ -197,7 +197,7 @@
 				}
 			}
 			if( index === -1 ) {
-				alert( "Something gone wrong" );
+				toastr["error"]( "Something gone wrong" );
 			}
 			control.offer.groceryOffers.splice( index, 1 );
 		}
@@ -209,7 +209,7 @@
 			control.offer.bid = control.bidToOffer;
 			control.offer.supplier = supplierService.getSupplier();
 			$http.post('/supplier/addOffer', control.offer).then(function success(response){
-				alert('Success!');
+				toastr["success"]('Bid successfully offered!');
 				control.offer = {};
 				control.offer.bid = {};
 				control.offer.drinkOffers = [];
@@ -270,7 +270,7 @@
 		
 		this.updateOffer = function(offer){
 			if(offer.bid.end < new Date()){
-				alert("This bid has expired!");
+				toastr["error"]("This bid has expired!");
 				return;
 			}
 			
@@ -349,7 +349,7 @@
 				}
 			}
 			if( index === -1 ) {
-				alert( "Something gone wrong" );
+				toastr["error"]( "Something gone wrong" );
 			}
 			control.offer.drinkOffers.splice( index, 1 );
 		}
@@ -364,7 +364,7 @@
 				}
 			}
 			if( index === -1 ) {
-				alert( "Something gone wrong" );
+				toastr["error"]( "Something gone wrong" );
 			}
 			control.offer.groceryOffers.splice( index, 1 );
 		}
@@ -377,7 +377,7 @@
 			control.offer.bid = control.offerToUpdate.bid;
 			control.offer.supplier = control.offerToUpdate.supplier;
 			$http.post('/supplier/updateOffer', control.offer).then(function success(response){
-				alert('Success!');
+				toastr["success"]('Offer successfully updated!');
 				
 				for(it in control.offers){
 					if(control.offer.idOffer === control.offers[it].idOffer){
@@ -424,9 +424,31 @@
 				stompClient.subscribe("/topic/" + str, function(data) {
 					var message = data.body;
 					acceptedOffer = angular.fromJson(message);
-					toastr["info"]('Your offer for restaurant ' + 
-							acceptedOffer.restaurantName + ' was accepted by ' + 
-							acceptedOffer.managerName + ' ' + acceptedOffer.managerSurname);
+					
+					var index = -1;		
+					var offerArr = eval( control.offers );
+					for( var i = 0; i < offerArr.length; i++ ) {
+						if( offerArr[i].bid.idBid === acceptedOffer.bidId ) {
+							index = i;
+							break;
+						}
+					}
+					if( index === -1 ) {
+						toastr["error"]( "Something gone wrong" );
+					}
+					control.offers.splice( index, 1 );
+					
+					
+					$scope.$apply();
+					if(acceptedOffer.accepted){
+						toastr["info"]('Your offer for restaurant ' + 
+								acceptedOffer.restaurantName + ' was accepted by ' + 
+								acceptedOffer.managerName + ' ' + acceptedOffer.managerSurname);
+					}else{
+						toastr["error"]('Your offer for restaurant ' + 
+								acceptedOffer.restaurantName + ' was refused by ' + 
+								acceptedOffer.managerName + ' ' + acceptedOffer.managerSurname);
+					}
 				})
 			})
 		}
@@ -454,13 +476,13 @@
 						 data: requestData
 				}).then(function success(response) {
 					if(response.data !== "taken" && response.data !== "No email sent" && response.data !== "same"){
-						alert("Sucess.");
+						toastr["success"]("Email successfully updated.");
 						control.form.email = response.data;
 						supplierService.setSupplierEmail(response.data);
 					}else if(response.data === "taken"){
-						alert("Email is already in use.");
+						toastr["error"]("Email is already in use.");
 					}else if(response.data === "No email sent"){
-						alert(response.data);
+						toastr["error"](response.data);
 					}
 				});
 			} else if (type == 1) {
@@ -479,7 +501,7 @@
 						control.form.currentPass = "";
 						control.form.newPass = "";
 						control.form.repeatPass = "";
-						alert("Sucess.");
+						toastr["success"]("Password successfully updated!");
 					});
 				} else {
 					control.form.newPass = "";
@@ -498,7 +520,7 @@
 						 },
 						 data: requestData
 				}).then(function success(response) {
-					alert("Sucess.");
+					toastr["success"]("Details successfully updated!");
 					control.form.label = response.data.label;
 					control.form.description = response.data.description;
 					supplierService.setSupplierDetails(response.data);
