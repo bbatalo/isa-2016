@@ -10,5 +10,7 @@ public interface DrinkOrderService {
 	
 	DrinkOrder getDrinkOrderById(Long id);
 	
+	void deleteDrinkOrderById(Long id);
+	
 	List<DrinkOrder> getAll();
 }

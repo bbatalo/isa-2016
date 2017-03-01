@@ -55,6 +55,14 @@ public class Restaurant implements Serializable{
 	@OneToOne(mappedBy="restaurant")
 	public WorkSchedule schedule;
 	
+	public Menu getMenu() {
+		return menu;
+	}
+
+	public void setMenu(Menu menu) {
+		this.menu = menu;
+	}
+
 	@OneToOne(mappedBy="restaurant")
 	public DrinksMenu drinksMenu;
 	

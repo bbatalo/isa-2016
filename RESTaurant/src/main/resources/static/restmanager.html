@@ -20,9 +20,14 @@
 		<script src="js/restmanager.js" type="text/javascript"></script>
 		<script src="js/helpersGagi.js"></script>
 		
+		<script src="js/jquery-3.1.1.min.js" type="text/javascript"></script>
+		<script src="js/toastr.js" type="text/javascript"></script>
+		<link rel="stylesheet" href="css/toastr.css">
+		
+		<script src="js/canvasjs.min.js"></script>
+		
 		<link rel="stylesheet" href="css/restmanager.css"></link>
 		<link rel="stylesheet" href="/webjars/bootstrap/3.3.6/css/bootstrap.css">
-		
 	</head>
 	<body ng-controller="TabController as tab">
 		<nav class="navbar navbar-inverse">
@@ -48,6 +53,65 @@
 	    		</ul>
 	  		</div>
 		</nav>
+		<div ng-show="tab.isSet(1)" ng-controller="HomeController as homeCtrl" ng-init="">
+			<div class="row">
+			  		<div class="col-sm-4">
+			  			<h3>Restaurant</h3>
+				  		<table class="table table-bordered">
+							<tbody>
+								<tr>
+									<td>{{homeCtrl.restaurant.name}}</td>
+									<td>{{homeCtrl.restaurant.rating}}</td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+					<div class="col-sm-4">
+						<h3>Dishes</h3>
+						<table class="table table-bordered">
+							<tbody>
+								<tr>
+									<td>
+										<select ng-model="homeCtrl.dish" class="form-control" ng-options="dish.label for dish in homeCtrl.dishes">
+          								</select>
+          							</td>
+									<td>{{homeCtrl.dish.rating}}</td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+					<div class="col-sm-4">
+						<h3>Employees</h3>
+						<table class="table table-bordered">
+							<tbody>
+								<tr>
+									<td>
+										<select ng-model="homeCtrl.employee" class="form-control" ng-options="employee.email for employee in homeCtrl.employees">
+          								</select>
+									</td>
+									<td>{{homeCtrl.employee.rating}}</td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+			  	</div>
+			  	<div class="row">
+			  		<div class="col-sm-2"></div>
+			  		<div class="col-sm-8">
+			  			<div id="visitsContainer" style="height: 400px; width: 100%;">
+						</div>
+			  		</div>
+			  		<div class="col-sm-2"></div>
+			  	</div>
+			  	<div class="row">
+			  		<div class="col-sm-2"></div>
+			  		<div class="col-sm-8">
+			  			<div id="incomeContainer" style="height: 400px; width: 100%;">
+						</div>
+			  		</div>
+			  		<div class="col-sm-2"></div>
+			  	</div>
+		</div>
 		<div ng-show="tab.isSet(2)"  ng-controller="RestaurantController as restaurantCtrl" ng-init="">
 			<div class="row">
 	  		<div class="col-sm-3"></div>
@@ -109,6 +173,11 @@
 									<h3>Add dish to menu.</h3>
 									<fieldset class="form-group">
 										<input ng-model="menuCtrl.dish.label" type="text" class="form-control" placeholder="Label" required></input>
+									</fieldset>
+									<fieldset class="form-group">
+										<select ng-model="menuCtrl.dish.type" class="form-control" required>
+											<option ng-repeat="type in menuCtrl.dishType" value="{{type.id}}">{{type.value}}</option>
+										</select>
 									</fieldset>
 									<fieldset class="form-group">
 										<input ng-model="menuCtrl.dish.description" type="text" class="form-control" placeholder="Description" required></input>

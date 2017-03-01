@@ -25,6 +25,17 @@ public class Offer {
 	@GeneratedValue
 	@Column(name="offer_id", nullable = false)
 	public long idOffer;
+	
+	@Column(name="offer_status", nullable = false)
+	public String status;
+	
+	public String getStatus() {
+		return status;
+	}
+
+	public void setStatus(String status) {
+		this.status = status;
+	}
 
 	public long getIdOffer() {
 		return idOffer;

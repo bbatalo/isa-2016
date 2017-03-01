@@ -38,7 +38,7 @@ public class MainController {
 					retVal = "redirect:/index.html"; 
 					break;
 				case EMPLOYEE:
-					//employee page
+					retVal = "redirect:/employee.html"; 
 					break;
 				case RESTMANAGER:
 					//restoraunt manager page

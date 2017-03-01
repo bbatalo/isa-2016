@@ -195,6 +195,7 @@
 								<th>Delivery</th>
 								<th>Warranty</th>
 								<th>Lasts until</th>
+								<th>Status</th>
 								<th>Update</th>
 							</tr>
 						</thead>
@@ -205,6 +206,7 @@
 								<td><input type="date" ng-model="offer.delivery" readonly/></td>
 								<td><input type="date" ng-model="offer.warranty" readonly/></td>
 								<td><input type="date" ng-model="offer.lastsUntil" readonly/></td>
+								<td>{{offer.status}}</td>
 								<td><input  type="button" class="btn btn-info" value="Update" ng-click="offersCtrl.updateOffer(offer)"/></td>
 							</tr>
 						</tbody>

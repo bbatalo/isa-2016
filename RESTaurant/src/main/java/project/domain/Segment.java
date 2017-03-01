@@ -49,6 +49,14 @@ public class Segment {
 	@JsonIgnore
 	public Set<Shift> shifts;
 	
+	public Set<Shift> getShifts() {
+		return shifts;
+	}
+
+	public void setShifts(Set<Shift> shifts) {
+		this.shifts = shifts;
+	}
+
 	public Segment() {}
 
 	public long getIdSegment() {

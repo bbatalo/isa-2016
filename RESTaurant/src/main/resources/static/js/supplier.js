@@ -123,7 +123,10 @@
 		
 		this.createOffer = function(bid){
 			if(bid.end < new Date()){
-				alert("This bid has expired!");
+				toastr["error"]("This bid has expired!");
+				return;
+			}else if(bid.hasOffer){
+				toastr["error"]('This bid has expired!');
 				return;
 			}
 			
@@ -182,7 +185,7 @@
 				}
 			}
 			if( index === -1 ) {
-				alert( "Something gone wrong" );
+				toastr["error"]( "Something gone wrong" );
 			}
 			control.offer.drinkOffers.splice( index, 1 );
 		}
@@ -197,7 +200,7 @@
 				}
 			}
 			if( index === -1 ) {
-				alert( "Something gone wrong" );
+				toastr["error"]( "Something gone wrong" );
 			}
 			control.offer.groceryOffers.splice( index, 1 );
 		}
@@ -208,16 +211,21 @@
 			control.offer.lastsUntil = $scope.offerLastsUntil.value;
 			control.offer.bid = control.bidToOffer;
 			control.offer.supplier = supplierService.getSupplier();
+			control.offer.status = "Waiting";
 			$http.post('/supplier/addOffer', control.offer).then(function success(response){
-				alert('Success!');
-				control.offer = {};
-				control.offer.bid = {};
-				control.offer.drinkOffers = [];
-				control.offer.groceryOffers = [];
-				control.bidToOffer = {};
-				control.drinkOffers = [];
-				control.groceryOffers = [];
-				control.toggleOffer = true;
+				if(response.data === "OK"){
+					toastr["success"]('Bid successfully offered!');
+					control.offer = {};
+					control.offer.bid = {};
+					control.offer.drinkOffers = [];
+					control.offer.groceryOffers = [];
+					control.bidToOffer = {};
+					control.drinkOffers = [];
+					control.groceryOffers = [];
+					control.toggleOffer = true;
+				}else{
+					toastr["error"]('That bid already has an offer.');
+				}
 			}), function error(response){
 				control.result = "Unknown error ocurred.";
 			}
@@ -270,7 +278,10 @@
 		
 		this.updateOffer = function(offer){
 			if(offer.bid.end < new Date()){
-				alert("This bid has expired!");
+				toastr["error"]("This bid has expired!");
+				return;
+			}else if(offer.status !== "Waiting"){
+				toastr["error"]('This bid has expired!');
 				return;
 			}
 			
@@ -349,7 +360,7 @@
 				}
 			}
 			if( index === -1 ) {
-				alert( "Something gone wrong" );
+				toastr["error"]( "Something gone wrong" );
 			}
 			control.offer.drinkOffers.splice( index, 1 );
 		}
@@ -364,20 +375,22 @@
 				}
 			}
 			if( index === -1 ) {
-				alert( "Something gone wrong" );
+				toastr["error"]( "Something gone wrong" );
 			}
 			control.offer.groceryOffers.splice( index, 1 );
 		}
 		
 		this.modifyOffer = function(){
+			
 			control.offer.idOffer = control.offerToUpdate.idOffer;
 			control.offer.delivery = $scope.offerDelivery.value;
 			control.offer.warranty = $scope.offerWarranty.value;
 			control.offer.lastsUntil = $scope.offerLastsUntil.value;
 			control.offer.bid = control.offerToUpdate.bid;
 			control.offer.supplier = control.offerToUpdate.supplier;
+			control.offer.status = "Waiting";
 			$http.post('/supplier/updateOffer', control.offer).then(function success(response){
-				alert('Success!');
+				toastr["success"]('Offer successfully updated!');
 				
 				for(it in control.offers){
 					if(control.offer.idOffer === control.offers[it].idOffer){
@@ -424,9 +437,27 @@
 				stompClient.subscribe("/topic/" + str, function(data) {
 					var message = data.body;
 					acceptedOffer = angular.fromJson(message);
-					toastr["info"]('Your offer for restaurant ' + 
-							acceptedOffer.restaurantName + ' was accepted by ' + 
-							acceptedOffer.managerName + ' ' + acceptedOffer.managerSurname);
+					
+					for(it in control.offers){
+						if(control.offers[it].idOffer === acceptedOffer.offerId){
+							if(acceptedOffer.accepted){
+								control.offers[it].status = "Accepted";
+							}else{
+								control.offers[it].status = "Refused";
+							}
+						}
+					}
+					
+					$scope.$apply();
+					if(acceptedOffer.accepted){
+						toastr["info"]('Your offer for restaurant ' + 
+								acceptedOffer.restaurantName + ' was accepted by ' + 
+								acceptedOffer.managerName + ' ' + acceptedOffer.managerSurname);
+					}else{
+						toastr["error"]('Your offer for restaurant ' + 
+								acceptedOffer.restaurantName + ' was refused by ' + 
+								acceptedOffer.managerName + ' ' + acceptedOffer.managerSurname);
+					}
 				})
 			})
 		}
@@ -454,13 +485,13 @@
 						 data: requestData
 				}).then(function success(response) {
 					if(response.data !== "taken" && response.data !== "No email sent" && response.data !== "same"){
-						alert("Sucess.");
+						toastr["success"]("Email successfully updated.");
 						control.form.email = response.data;
 						supplierService.setSupplierEmail(response.data);
 					}else if(response.data === "taken"){
-						alert("Email is already in use.");
+						toastr["error"]("Email is already in use.");
 					}else if(response.data === "No email sent"){
-						alert(response.data);
+						toastr["error"](response.data);
 					}
 				});
 			} else if (type == 1) {
@@ -479,7 +510,7 @@
 						control.form.currentPass = "";
 						control.form.newPass = "";
 						control.form.repeatPass = "";
-						alert("Sucess.");
+						toastr["success"]("Password successfully updated!");
 					});
 				} else {
 					control.form.newPass = "";
@@ -498,7 +529,7 @@
 						 },
 						 data: requestData
 				}).then(function success(response) {
-					alert("Sucess.");
+					toastr["success"]("Details successfully updated!");
 					control.form.label = response.data.label;
 					control.form.description = response.data.description;
 					supplierService.setSupplierDetails(response.data);

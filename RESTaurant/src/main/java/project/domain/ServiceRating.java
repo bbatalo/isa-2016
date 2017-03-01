@@ -50,10 +50,13 @@ public void setRestOrder(RestOrder restOrder) {
 	if(restOrder.getDishOrders()!=null){
 		for (int i=0; i<restOrder.getDishOrders().size(); i++){
 			DishOrder meal = restOrder.getDishOrders().get(i);
-			Chef newChef = meal.getChef();
-			if(!chefs.contains(newChef)){
-				chefs.add(newChef);
+			Set<Chef> newChef = meal.getChef();
+			for(Chef c : newChef){
+				if(!chefs.contains(c)){
+					chefs.add(c);
+				}
 			}
+			
 		}
 	}
 	if(bartenders!=null){

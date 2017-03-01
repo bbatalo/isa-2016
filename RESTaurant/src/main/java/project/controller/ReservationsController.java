@@ -1,6 +1,5 @@
 package project.controller;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -22,24 +21,36 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import project.domain.Bartender;
+import project.domain.Chef;
 import project.domain.Customer;
 import project.domain.Dish;
 import project.domain.DishOrder;
+import project.domain.DishType;
 import project.domain.Drink;
 import project.domain.DrinkOrder;
+import project.domain.EmployeeRole;
 import project.domain.Online;
 import project.domain.Reservation;
 import project.domain.RestOrder;
 import project.domain.RestTable;
 import project.domain.Restaurant;
 import project.domain.Segment;
+import project.domain.Shift;
+import project.domain.Waiter;
+import project.domain.WorkSchedule;
 import project.domain.dto.PasswordDTO;
 import project.domain.dto.ReservDTO;
+import project.messaging.BarMessenger;
+import project.messaging.CookMessenger;
+import project.messaging.OrderMessenger;
+import project.service.ChefService;
 import project.service.CustomerService;
 import project.service.DishOrderService;
 import project.service.DishService;
 import project.service.DrinkOrderService;
 import project.service.DrinkService;
+import project.service.EmployeeService;
 import project.service.OrderService;
 import project.service.ReservationService;
 import project.service.RestaurantService;
@@ -55,6 +66,9 @@ public class ReservationsController {
 	
 	@Autowired
 	private CustomerService customerService;
+	
+	@Autowired
+	private EmployeeService employeeService;
 	
 	@Autowired
 	private ReservationService reservationService;
@@ -79,6 +93,18 @@ public class ReservationsController {
 	
 	@Autowired
 	private OrderService orderService;
+	
+	@Autowired
+	private ChefService chefService;
+	
+	@Autowired
+	private OrderMessenger orderMessenger;
+	
+	@Autowired
+	private CookMessenger cookMessenger;
+	
+	@Autowired
+	private BarMessenger barMessenger;
 	
 	@RequestMapping(value = "/getRestaurants",
 			method = RequestMethod.GET,
@@ -373,6 +399,29 @@ public class ReservationsController {
 			orderService.save(order);
 			reservationService.save(res);
 			
+			Waiter kelner = null;
+			
+			RestTable sto = order.getTable();
+			Segment seg = sto.getSegment();
+			Set<Shift> smene = seg.getShifts();
+			for(Shift s : smene){
+				Date pocetak = s.getShiftBegins();
+				Date kraj = s.getShiftEnds();
+				Date trenutak = new Date();
+				if( trenutak.before(kraj) && trenutak.after(pocetak) ){
+					if(s.getEmployee().getRole()==EmployeeRole.WAITER){
+						kelner = (Waiter) s.getEmployee();
+						break;
+					}
+				}
+			}
+			
+			order.setWaiter(kelner);
+			orderService.save(order);
+			
+			orderMessenger.sendRequestTo(kelner,order);
+			orderMessenger.sendUpdateTo(order, kelner);
+			return new ResponseEntity<String>("Success", HttpStatus.OK);
 			
 			//ODAVDE POSALJI STA HOCES KOME HOCES
 			//za referencu pogledaj metodu sendRequest u IndexControlleru
@@ -383,7 +432,6 @@ public class ReservationsController {
 			//pocupaj konobara iz smena i tih sranja, to nisam gledao kako je implementirano...
 			
 			
-			return new ResponseEntity<String>("Unavailable", HttpStatus.OK);
 		} else {
 			return null;
 		}
@@ -449,5 +497,341 @@ public class ReservationsController {
 		
 		
 		return out;
+	}
+	
+	
+	@RequestMapping(value = "/loadOrders",
+			method = RequestMethod.GET,
+			produces = MediaType.APPLICATION_JSON)
+	public ResponseEntity<List<RestOrder>> loadRequests(@Context HttpServletRequest request) {
+		
+		Online online = (Online) request.getSession().getAttribute("user");
+		if (online != null) {
+			Waiter employee = (Waiter) employeeService.getEmployeeById(online.getUser().getUserID());
+			List<RestOrder> serving = new ArrayList<RestOrder>();
+			for (RestOrder r : employee.getCurrentlyServing()) {
+				serving.add(r);
+			}
+			return new ResponseEntity<List<RestOrder>>(serving, HttpStatus.OK);
+		} else {
+			return null;
+		}
+		
+
+	}
+	
+	@RequestMapping(value = "getDishOrder",
+			method = RequestMethod.POST,
+			consumes = MediaType.APPLICATION_JSON,
+			produces = MediaType.APPLICATION_JSON)
+	public ResponseEntity<List<DishOrder>> getByOrderDi(@Context HttpServletRequest request, @RequestBody Long orderID) {
+		Long number = orderID;
+		if (number!=null){
+			List<DishOrder> retVal = orderService.getById(number).getDishOrders();
+			return new ResponseEntity<List<DishOrder>>(retVal, HttpStatus.OK);
+		}
+		
+		return null;
+	}
+	
+	
+	@RequestMapping(value = "getDrinkOrder",
+			method = RequestMethod.POST,
+			consumes = MediaType.APPLICATION_JSON,
+			produces = MediaType.APPLICATION_JSON)
+	public ResponseEntity<List<DrinkOrder>> getByOrderDr(@Context HttpServletRequest request, @RequestBody Long orderID) {
+		Long number = orderID;
+		if (number!=null){
+			List<DrinkOrder> retVal = orderService.getById(number).getDrinkOrders();
+			return new ResponseEntity<List<DrinkOrder>>(retVal, HttpStatus.OK);
+		}
+		
+		return null;
+	}
+	
+	
+	@Transactional(isolation=Isolation.SERIALIZABLE)
+	@RequestMapping(value = "/sendMeal",
+			method = RequestMethod.POST,
+			consumes = MediaType.APPLICATION_JSON,
+			produces = MediaType.TEXT_HTML)
+	public ResponseEntity<String> sendMeal(@Context HttpServletRequest request, @RequestBody Long mealID) {
+		
+		Online online = (Online) request.getSession().getAttribute("user");
+		
+		if (online != null) {
+			
+			//DATI MU GA MALO PO
+			DishOrder dish = dishOrderService.getDishById(mealID);
+			dish.setStatus("Sent");
+			dishOrderService.save(dish);
+			RestOrder order = orderService.getById(dish.getOrder().getId());
+			
+			ArrayList<Chef> chefs = new ArrayList<Chef>();
+			
+			Restaurant restoran = order.getReservation().getRestaurant();
+			WorkSchedule raspored = restoran.getSchedule();
+			Set<Shift> smene = raspored.getShifts();
+			for(Shift s : smene){
+				if(s.getEmployee().getRole()==EmployeeRole.CHEF){
+					Date pocetak = s.getShiftBegins();
+					Date kraj = s.getShiftEnds();
+					Date trenutak = new Date();
+					if( trenutak.before(kraj) && trenutak.after(pocetak) ){
+						Chef kuhar = (Chef) s.getEmployee();
+						if(kuhar.getType()==dish.getDish().getType() || kuhar.getType()==DishType.UNIVERSAL)
+							chefs.add(kuhar);
+
+					}
+				}
+			}
+			
+			for (int i=0; i<chefs.size(); i++){
+				Chef hef = chefs.get(i);
+				hef.getDishOrders().add(dish);
+				chefService.save(hef);
+				dish.getChef().add(hef);
+				dishOrderService.save(dish);
+			}
+			Waiter w = order.getWaiter();
+			orderService.save(order);
+			
+			for(int i=0; i<chefs.size(); i++){
+				Chef hef = chefs.get(i);
+				cookMessenger.sendRequestTo(hef,dish);
+			}
+			
+			cookMessenger.sendUpdateTo(w, dish);
+			return new ResponseEntity<String>("Success", HttpStatus.OK);
+			
+			//ODAVDE POSALJI STA HOCES KOME HOCES
+			//za referencu pogledaj metodu sendRequest u IndexControlleru
+			//u principu samo napravis Messenger klasu kao onu moju, samo sa cime ti hoces kao topicom
+			//i ovde pozoves njenu metodu da posaljes poruku, tipa
+			//messenger.sendToKonobar(konobar, order.getId());
+			//ili sta ti vec odgovara
+			//pocupaj konobara iz smena i tih sranja, to nisam gledao kako je implementirano...
+			
+			
+		} else {
+			return null;
+		}
+	}
+	
+	
+	@Transactional(isolation=Isolation.SERIALIZABLE)
+	@RequestMapping(value = "/sendDrink",
+			method = RequestMethod.POST,
+			produces = MediaType.TEXT_HTML)
+	public ResponseEntity<String> sendDrink(@Context HttpServletRequest request, @RequestBody Long drinkID) {
+		
+		Online online = (Online) request.getSession().getAttribute("user");
+		
+		if (online != null) {
+			
+			DrinkOrder drink = drinkOrderService.getDrinkOrderById(drinkID);
+			drink.setStatus("Sent");
+			drinkOrderService.save(drink);
+			RestOrder order = orderService.getById(drink.getOrder().getId());
+			
+			Bartender barmen = null;
+
+			Restaurant restoran = order.getReservation().getRestaurant();
+			WorkSchedule raspored = restoran.getSchedule();
+			Set<Shift> smene = raspored.getShifts();
+			for(Shift s : smene){
+				if(s.getEmployee().getRole()==EmployeeRole.BARTENDER){
+					Date pocetak = s.getShiftBegins();
+					Date kraj = s.getShiftEnds();
+					Date trenutak = new Date();
+					if( trenutak.before(kraj) && trenutak.after(pocetak) ){
+						barmen = (Bartender) s.getEmployee();
+						
+
+					}
+				}
+			}
+			
+			Waiter w = order.getWaiter();
+			orderService.save(order);
+			drink.setBartender(barmen);
+			drinkOrderService.save(drink);
+			
+			barMessenger.sendRequestTo(barmen,drink);
+			
+			barMessenger.sendUpdateTo(w, drink);
+			return new ResponseEntity<String>("Success", HttpStatus.OK);
+			
+			//ODAVDE POSALJI STA HOCES KOME HOCES
+			//za referencu pogledaj metodu sendRequest u IndexControlleru
+			//u principu samo napravis Messenger klasu kao onu moju, samo sa cime ti hoces kao topicom
+			//i ovde pozoves njenu metodu da posaljes poruku, tipa
+			//messenger.sendToKonobar(konobar, order.getId());
+			//ili sta ti vec odgovara
+			//pocupaj konobara iz smena i tih sranja, to nisam gledao kako je implementirano...
+			
+			
+		} else {
+			return null;
+		}
+	}
+	
+	
+	@Transactional(isolation=Isolation.SERIALIZABLE)
+	@RequestMapping(value = "/deleteDrink",
+			method = RequestMethod.POST,
+			produces = MediaType.TEXT_HTML)
+	public ResponseEntity<String> deleteDrink(@Context HttpServletRequest request, @RequestBody Long drinkID) {
+		
+		Online online = (Online) request.getSession().getAttribute("user");
+		
+		if (online != null) {
+			
+			DrinkOrder drink = drinkOrderService.getDrinkOrderById(drinkID);
+			RestOrder order = orderService.getById(drink.getOrder().getId());
+			
+			order.getDrinkOrders().remove(drink);
+			order.setStatus("Updated");
+			orderService.save(order);
+			drink.setStatus("Deleted");
+			drinkOrderService.save(drink);
+			
+			
+			Waiter kelner = null;
+			
+			RestTable sto = order.getTable();
+			Segment seg = sto.getSegment();
+			Set<Shift> smene = seg.getShifts();
+			for(Shift s : smene){
+				Date pocetak = s.getShiftBegins();
+				Date kraj = s.getShiftEnds();
+				Date trenutak = new Date();
+				if( trenutak.before(kraj) && trenutak.after(pocetak) ){
+					if(s.getEmployee().getRole()==EmployeeRole.WAITER){
+						kelner = (Waiter) s.getEmployee();
+						break;
+					}
+				}
+			}
+			
+			order.setWaiter(kelner);
+			orderService.save(order);
+			
+			orderMessenger.sendRequestTo(order,kelner);
+			orderMessenger.sendUpdateTo(kelner, order);
+			return new ResponseEntity<String>("Success", HttpStatus.OK);
+			
+			//ODAVDE POSALJI STA HOCES KOME HOCES
+			//za referencu pogledaj metodu sendRequest u IndexControlleru
+			//u principu samo napravis Messenger klasu kao onu moju, samo sa cime ti hoces kao topicom
+			//i ovde pozoves njenu metodu da posaljes poruku, tipa
+			//messenger.sendToKonobar(konobar, order.getId());
+			//ili sta ti vec odgovara
+			//pocupaj konobara iz smena i tih sranja, to nisam gledao kako je implementirano...
+			
+			
+		} else {
+			return null;
+		}
+	}
+	
+	
+	@Transactional(isolation=Isolation.SERIALIZABLE)
+	@RequestMapping(value = "/deleteMeal",
+			method = RequestMethod.POST,
+			produces = MediaType.TEXT_HTML)
+	public ResponseEntity<String> deleteMeal(@Context HttpServletRequest request, @RequestBody Long mealID) {
+		
+		Online online = (Online) request.getSession().getAttribute("user");
+		
+		if (online != null) {
+			
+			DishOrder meal = dishOrderService.getDishById(mealID);
+			RestOrder order = orderService.getById(meal.getOrder().getId());
+			order.getDishOrders().remove(meal);
+			order.setStatus("Updated");
+			orderService.save(order);
+			meal.setStatus("Deleted");
+			dishOrderService.save(meal);
+			
+			
+			
+			
+			Waiter kelner = null;
+			
+			RestTable sto = order.getTable();
+			Segment seg = sto.getSegment();
+			Set<Shift> smene = seg.getShifts();
+			for(Shift s : smene){
+				Date pocetak = s.getShiftBegins();
+				Date kraj = s.getShiftEnds();
+				Date trenutak = new Date();
+				if( trenutak.before(kraj) && trenutak.after(pocetak) ){
+					if(s.getEmployee().getRole()==EmployeeRole.WAITER){
+						kelner = (Waiter) s.getEmployee();
+						break;
+					}
+				}
+			}
+			
+			order.setWaiter(kelner);
+			orderService.save(order);
+			
+			orderMessenger.sendRequestTo(order,kelner);
+			orderMessenger.sendUpdateTo(kelner, order);
+			return new ResponseEntity<String>("Success", HttpStatus.OK);
+			
+			//ODAVDE POSALJI STA HOCES KOME HOCES
+			//za referencu pogledaj metodu sendRequest u IndexControlleru
+			//u principu samo napravis Messenger klasu kao onu moju, samo sa cime ti hoces kao topicom
+			//i ovde pozoves njenu metodu da posaljes poruku, tipa
+			//messenger.sendToKonobar(konobar, order.getId());
+			//ili sta ti vec odgovara
+			//pocupaj konobara iz smena i tih sranja, to nisam gledao kako je implementirano...
+			
+			
+		} else {
+			return null;
+		}
+	}
+	
+	@RequestMapping(value = "/loadCookOrders",
+			method = RequestMethod.GET,
+			produces = MediaType.APPLICATION_JSON)
+	public ResponseEntity<List<DishOrder>> loadCookOrders(@Context HttpServletRequest request) {
+		
+		Online online = (Online) request.getSession().getAttribute("user");
+		if (online != null) {
+			Chef employee = (Chef) employeeService.getEmployeeById(online.getUser().getUserID());
+			List<DishOrder> serving = new ArrayList<DishOrder>();
+			for (DishOrder r : employee.getDishOrders()) {
+				serving.add(r);
+			}
+			return new ResponseEntity<List<DishOrder>>(serving, HttpStatus.OK);
+		} else {
+			return null;
+		}
+		
+
+	}
+	
+	@RequestMapping(value = "/loadBarOrders",
+			method = RequestMethod.GET,
+			produces = MediaType.APPLICATION_JSON)
+	public ResponseEntity<List<DrinkOrder>> loadBarOrders(@Context HttpServletRequest request) {
+		
+		Online online = (Online) request.getSession().getAttribute("user");
+		if (online != null) {
+			Bartender employee = (Bartender) employeeService.getEmployeeById(online.getUser().getUserID());
+			List<DrinkOrder> serving = new ArrayList<DrinkOrder>();
+			for (DrinkOrder r : employee.getDrinkOrder()) {
+				serving.add(r);
+			}
+			return new ResponseEntity<List<DrinkOrder>>(serving, HttpStatus.OK);
+		} else {
+			return null;
+		}
+		
+
 	}
 }

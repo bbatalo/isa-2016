@@ -143,24 +143,6 @@ public class SupplierController {
 	@ResponseBody
 	public List<Bid> getBids(@Context HttpServletRequest request){
 		
-		//List<Bid> ret = bidService.getAllBids();
-		//List<BidDTO> ret = new ArrayList<BidDTO>();
-		
-
-		//SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
-		/*
-		for(Bid b : tmp){
-			BidDTO bidDTO = new BidDTO();
-			bidDTO.setIdBid(b.getIdBid());
-			bidDTO.setManager(b.getManager());
-			bidDTO.setGroceries(b.getGroceries());
-			bidDTO.setDrinks(b.getDrinks());
-			bidDTO.setBeginning(sdf.format(b.getBeginning()));
-			bidDTO.setEnd(sdf.format(b.getEnd()));
-			
-			ret.add(bidDTO);
-		}
-		*/
 		return bidService.getAllBids();
 	}
 	
@@ -170,6 +152,13 @@ public class SupplierController {
 			produces = MediaType.TEXT_PLAIN)
 	@ResponseBody
 	public String addOffer(@Context HttpServletRequest request, @RequestBody Offer offer) throws ParseException{
+		
+		Bid realBid = bidService.getBid(offer.getBid().idBid);
+		
+		if(realBid.hasOffer){
+			System.out.println("pa imam vec");
+			return "notOK";
+		}
 		
 		offerService.addOffer(offer);
 		

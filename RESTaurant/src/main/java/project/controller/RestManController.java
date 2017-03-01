@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Isolation;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -130,6 +131,21 @@ public class RestManController {
 		}
 	}
 	
+	@RequestMapping(value="/getRestaurantNew",
+			method = RequestMethod.GET,
+			produces = MediaType.APPLICATION_JSON)
+	@ResponseBody
+	public Restaurant getRestaurantNew(@Context HttpServletRequest request){
+		
+		Online o = (Online)request.getSession().getAttribute("user");
+	
+		User u = o.getUser();
+		
+		RestaurantManager rm = restManService.getRestaurantManagerById(u.getUserID());
+		
+		return rm.getRestaurant();
+	}
+	
 	@Transactional
 	@RequestMapping(value = "updateRestaurantName",
 			method = RequestMethod.POST,
@@ -216,6 +232,21 @@ public class RestManController {
 		return this.dishService.getDishesByMenuId(menu.getIdMenu());
 	}
 	
+	@RequestMapping(value="/getDishesNew",
+			method = RequestMethod.GET,
+			produces = MediaType.APPLICATION_JSON)
+	@ResponseBody
+	public List<Dish> getDishesNew(@Context HttpServletRequest request){
+		
+		Online o = (Online)request.getSession().getAttribute("user");
+	
+		User u = o.getUser();
+		
+		RestaurantManager rm = restManService.getRestaurantManagerById(u.getUserID());
+		
+		return this.dishService.getDishesByMenuId(rm.getRestaurant().getMenu().getIdMenu());
+	}
+	
 	@Transactional
 	@RequestMapping(value="/addDrink",
 			method = RequestMethod.POST,
@@ -287,17 +318,7 @@ public class RestManController {
 			produces = MediaType.TEXT_PLAIN)
 	@ResponseBody
 	public String addBid(@Context HttpServletRequest request, @RequestBody Bid bid) throws ParseException{
-		/*
-		Bid realBid = new Bid();
-		
-		SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
-
-		realBid.setBeginning(sdf.parse(bid.getBeginning()));
-		realBid.setEnd(sdf.parse(bid.getEnd()));
-		realBid.setGroceries(bid.getGroceries());
-		realBid.setDrinks(bid.getDrinks());
-		realBid.setManager(bid.getManager());
-		*/
+		bid.setHasOffer(false);
 		bidService.addBid(bid);
 		
 		return "OK";
@@ -407,7 +428,7 @@ public class RestManController {
 		return offerService.getOffersByManagerId(restaurant.getRestaurantID());
 	}
 	
-	@Transactional
+	@org.springframework.transaction.annotation.Transactional(isolation=Isolation.SERIALIZABLE)
 	@RequestMapping(value="/acceptOffer",
 			method = RequestMethod.POST,
 			consumes = MediaType.APPLICATION_JSON,
@@ -420,26 +441,42 @@ public class RestManController {
 		
 		Bid realBid = bidService.getBid(offer.getBid().idBid);
 		
-		List<Offer> realOffers = offerService.getOffersByBidId(realBid.getIdBid());
-		
-		Offer realOffer = offerService.getOfferById(offer.getIdOffer());
-		
-		OfferAcceptedDTO dto = new OfferAcceptedDTO();
-		dto.setManagerName(realOffer.getBid().getManager().getName());
-		dto.setManagerSurname(realOffer.getBid().getManager().getSurname());
-		dto.setRestaurantName(realOffer.getBid().getManager().getRestaurant().getName());
-		dto.setReceiverID(realOffer.getSupplier().getUserID());
-		offerMessenger.sendOfferAcceptedTo(dto);
-		
-		for(Offer o : realOffers){
-			drinkOfferService.removeDrinkOfferByOfferId(o.getIdOffer());
-			
-			groceryOfferService.removeGroceryOfferByOfferId(o.getIdOffer());
-			
-			offerService.deleteOfferById(o.getIdOffer());
+		if(realBid.hasOffer){
+			return "notOK";
 		}
 		
-		bidService.deleteBidById(realBid.getIdBid());
+		List<Offer> realOffers = offerService.getOffersByBidId(realBid.getIdBid());
+		
+		
+		for(Offer o : realOffers){
+			Offer realOffer = offerService.getOfferById(o.getIdOffer());
+			OfferAcceptedDTO dto = new OfferAcceptedDTO();
+			dto.setManagerName(realOffer.getBid().getManager().getName());
+			dto.setManagerSurname(realOffer.getBid().getManager().getSurname());
+			dto.setRestaurantName(realOffer.getBid().getManager().getRestaurant().getName());
+			dto.setReceiverID(realOffer.getSupplier().getUserID());
+			dto.setBidId(realBid.idBid);
+			dto.setOfferId(o.getIdOffer());
+			
+			if(offer.getIdOffer() == o.getIdOffer()){
+				dto.setAccepted(true);
+				o.setStatus("Accepted");
+			}else{
+				dto.setAccepted(false);
+				o.setStatus("Refused");
+			}
+			
+			offerMessenger.sendOfferAcceptedTo(dto);
+			
+			//drinkOfferService.removeDrinkOfferByOfferId(o.getIdOffer());
+			
+			//groceryOfferService.removeGroceryOfferByOfferId(o.getIdOffer());
+			
+			//offerService.deleteOfferById(o.getIdOffer());
+		}
+		
+		realBid.setHasOffer(true);
+		//bidService.deleteBidById(realBid.getIdBid());
 		
 		return "OK";
 	}
@@ -480,6 +517,21 @@ public class RestManController {
 	@ResponseBody
 	public List<Employee> getEmployees(@Context HttpServletRequest request, @RequestBody Restaurant restaurant){
 		return employeeService.getEmployeesByRestaurantId(restaurant.getRestaurantID());
+	}
+	
+	@RequestMapping(value="/getEmployeesNew",
+			method = RequestMethod.GET,
+			produces = MediaType.APPLICATION_JSON)
+	@ResponseBody
+	public List<Employee> getEmployeesNew(@Context HttpServletRequest request){
+		
+		Online o = (Online)request.getSession().getAttribute("user");
+	
+		User u = o.getUser();
+		
+		RestaurantManager rm = restManService.getRestaurantManagerById(u.getUserID());
+		
+		return employeeService.getEmployeesByRestaurantId(rm.getRestaurant().getRestaurantID());
 	}
 	
 	@Transactional

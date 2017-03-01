@@ -2,6 +2,7 @@ package project.repository;
 
 import java.util.List;
 
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.Repository;
 
@@ -16,4 +17,8 @@ public interface DrinkOrderRepository extends Repository<DrinkOrder, Long> {
 	
 	@Query("select d from DrinkOrder d")
 	List<DrinkOrder> findAll();
+	
+	@Modifying
+	@Query("delete from DrinkOrder d where d.id = ?1")
+	public void removeById(Long id);
 }

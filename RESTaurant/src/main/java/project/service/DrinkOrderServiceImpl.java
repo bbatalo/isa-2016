@@ -18,6 +18,11 @@ public class DrinkOrderServiceImpl implements DrinkOrderService {
 	public DrinkOrder save(DrinkOrder drinkOrder) {
 		return repository.save(drinkOrder);
 	}
+	
+	@Override
+	public void deleteDrinkOrderById(Long id){
+		repository.removeById(id);
+	}
 
 	@Override
 	public DrinkOrder getDrinkOrderById(Long id) {
