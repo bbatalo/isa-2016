@@ -12,4 +12,6 @@ public interface DishService {
 	Dish getDishByLabel(String label);
 	
 	void deleteDishById(Long id);
+	
+	Dish getDishById(Long id);
 }

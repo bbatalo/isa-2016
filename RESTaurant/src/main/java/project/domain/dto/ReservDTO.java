@@ -15,7 +15,7 @@ public class ReservDTO {
 	
 	private Long segmentID;
 	
-	private List<Long> tableIDs;
+	private List<String> tableCodess;
 	
 	private String status;
 	
@@ -24,6 +24,14 @@ public class ReservDTO {
 	private Date time;
 	
 	private short duration;
+	
+	private String currentTableCode;
+	
+	private List<Long> drinks;
+	
+	private List<Long> dishes;
+	
+	private boolean onArrival;
 	
 	public ReservDTO() {}
 
@@ -70,12 +78,12 @@ public class ReservDTO {
 		this.segmentID = segmentID;
 	}
 
-	public List<Long> getTableIDs() {
-		return tableIDs;
+	public List<String> getTableCodess() {
+		return tableCodess;
 	}
 
-	public void setTableIDs(List<Long> tableIDs) {
-		this.tableIDs = tableIDs;
+	public void setTableCodess(List<String> tableCodess) {
+		this.tableCodess = tableCodess;
 	}
 
 	public String getStatus() {
@@ -109,6 +117,38 @@ public class ReservDTO {
 	public void setDuration(short duration) {
 		this.duration = duration;
 	}
-	
+
+	public String getCurrentTableCode() {
+		return currentTableCode;
+	}
+
+	public void setCurrentTableCode(String currentTableCode) {
+		this.currentTableCode = currentTableCode;
+	}
+
+	public List<Long> getDrinks() {
+		return drinks;
+	}
+
+	public void setDrinks(List<Long> drinks) {
+		this.drinks = drinks;
+	}
+
+	public List<Long> getDishes() {
+		return dishes;
+	}
+
+	public void setDishes(List<Long> dishes) {
+		this.dishes = dishes;
+	}
+
+	public boolean isOnArrival() {
+		return onArrival;
+	}
+
+	public void setOnArrival(boolean onArrival) {
+		this.onArrival = onArrival;
+	}
+
 	
 }

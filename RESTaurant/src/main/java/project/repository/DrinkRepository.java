@@ -23,4 +23,7 @@ public interface DrinkRepository extends Repository<Drink, Long>{
 	@Modifying
 	@Query("delete from Drink d where d.idDrink = ?1")
 	public void removeDrinkById(Long id);
+	
+	@Query("select d from Drink d where d.idDrink = ?1")
+	public Drink findDrinkById(Long id);
 }

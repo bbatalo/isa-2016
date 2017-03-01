@@ -14,4 +14,6 @@ public interface DrinkService {
 	void deleteDrinkById(Long id);
 	
 	List<Drink> getAllDrinks();
+	
+	Drink getDrinkById(Long id);
 }

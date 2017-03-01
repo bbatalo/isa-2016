@@ -34,4 +34,10 @@ public class TableServiceImpl implements TableService{
 		tableRepository.removeTableByCode(code);
 	}
 
+	@Override
+	public RestTable getTableById(Long id) {
+		return tableRepository.findTableById(id);
+	}
+
+	
 }

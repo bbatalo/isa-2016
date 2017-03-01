@@ -13,12 +13,12 @@ public class DrinkOrder {
 	@Id
 	@GeneratedValue
 	@Column(name = "odk_id", nullable = false)
-	private long id;
+	private Long id;
 
 	@Column(name = "odk_status", nullable = false)
     private String status;
 
-	@ManyToOne(optional = false)
+	@ManyToOne(optional = true)
 	@JoinColumn(name="odk_bartender",  referencedColumnName="usr_id")
 	private Bartender bartender; 
 	
@@ -32,11 +32,11 @@ public class DrinkOrder {
    
 	public DrinkOrder() {}
 
-	public long getId() {
+	public Long getId() {
 		return id;
 	}
 
-	public void setId(long id) {
+	public void setId(Long id) {
 		this.id = id;
 	}
 

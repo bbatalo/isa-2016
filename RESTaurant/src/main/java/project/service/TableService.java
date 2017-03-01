@@ -12,4 +12,6 @@ public interface TableService {
 	RestTable getTableByCode(String code);
 	
 	void deleteTableByCode(String code);
+	
+	RestTable getTableById(Long id);
 }

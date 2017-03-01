@@ -14,6 +14,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
@@ -68,6 +69,10 @@ public class RestTable {
 	@JsonIgnore
     public List<Reservation> reservations;
 	
+	@OneToMany
+	@JsonIgnore
+	public List<RestOrder> orders;
+	
 	public RestTable() {}
    
 
@@ -101,6 +106,14 @@ public class RestTable {
 
 	public void setReservations(List<Reservation> reservations) {
 		this.reservations = reservations;
+	}
+
+	public List<RestOrder> getOrders() {
+		return orders;
+	}
+
+	public void setOrders(List<RestOrder> orders) {
+		this.orders = orders;
 	}
    
     

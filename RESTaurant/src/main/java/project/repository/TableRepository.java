@@ -20,4 +20,7 @@ public interface TableRepository extends Repository<RestTable, Long>{
 	@Modifying
 	@Query("delete from RestTable t where t.tableCode = ?1")
 	public void removeTableByCode(String code);
+	
+	@Query("select t from RestTable t where t.idTable = ?1")
+	public RestTable findTableById(Long id);
 }
