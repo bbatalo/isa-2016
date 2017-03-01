@@ -186,13 +186,47 @@
 		control.friends = [];
 		
 		control.filters = [
-		      {id: '1', name: 'Email'},
-		      {id: '2', name: 'Name'},
-		      {id: '3', name: 'Surname'}
+		      {id: '1', name: 'email', label: 'Email'},
+		      {id: '2', name: 'name', label: 'Name'},
+		      {id: '3', name: 'surname', label: 'Surname'}
 		    ];
 		
 		control.selected = {id: '1', name: 'Email'};
 		control.cst_selected = {id: '1', name: 'Email'};
+		
+		control.flt_reverse = false;
+		control.cst_reverse = false;
+		
+		control.filter = "";
+		control.cst_filter = "";
+		
+		control.asc = function() {
+			control.flt_reverse = false;
+		}
+		
+		control.desc = function() {
+			control.flt_reverse = true;
+		}
+		
+		control.reset = function() {
+			control.selected = {id: '1', name: 'email', label: 'Email'};
+			control.filter = "";
+			control.flt_reverse = false;
+		}
+		
+		control.cst_asc = function() {
+			control.cst_reverse = false;
+		}
+		
+		control.cst_desc = function() {
+			control.cst_reverse = true;
+		}
+		
+		control.cst_reset = function() {
+			control.cst_selected = {id: '1', name: 'email', label: 'Email'};
+			control.cst_filter = "";
+			control.cst_reverse = false;
+		}
 		
 		control.customers = [];
 		
@@ -395,6 +429,31 @@
 		control.sockets = [];
 		control.segments = [];
 		control.tables = {};
+		
+		control.filters = [
+		      {id: '1', name: 'type', label: 'Type'},
+		      {id: '2', name: 'name', label: 'Name'},
+		    ];
+		
+		control.flt_selected = {id: '1', name: 'type', label: 'Type'};
+
+		control.flt_reverse = false;
+		
+		control.filter = "";
+		
+		control.asc = function() {
+			control.flt_reverse = false;
+		}
+		
+		control.desc = function() {
+			control.flt_reverse = true;
+		}
+		
+		control.reset = function() {
+			control.flt_selected = {id: '1', name: 'type', label: 'Type'};
+			control.filter = "";
+			control.flt_reverse = false;
+		}
 		
 		control.isSet = function(checkPhase) {
 			return control.phase === checkPhase;
@@ -651,5 +710,143 @@
 				return "btn btn-info";
 		}
 	}]);
+	
+	app.controller('CurrentController', ['$scope', '$http', '$window', 'customerService', function($scope, $http, $window, customerService) {
+		var control = this;
+		control.reservations = [];
+		control.phase = 1;
+		control.order = {};
+		control.rest = {};
+		
+		$scope.$watch('tabCtrl.tab', function(newValue) {
+			if (newValue == 7) {	
+				control.loadReservations();
+			}
+		});
+		
+		control.view = function(res) {
+			control.loadOrder(res);
+			
+			control.phase = 2;
+		}
+		
+		control.refresh = function() {
+			var restaurant = control.reservation.restaurant;
+			control.loadOrder(restaurant)
+			
+		}
+		
+		control.loadReservations = function() {
+			$http({
+				method: 'GET',
+				url: '/reservations/getReservations',
+			}).then(function success(response) {
+				control.reservations = response.data;
+			});
+		}
+		
+		control.loadOrder = function(res) {
+			control.order = {};
+			$http({
+				method: 'GET',
+				url: '/reservations/getOrder?id=' + res.id,
+			}).then(function success(response) {
+				control.order = response.data;
+				control.loadOrderDrinks(control.order.id);
+				control.loadOrderDishes(control.order.id);
+				control.loadRestDrinks(control.order.reservation.restaurant.restaurantID);
+				control.loadRestDishes(control.order.reservation.restaurant.restaurantID);
+			});
+		}
+		
+		control.loadOrderDrinks = function(id) {
+			$http({
+				method: 'GET',
+				url: '/reservations/getOrderDrinks?id=' + id,
+			}).then(function success(response) {
+				control.order.drinks = response.data;
+			});
+		}
+		
+		control.loadOrderDishes = function(id) {
+			$http({
+				method: 'GET',
+				url: '/reservations/getOrderDishes?id=' + id,
+			}).then(function success(response) {
+				control.order.dishes = response.data;
+			});
+		}
+		
+		control.loadRestDishes = function(id) {
+			$http({
+				method: 'GET',
+				url: '/reservations/getDishes?id=' + id,
+			}).then(function success(response) {
+				control.rest.dishes = response.data;
+			});
+		}
+		
+		control.loadRestDrinks = function(id) {
+			$http({
+				method: 'GET',
+				url: '/reservations/getDrinks?id=' + id,
+			}).then(function success(response) {
+				control.rest.drinks = response.data;
+			});
+		}
+		
+		control.removeDrOrder = function(drOrder) {
+			id = control.order.id;
+			$http({
+				method: 'GET',
+				url: '/reservations/removeDrOrder?id=' + id + '&drOrder=' + drOrder.id,
+			}).then(function success(response) {
+				if (response.data == "Success") {
+					var index = control.order.drinkOrders.indexOf(drOrder);
+					control.order.drinkOrders.splice(index, 1);
+					toastr['Succes']('Canceled drink order', 'Cancel')
+				}
+			});
+		}
+		
+		control.removeDiOrder = function(diOrder) {
+			id = control.order.id;
+			$http({
+				method: 'GET',
+				url: '/reservations/removeDiOrder?id=' + id + '&diOrder=' + diOrder.id,
+			}).then(function success(response) {
+				if (response.data == "Success") {
+					var index = control.order.dishOrders.indexOf(diOrder);
+					control.order.dishOrders.splice(index, 1);
+					toastr['Succes']('Canceled dish order', 'Cancel')
+				}
+			});
+		}
+		
+		control.addDrOrder = function(drink) {
+			id = control.order.id;
+			$http({
+				method: 'GET',
+				url: '/reservations/addDrOrder?id=' + id + '&drink=' + drink.id,
+			}).then(function success(response) {
+				if (response.data != null) {
+					control.order.drinkOrders.push(response.data);
+				}
+			});
+		}
+		
+		control.addDiOrder= function(dish) {
+			id = control.order.id;
+			$http({
+				method: 'GET',
+				url: '/reservations/addDiOrder?id=' + id + '&dish=' + dish.id,
+			}).then(function success(response) {
+				if (response.data != null) {
+					control.order.dishOrders.push(response.data);
+				}
+			});
+		}
+	}]);
+	
 })();
 

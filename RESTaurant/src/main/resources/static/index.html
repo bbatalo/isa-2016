@@ -30,7 +30,8 @@
 	    		<ul class="nav navbar-nav">
 	    			<li ng-class="{active:tabCtrl.isSet(1)}"><a class="btn" ng-click="tabCtrl.setTab(1)">Restaurants</a></li>
       				<li ng-class="{active:tabCtrl.isSet(2)}"><a class="btn" ng-click="tabCtrl.setTab(2)">Friends</a></li>
-      				<li ng-class="{active:tabCtrl.isSet(3)}"><a class="btn" ng-click="tabCtrl.setTab(3)">Visits</a></li>
+      				<li ng-class="{active:tabCtrl.isSet(7)}"><a class="btn" ng-click="tabCtrl.setTab(7)">Reservations</a></li>
+      				<li ng-class="{active:tabCtrl.isSet(3)}"><a class="btn" ng-click="tabCtrl.setTab(3)">History</a></li>
 	    		</ul>
 	    		<ul class="nav navbar-nav navbar-right" >
 	    			<li ng-class="{active:tabCtrl.isSet(4)}"><a class="btn" ng-click="tabCtrl.setTab(4)"><span class="glyphicon glyphicon-envelope"></span> Invites</a></li>
@@ -44,6 +45,37 @@
 			<div class="col-sm-2"></div>
 			<div class="col-sm-8">
 				<div ng-show="reservationsCtrl.phase == 1">
+					<form class="form-horizontal">
+				  		<div class="form-group">
+						  	<label class="control-label col-sm-4">Order by:</label>
+						  	<div class="col-sm-8">
+						  		<select class="form-control"
+	      							ng-options="filter.label for filter in reservationsCtrl.filters track by filter.id"
+	      							ng-model="reservationsCtrl.flt_selected">
+	      						</select>
+						  	</div>
+						</div>
+						<div class="form-group">
+							<div class="col-sm-4">
+								<input type="button" class="btn btn-default btn-primary" value="Ascending" ng-click="reservationsCtrl.asc()">
+							</div>
+							<div class="col-sm-4">
+								<input type="button" class="btn btn-default btn-primary" value="Descending" ng-click="reservationsCtrl.desc()">
+							</div>
+							<div class="col-sm-4">
+								<input type="button" class="btn btn-default btn-primary" value="Reset"ng-click="reservationsCtrl.reset()">
+							</div>
+						</div>
+						<div class="input-group">
+							<input type="text" class="form-control" placeholder="Search" ng-model="reservationsCtrl.filter">
+								<div class="input-group-btn">
+							      	<button class="btn btn-default" type="submit">
+							        	<i class="glyphicon glyphicon-search"></i>
+							    	</button>
+							    </div>
+						</div>
+					</form>
+					<br/>
 					<table class="table table-hover">
 						<thead>
 							<tr>
@@ -53,7 +85,7 @@
 							</tr>
 						</thead>
 						<tbody>
-							<tr ng-repeat="rest in reservationsCtrl.restaurants">
+							<tr ng-repeat="rest in reservationsCtrl.restaurants | orderBy:reservationsCtrl.flt_selected.name:reservationsCtrl.flt_reverse | filter:reservationsCtrl.filter">
 								<td>{{rest.type}}</td>
 								<td>{{rest.name}}</td>
 								<td>{{rest.description}}</td>
@@ -264,7 +296,8 @@
 		  			</div>
 				</div>
 				
-			<div class="col-sm-2"></div>
+				<div class="col-sm-2"></div>
+			</div>
 		</div>
 		<div ng-show="tabCtrl.isSet(2)" ng-controller="FriendsController as friendsCtrl">
 			<div class="row">
@@ -286,8 +319,19 @@
 	      								</select>
 						  			</div>
 						  		</div>
+						  		<div class="form-group">
+									<div class="col-sm-4">
+										<input type="button" class="btn btn-default btn-primary" value="Ascending" ng-click="friendsCtrl.asc()">
+									</div>
+									<div class="col-sm-4">
+										<input type="button" class="btn btn-default btn-primary" value="Descending" ng-click="friendsCtrl.desc()">
+									</div>
+									<div class="col-sm-4">
+										<input type="button" class="btn btn-default btn-primary" value="Reset"ng-click="friendsCtrl.reset()">
+									</div>
+								</div>
 								<div class="input-group">
-							    	<input type="text" class="form-control" placeholder="Search">
+							    	<input type="text" class="form-control" placeholder="Search" ng-model="friendsCtrl.filter">
 							    	<div class="input-group-btn">
 							      		<button class="btn btn-default" type="submit">
 							        		<i class="glyphicon glyphicon-search"></i>
@@ -305,7 +349,7 @@
 									</tr>
 								</thead>
 								<tbody>
-									<tr ng-repeat="friend in friendsCtrl.friends">
+									<tr ng-repeat="friend in friendsCtrl.friends | orderBy:friendsCtrl.selected.name:friendsCtrl.flt_reverse | filter:friendsCtrl.filter">
 										<td>{{friend.email}}</td>
 										<td>{{friend.name}}</td>
 										<td>{{friend.surname}}</td>
@@ -324,8 +368,19 @@
 	      								</select>
 						  			</div>
 						  		</div>
+						  		<div class="form-group">
+									<div class="col-sm-4">
+										<input type="button" class="btn btn-default btn-primary" value="Ascending" ng-click="friendsCtrl.cst_asc()">
+									</div>
+									<div class="col-sm-4">
+										<input type="button" class="btn btn-default btn-primary" value="Descending" ng-click="friendsCtrl.cst_desc()">
+									</div>
+									<div class="col-sm-4">
+										<input type="button" class="btn btn-default btn-primary" value="Reset"ng-click="friendsCtrl.cst_reset()">
+									</div>
+								</div>
 								<div class="input-group">
-							    	<input type="text" class="form-control" placeholder="Search">
+							    	<input type="text" class="form-control" placeholder="Search" ng-model="friendsCtrl.cst_filter">
 							    	<div class="input-group-btn">
 							      		<button class="btn btn-default" type="submit">
 							        		<i class="glyphicon glyphicon-search"></i>
@@ -343,7 +398,7 @@
 									</tr>
 								</thead>
 								<tbody>
-									<tr ng-repeat="cst in friendsCtrl.customers">
+									<tr ng-repeat="cst in friendsCtrl.customers | orderBy:friendsCtrl.cst_selected.name:friendsCtrl.cst_reverse | filter:friendsCtrl.cst_filter">
 										<td>{{cst.email}}</td>
 										<td>{{cst.name}}</td>
 										<td>{{cst.surname}}</td>
@@ -360,6 +415,126 @@
 					<div class="col-sm-2"></div>
 					<div class="col-sm-4"></div>
 			  	</div>
+		</div>
+		<div ng-show="tabCtrl.isSet(7)" ng-controller="CurrentController as currentCtrl">
+			<div ng-show="currentCtrl.phase == 1">
+				<div class="col-sm-2"></div>
+				<div class="col-sm-8">
+				<table class="table table-hover">
+						<caption>Reservations</caption>
+						<thead>
+							<tr>
+								<th>Status</th>
+								<th>Restaurant</th>
+								<th>Date</th>
+								<th>Time</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr ng-repeat="res in currentCtrl.reservations">
+								<td>{{res.status}}</td>
+								<td>{{res.restaurant.name}}</td>
+								<td>{{res.date | date:'MM/dd/yyyy'}}</td>
+								<td>{{res.time | date:'h:mma'}}</td>
+								<td>
+									<button class="btn btn-primary" ng-click="currentCtrl.view(res)" ng-disabled="res.status == 'Finished'">
+									     View
+									 </button>
+								</td>
+								<td>
+									<button class="btn btn-danger" ng-click="" ng-disabled="">
+									     Cancel
+									 </button>
+								</td>
+							</tr>
+						</tbody>
+				</table>
+				</div>
+				<div class="col-sm-2"></div>
+			</div>
+			<div ng-show="currentCtrl.phase == 2">
+				<div class="col-sm-5">
+					<table class="table table-hover">
+							<caption>Ordered drinks:</caption>
+							<thead>
+								<tr>
+									<th>Label</th>
+									<th>Description</th>
+									<th>Price</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr ng-repeat="drOrder in currentCtrl.order.drinks">
+									<td>{{drOrder.drink.label}}</td>
+									<td>{{drOrder.drink.description}}</td>
+									<td>{{drOrder.drink.price}}</td>
+									<td><input  type="button" class="btn btn-danger" value="Remove" ng-click="currentCtrl.removeDrOrder(drOrder)"/></td>
+								</tr>
+							</tbody>
+					</table>
+					<br/>
+					<table class="table table-hover">
+							<caption>Order drinks:</caption>
+							<thead>
+								<tr>
+									<th>Label</th>
+									<th>Description</th>
+									<th>Price</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr ng-repeat="drink in currentCtrl.rest.drinks">
+									<td>{{drink.label}}</td>
+									<td>{{drink.description}}</td>
+									<td>{{drink.price}}</td>
+									<td><input  type="button" class="btn btn-primary" value="Add" ng-click="currentCtrl.addDrOrder(drink)"/></td>
+								</tr>
+							</tbody>
+					</table>
+				</div>
+				<div class="col-sm-2">
+					
+				</div>
+				<div class="col-sm-5">
+					<table class="table table-hover">
+							<caption>Ordered dishes:</caption>
+							<thead>
+								<tr>
+									<th>Label</th>
+									<th>Description</th>
+									<th>Price</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr ng-repeat="diOrder in currentCtrl.order.dishes">
+									<td>{{diOrder.dish.label}}</td>
+									<td>{{diOrder.dish.description}}</td>
+									<td>{{diOrder.dish.price}}</td>
+									<td><input  type="button" class="btn btn-danger" value="Remove" ng-click="currentCtrl.removeDiOrder(diOrder)"/></td>
+								</tr>
+							</tbody>
+					</table>
+					<br/>
+					<table class="table table-hover">
+							<caption>Order dishes:</caption>
+							<thead>
+								<tr>
+									<th>Label</th>
+									<th>Description</th>
+									<th>Price</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr ng-repeat="dish in currentCtrl.rest.dishes">
+									<td>{{dish.label}}</td>
+									<td>{{dish.description}}</td>
+									<td>{{dish.price}}</td>
+									<td><input  type="button" class="btn btn-primary" value="Add" ng-click="currentCtrl.addDiOrder(dish)"/></td>
+								</tr>
+							</tbody>
+					</table>
+				</div>
+			</div>
 		</div>
 		<div ng-show="tabCtrl.isSet(3)">OVDE SAM BIJO ALI NEMA INSTAGRAMA</div>
 		<div ng-show="tabCtrl.isSet(4)">POZVALI ME PRIJATELJI MOJI KINESKE RANE DA JEDEMO</div>

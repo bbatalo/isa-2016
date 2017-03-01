@@ -202,24 +202,77 @@ public class ReservationsController {
 			return null;
 		}
 	}
-	/*
-	@RequestMapping(value = "/getTables",
+	
+	@RequestMapping(value = "/getReservations",
 			method = RequestMethod.GET,
 			produces = MediaType.APPLICATION_JSON)
-	public ResponseEntity<List<RestTable>> loadTables(@Context HttpServletRequest request, @RequestParam("id") Long id) {
+	public ResponseEntity<List<Reservation>> loadReservations(@Context HttpServletRequest request) {
+		
+		Online online = (Online) request.getSession().getAttribute("user");
+		
+		if (online != null) {
+			Customer cst = customerService.getCustomerById(online.getUser().getUserID());
+			List<Reservation> reservations = cst.getReservations();
+			
+			return new ResponseEntity<List<Reservation>>(reservations, HttpStatus.OK);
+		} else {
+			return null;
+		}
+	}
+	
+	@RequestMapping(value = "/getOrder",
+			method = RequestMethod.GET,
+			produces = MediaType.APPLICATION_JSON)
+	public ResponseEntity<RestOrder> loadOrder(@Context HttpServletRequest request, @RequestParam("id") Long id) {
+		
+		Online online = (Online) request.getSession().getAttribute("user");
+		
+		if (online != null) {
+			Reservation res = reservationService.findById(id);
+			Customer cst = customerService.getCustomerById(online.getUser().getUserID());
+			for (RestOrder r : res.getOrder()) {
+				if (r.getCustomer().getUserID() == cst.getUserID())
+					return new ResponseEntity<RestOrder>(r, HttpStatus.OK);
+			}
+			return new ResponseEntity<RestOrder>(new RestOrder(), HttpStatus.OK);
+		} else {
+			return null;
+		}
+	}
+	
+	@RequestMapping(value = "/getOrderDrinks",
+			method = RequestMethod.GET,
+			produces = MediaType.APPLICATION_JSON)
+	public ResponseEntity<List<DrinkOrder>> loadOrderDrinks(@Context HttpServletRequest request, @RequestParam("id") Long id) {
 		
 		Online online = (Online) request.getSession().getAttribute("user");
 		
 		if (online != null) {
 			
-			List<RestTable> tables = tableService.getTablesBySegmentId(id);
-			return new ResponseEntity<List<RestTable>>(tables, HttpStatus.OK);
+			RestOrder order = orderService.getById(id);
+			List<DrinkOrder> drinks = order.getDrinkOrders();
+			return new ResponseEntity<List<DrinkOrder>>(drinks, HttpStatus.OK);
 		} else {
 			return null;
 		}
-	}*/
+	}
 	
-	
+	@RequestMapping(value = "/getOrderDishes",
+			method = RequestMethod.GET,
+			produces = MediaType.APPLICATION_JSON)
+	public ResponseEntity<List<DishOrder>> loadOrderDishes(@Context HttpServletRequest request, @RequestParam("id") Long id) {
+		
+		Online online = (Online) request.getSession().getAttribute("user");
+		
+		if (online != null) {
+			
+			RestOrder order = orderService.getById(id);
+			List<DishOrder> dishes = order.getDishOrders();
+			return new ResponseEntity<List<DishOrder>>(dishes, HttpStatus.OK);
+		} else {
+			return null;
+		}
+	}
 	@RequestMapping(value = "/getTables",
 			method = RequestMethod.POST,
 			produces = MediaType.APPLICATION_JSON)
