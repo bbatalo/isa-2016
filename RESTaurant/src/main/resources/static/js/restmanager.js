@@ -82,6 +82,114 @@
 		  };
 	});
 	
+	app.controller('HomeController', ['$scope', '$http', '$window', 'restaurantService', function($scope, $http, $window, restaurantService) {
+		var control = this;
+		control.restaurant = {};
+		control.dish = {};
+		control.dishes = [];
+		control.employee = {};
+		control.employees = [];
+		
+		this.getDishes = function(){
+			$http.get('/restmanager/getDishesNew').then(function success(response){
+				control.dishes = response.data;
+				
+				for(it in control.dishes){
+					control.dishes[it].rating = (Math.random() * 4 + 1).toFixed(2);
+				}
+				
+			}), function error(response){
+				control.result = "Unknown error ocurred.";
+			}
+			
+		};
+		
+		this.getEmployees = function(){
+			$http.get('/restmanager/getEmployeesNew').then(function success(response){
+				control.employees = response.data;
+				
+				for(it in control.employees){
+					control.employees[it].rating = (Math.random() * 4 + 1).toFixed(2);
+				}
+			}), function error(response){
+				control.result = "Unknown error ocurred."
+			}
+		};
+		
+		this.getRestaurant = function(){
+			$http.get('/restmanager/getRestaurantNew').then(function success(response){
+				control.restaurant = response.data;
+				
+				control.restaurant.rating = (Math.random() * 4 + 1).toFixed(2);
+				
+			}), function error(response){
+				control.result = "Unknown error ocurred."
+			}
+		};
+		
+		$scope.$watch('tab.tab', function(newValue) {
+			if(newValue == 1){
+				control.getRestaurant();
+				control.getDishes();
+				control.getEmployees();
+			}
+		});
+		
+		$scope.visitsChart = new CanvasJS.Chart("visitsContainer",
+	    {
+	      title: {
+	        text: "Weekly visits"
+	      },
+	        data: [
+	      {
+	        type: "area",
+	        dataPoints: [//array
+
+	        { x: new Date(2017, 02, 1), y: Math.floor(Math.random()*30) + 1},
+	        { x: new Date(2017, 02, 2), y: Math.floor(Math.random()*30) + 1},
+	        { x: new Date(2017, 02, 3), y: Math.floor(Math.random()*30) + 1},
+	        { x: new Date(2017, 02, 4), y: Math.floor(Math.random()*30) + 1},
+	        { x: new Date(2017, 02, 5), y: Math.floor(Math.random()*30) + 1},
+	        { x: new Date(2017, 02, 6), y: Math.floor(Math.random()*30) + 1},
+	        { x: new Date(2017, 02, 7), y: Math.floor(Math.random()*30) + 1},
+	        ]
+	      }
+	      ]
+	    });
+
+	    $scope.visitsChart.render();
+	    
+		$scope.incomeChart = new CanvasJS.Chart("incomeContainer",
+			    {
+			      title: {
+			        text: "Yearly income"
+			      },
+			        data: [
+			      {
+			        type: "area",
+			        dataPoints: [//array
+
+			        { x: new Date(2016, 00, 1), y: Math.floor(Math.random()*2000) + 1},
+			        { x: new Date(2016, 01, 1), y: Math.floor(Math.random()*2000) + 1},
+			        { x: new Date(2016, 02, 1), y: Math.floor(Math.random()*2000) + 1},
+			        { x: new Date(2016, 03, 1), y: Math.floor(Math.random()*2000) + 1},
+			        { x: new Date(2016, 04, 1), y: Math.floor(Math.random()*2000) + 1},
+			        { x: new Date(2016, 05, 1), y: Math.floor(Math.random()*2000) + 1},
+			        { x: new Date(2016, 06, 1), y: Math.floor(Math.random()*2000) + 1},
+			        { x: new Date(2016, 07, 1), y: Math.floor(Math.random()*2000) + 1},
+			        { x: new Date(2016, 08, 1), y: Math.floor(Math.random()*2000) + 1},
+			        { x: new Date(2016, 09, 1), y: Math.floor(Math.random()*2000) + 1},
+			        { x: new Date(2016, 10, 1), y: Math.floor(Math.random()*2000) + 1},
+			        { x: new Date(2016, 11, 1), y: Math.floor(Math.random()*2000) + 1}
+			        ]
+			      }
+			      ]
+			    });
+
+			    $scope.incomeChart.render();
+	    
+	}]);
+	
 	app.controller('RestManagerController', ['$http', '$window', 'restaurantService', function($http, $window, restaurantService) {
 		
 		this.authorize = function() {
@@ -146,11 +254,11 @@
 					if(response.data === "same"){
 						//qwe
 					}else if(response.data === "taken"){
-						alert("Restaurant name is already taken.");
+						toastr["error"]('Restaurant name is already taken.');
 					}else if(response.data === "No name sent"){
-						alert(response.data);
+						toastr["error"](response.data);
 					}else{
-						alert("Success.");
+						toastr["success"]('Restaurant name successfully updated.');
 						control.form.name = response.data;
 						restaurantService.setRestaurantName(response.data);
 					}
@@ -167,7 +275,7 @@
 						 },
 						 data: requestData
 				}).then(function success(response) {
-					alert("Success.");
+					toastr["success"]('Restaurant details successfully updated.');
 					control.form.type = response.data.type;
 					control.form.description = response.data.description;
 					restaurantService.setRestaurantDetails(response.data);
@@ -186,6 +294,28 @@
 		var control = this;
 		control.dish = {};
 		control.dishes = [];
+		control.dishType = [
+			{
+				id: 0,
+				value: "Baked"
+			},
+			{
+				id: 1,
+				value: "Vegan"
+			},
+			{
+				id: 2,
+				value: "Cooked"
+			},
+			{
+				id: 3,
+				value: "Grilled"
+			},
+			{
+				id: 4,
+				value: "Universal"
+			}
+		];
 		control.result = "";
 		
 		this.register = function(){
@@ -194,6 +324,7 @@
 				control.result = response.data;
 				if(control.result === "OK"){
 					control.dishes.push(control.dish);
+					toastr["success"]('Dish successfully added.');
 					control.dish = {};
 				}
 			}, function error(response) {
@@ -218,7 +349,7 @@
 		
 		this.removeDish = function(dish){
 			$http.post('/restmanager/removeDish', dish).then(function success(response){
-				alert(response.data);
+				toastr["success"](response.data);
 				var index = -1;		
 				var dishArr = eval( control.dishes );
 				for( var i = 0; i < dishArr.length; i++ ) {
@@ -228,7 +359,7 @@
 					}
 				}
 				if( index === -1 ) {
-					alert( "Something gone wrong" );
+					toastr["error"]('Something gone wrong.');
 				}
 				control.dishes.splice( index, 1 );
 			}), function error(response){
@@ -249,6 +380,7 @@
 				control.result = response.data;
 				if(control.result === "OK"){
 					control.drinks.push(control.drink);
+					toastr["success"]('Drink successfully added.');
 					control.drink = {};
 				}
 			}, function error(response) {
@@ -266,13 +398,13 @@
 		};
 		
 		$scope.$watch('tab.tab', function(newValue) {
-			if(newValue == 5)
+			if(newValue == 4)
 				control.getDrinks();
 		});
 		
 		this.removeDrink = function(drink){
 			$http.post('/restmanager/removeDrink', drink).then(function success(response){
-				alert(response.data);
+				toastr["success"](response.data);
 				var index = -1;		
 				var drinkArr = eval( control.drinks );
 				for( var i = 0; i < drinkArr.length; i++ ) {
@@ -282,7 +414,7 @@
 					}
 				}
 				if( index === -1 ) {
-					alert( "Something gone wrong" );
+					toastr["error"]('Something gone wrong.');
 				}
 				control.drinks.splice( index, 1 );
 			}), function error(response){
@@ -358,7 +490,7 @@
 				}
 			}
 			if( index === -1 ) {
-				alert( "Something gone wrong" );
+				toastr["error"]( "Something gone wrong" );
 			}
 			control.bid.drinks.splice( index, 1 );
 		}
@@ -373,7 +505,7 @@
 				}
 			}
 			if( index === -1 ) {
-				alert( "Something gone wrong" );
+				toastr["error"]( "Something gone wrong" );
 			}
 			control.bid.groceries.splice( index, 1 );
 		}
@@ -389,15 +521,15 @@
 						control.bid = {};
 						control.bid.drinks = [];
 						control.bid.groceries = [];
-						alert("Success!");
+						toastr["success"]("Bid successfully added!");
 					}), function error(response){
 						control.result = "Unknown error ocurred.";
 					}
 				else{
-					alert('Grocery or drink list is empty.');
+					toastr["warning"]('Grocery or drink list is empty.');
 				}
 			else
-				alert('End date needs to be after begin date.');
+				toastr["warning"]('End date needs to be after begin date.');
 		}
 		
 		$scope.$watch('tab.tab', function(newValue) {
@@ -439,7 +571,11 @@
 		
 		this.acceptOffer = function(offer){
 			$http.post('/restmanager/acceptOffer', offer).then(function success(response) {
-				alert('Offer accepted');
+				if(response.data === "OK"){
+					toastr["success"]('Offer accepted.');
+				}else{
+					toastr["error"]('Bid already has an offer.');
+				}
 			}, function error(response) {
 				control.result = "Unknown error ocurred."
 			});
@@ -494,6 +630,7 @@
 			control.segment.seating = restaurantService.getRestaurantSeating();
 			$http.post('/restmanager/addSegment', this.segment).then(function success(response) {
 				control.result = response.data;
+				toastr["success"]('Segment successfully added.');
 				if(control.result === "OK"){
 					control.segments.push(control.segment);
 					control.segment = {};
@@ -519,7 +656,7 @@
 		
 		this.removeSegment = function(segment){
 			$http.post('/restmanager/removeSegment', segment).then(function success(response){
-				alert(response.data);
+				toastr["success"](response.data);
 				var index = -1;		
 				var segmentArr = eval( control.segments );
 				for( var i = 0; i < segmentArr.length; i++ ) {
@@ -529,7 +666,7 @@
 					}
 				}
 				if( index === -1 ) {
-					alert( "Something gone wrong" );
+					toastr["error"]( "Something gone wrong" );
 				}
 				control.segments.splice( index, 1 );
 			}), function error(response){
@@ -571,7 +708,7 @@
 				
 				$http.post('/restmanager/addTable', restTable).then(function success(response){
 					
-					alert(response.data);
+					toastr["success"](response.data);
 				}), function error(response){
 					control.result = "Unknown error ocurred.";
 				}
@@ -587,7 +724,7 @@
 				restTable.tableCol = table.tableCol;
 				
 				$http.post('/restmanager/removeTable', restTable).then(function success(response){
-					alert(response.data);
+					toastr["success"](response.data);
 				}), function error(response){
 					control.result = "Unknown error ocurred.";
 				}
@@ -633,6 +770,7 @@
 			
 			$http.post('/restmanager/addEmployee', this.employee).then(function success(response) {
 				control.result = response.data;
+				toastr["success"]('Employee successfully registered.');
 				if(control.result === "OK"){
 					control.employees.push(control.employee);
 					control.employee = {};
@@ -810,7 +948,7 @@
 				
 				$http.post('/restmanager/addShift', shift).then(function success(response){
 					if(response.data !== null){
-						alert('Success!');
+						toastr["success"]('Shift successfully added!');
 						control.event.id = response.data.idShift;
 						control.event.title = control.employee.email;
 						control.shifts.push(response.data);
@@ -831,7 +969,7 @@
 						control.showSegment = false;
 						control.newShift = false;
 					}else{
-						alert('Error');
+						toastr["error"]('Error');
 					}
 					
 				}), function error(response){
@@ -926,7 +1064,7 @@
 			shift.idShift = event.id;
 			
 			$http.post('/restmanager/removeShift', shift).then(function success(response){
-				alert(response.data);
+				toastr["success"](response.data);
 				
 				var index = -1;		
 				var shiftsArr = eval( control.shifts );
@@ -937,7 +1075,7 @@
 					}
 				}
 				if( index === -1 ) {
-					alert( "Something gone wrong" );
+					toastr["error"]( "Something gone wrong" );
 				}else{
 					control.shifts.splice( index, 1 );
 					control.events.splice(index, 1);
