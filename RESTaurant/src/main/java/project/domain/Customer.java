@@ -10,6 +10,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
@@ -36,11 +37,12 @@ public class Customer extends User {
 	@JsonIgnore
     private List<Reservation> reservations;
 
+    
+    //public java.util.Collection<Invite> invites;
+	@OneToOne
+	@JsonIgnore
+    private VisitHistory history;
     /*
-    public java.util.Collection<Invite> invites;
-
-    public VisitHistory history;
-
     public java.util.Collection<Order> orders;
 	*/
 	
@@ -137,6 +139,14 @@ public class Customer extends User {
 
 	public void setReservations(List<Reservation> reservations) {
 		this.reservations = reservations;
+	}
+
+	public VisitHistory getHistory() {
+		return history;
+	}
+
+	public void setHistory(VisitHistory history) {
+		this.history = history;
 	}
 
 	

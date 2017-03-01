@@ -454,7 +454,12 @@
 			</div>
 			<div ng-show="currentCtrl.phase == 2">
 				<div class="col-sm-5">
+					<input type="button" class="btn btn-warning" value="{{currentCtrl.order.status}}" />
+					<input type="button" class="btn btn-success" value="Pay" ng-click="currentCtrl.pay()"/>
+					<input type="button" class="btn btn-primary" value="Refresh" ng-click="currentCtrl.refresh()"/>
+					<input type="button" class="btn btn-info" value="Go Back" ng-click="currentCtrl.goBack()"/>
 					<table class="table table-hover">
+							
 							<caption>Ordered drinks:</caption>
 							<thead>
 								<tr>

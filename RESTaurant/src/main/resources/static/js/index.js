@@ -587,7 +587,8 @@
 		}
 		
 		control.removeDish = function(dish) {	
-			
+			var index = control.restaurant.orderedDishes.indexOf(dish);
+			control.restaurant.orderedDishes.splice(index, 1);
 		}
 		
 		control.confirmDrinks = function() {
@@ -608,7 +609,8 @@
 		}
 		
 		control.removeDrink = function(drink) {
-			
+			var index = control.restaurant.orderedDrinks.indexOf(drink);
+			control.restaurant.orderedDrinks.splice(index, 1);
 		}
 
 		control.finish = function() {
@@ -632,6 +634,11 @@
 				data: control.reserv
 			}).then(function success(response) {
 				toastr["success"]('EYYYYYY', "EYYYYY!");
+				if(response.data == "Nema kelnera brt") {
+					toastr["info"]('Kelneru nije poslata poruka, jer ne postoji u tom trenutku', "EYYYYY!");
+				}
+				control.clean();
+				control.phase = 1;
 			});
 		}
 		
@@ -726,14 +733,23 @@
 		
 		control.view = function(res) {
 			control.loadOrder(res);
-			
+			control.restaurant = res;
 			control.phase = 2;
 		}
 		
 		control.refresh = function() {
-			var restaurant = control.reservation.restaurant;
+			var restaurant = control.restaurant;
 			control.loadOrder(restaurant)
 			
+		}
+		
+		control.pay = function() {
+			$http({
+				method: 'GET',
+				url: '/reservations/pay?id=' + control.order.id,
+			}).then(function success(response) {
+				toastr['success']('Svaka cast!', 'Svaka cast');
+			});
 		}
 		
 		control.loadReservations = function() {
@@ -804,7 +820,7 @@
 				if (response.data == "Success") {
 					var index = control.order.drinkOrders.indexOf(drOrder);
 					control.order.drinkOrders.splice(index, 1);
-					toastr['Succes']('Canceled drink order', 'Cancel')
+					toastr['success']('Canceled drink order', 'Cancel')
 				}
 			});
 		}
@@ -818,7 +834,7 @@
 				if (response.data == "Success") {
 					var index = control.order.dishOrders.indexOf(diOrder);
 					control.order.dishOrders.splice(index, 1);
-					toastr['Succes']('Canceled dish order', 'Cancel')
+					toastr['success']('Canceled dish order', 'Cancel')
 				}
 			});
 		}
@@ -845,6 +861,12 @@
 					control.order.dishOrders.push(response.data);
 				}
 			});
+		}
+		
+		control.goBack = function(){
+			control.phase = 1;
+			control.order = {};
+			control.rest = {};
 		}
 	}]);
 	

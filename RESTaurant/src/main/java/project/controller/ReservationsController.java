@@ -37,6 +37,8 @@ import project.domain.RestTable;
 import project.domain.Restaurant;
 import project.domain.Segment;
 import project.domain.Shift;
+import project.domain.Visit;
+import project.domain.VisitHistory;
 import project.domain.Waiter;
 import project.domain.WorkSchedule;
 import project.domain.dto.PasswordDTO;
@@ -56,6 +58,8 @@ import project.service.ReservationService;
 import project.service.RestaurantService;
 import project.service.SegmentService;
 import project.service.TableService;
+import project.service.VisitHistoryService;
+import project.service.VisitService;
 
 @RequestMapping("/reservations")
 @Controller
@@ -105,6 +109,12 @@ public class ReservationsController {
 	
 	@Autowired
 	private BarMessenger barMessenger;
+	
+	@Autowired
+	private VisitHistoryService historyService;
+	
+	@Autowired
+	private VisitService visitService;
 	
 	@RequestMapping(value = "/getRestaurants",
 			method = RequestMethod.GET,
@@ -309,12 +319,29 @@ public class ReservationsController {
 		if (online != null) {
 			
 			List<RestTable> tables = tableService.getTablesBySegmentId(dto.getSegmentID());
-			/*
+			
 			Restaurant rest = restaurantService.getRestaurantById(dto.getRestID());
 			List<Reservation> tmp = rest.getReservations();
 			List<Reservation> reservs = purge(tmp, dto);
 			System.out.println(reservs.size());
-			*/
+			List<Long> tableIDs = new ArrayList<Long>();
+			if (reservs.size() > 0) {
+				for (Reservation r : reservs) {
+					for (RestTable t : r.getTables()) {
+						tableIDs.add(t.getIdTable());
+					}
+				}
+			}
+			
+			if (tableIDs.size() > 0) {
+				for (RestTable t : tables) {
+					if (tableIDs.contains(t.getIdTable())) {
+						t.setStatus("taken");
+					}
+				}
+			}
+			
+			
 			return new ResponseEntity<List<RestTable>>(tables, HttpStatus.OK);
 		} else {
 			return null;
@@ -336,6 +363,21 @@ public class ReservationsController {
 			
 			//vremenska zauzetost
 			if (table != null && reservation != null) {
+				List<Reservation> temp = reservation.getRestaurant().getReservations();
+				List<Reservation> reservs = purge(temp, dto);
+				System.out.println(reservs.size());
+				List<Long> tableIDs = new ArrayList<Long>();
+				if (reservs.size() > 0) {
+					for (Reservation r : reservs) {
+						for (RestTable t : r.getTables()) {
+							tableIDs.add(t.getIdTable());
+						}
+					}
+				}
+				
+				if (tableIDs.contains(table.getIdTable()))
+					table.setStatus("taken");
+				
 				if (!table.getStatus().equals("taken")) {
 					reservation.getTables().add(table);
 					reservationService.save(reservation);
@@ -419,6 +461,10 @@ public class ReservationsController {
 			order.setWaiter(kelner);
 			orderService.save(order);
 			
+			if (kelner == null) {
+				return new ResponseEntity<String>("Nema kelnera brt", HttpStatus.OK);
+			}
+			
 			orderMessenger.sendRequestTo(kelner,order);
 			orderMessenger.sendUpdateTo(order, kelner);
 			return new ResponseEntity<String>("Success", HttpStatus.OK);
@@ -429,9 +475,46 @@ public class ReservationsController {
 			//i ovde pozoves njenu metodu da posaljes poruku, tipa
 			//messenger.sendToKonobar(konobar, order.getId());
 			//ili sta ti vec odgovara
-			//pocupaj konobara iz smena i tih sranja, to nisam gledao kako je implementirano...
+			//pocupaj konobara iz smena i segmenata, to nisam gledao kako je implementirano...
 			
 			
+		} else {
+			return null;
+		}
+	}
+	
+	
+	@RequestMapping(value = "/pay",
+			method = RequestMethod.GET,
+			produces = MediaType.TEXT_PLAIN)
+	public ResponseEntity<String> pay(@Context HttpServletRequest request, @RequestParam("id") Long id) {
+		
+		Online online = (Online) request.getSession().getAttribute("user");
+		
+		if (online != null) {
+			Customer cst = customerService.getCustomerById(online.getUser().getUserID());
+			RestOrder order = orderService.getById(id);
+			order.setStatus("Paid");
+			
+			VisitHistory history = cst.getHistory();
+			if (history == null) {
+				history = new VisitHistory();
+				cst.setHistory(history);
+				historyService.save(history);
+			}
+			
+			Visit visit = new Visit();
+			visit.setHistory(history);
+			visit.setOrder(order);
+			
+			visitService.save(visit);
+			historyService.save(history);
+			customerService.save(cst);
+			orderService.save(order);
+			
+			//poslati poruku konobaru
+			
+			return new ResponseEntity<String>("Success", HttpStatus.OK);
 		} else {
 			return null;
 		}
@@ -470,24 +553,33 @@ public class ReservationsController {
 	private List<Reservation> purge(List<Reservation> in, ReservDTO dto) {
 		List<Reservation> out = new ArrayList<Reservation>();
 		for (Reservation r : in) {
+			if (r.getId() == dto.getReservID()) {
+				continue;
+			}
+			
 			if (checkDate(r.getDate(), dto.getDate()) == 0) {
 				System.out.println("isti datum");
 				
 				Calendar calDTO1 = Calendar.getInstance();
 				calDTO1.setTime(dto.getTime());
+				System.out.println(calDTO1.toString());
 				
 				Calendar calDTO2 = Calendar.getInstance();
 				calDTO2.setTime(dto.getTime());
 				calDTO2.add(Calendar.HOUR_OF_DAY, dto.getDuration());
+				System.out.println(calDTO2.toString());
 				
 				Calendar calRES1 = Calendar.getInstance();
 				calRES1.setTime(r.getTime());
+				System.out.println(calRES1.toString());
 				
 				Calendar calRES2 = Calendar.getInstance();
 				calRES2.setTime(r.getTime());
 				calRES2.add(Calendar.HOUR_OF_DAY, r.getDuration());
+				System.out.println(calRES2.toString());
 				
-				if ((calDTO1.before(calRES1) && calDTO2.before(calRES2)) || (calRES1.before(calDTO1) && calRES2.before(calDTO2))) {
+				if ((calDTO1.before(calRES1) && calDTO2.before(calRES1)) || (calRES1.before(calDTO1) && calRES2.before(calDTO1))) {
+					System.out.println("vremensko razilazenje");
 					continue;
 				}
 				

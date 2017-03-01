@@ -1,49 +1,59 @@
-/***********************************************************************
- * Module:  Visit.java
- * Author:  Bojan
- * Purpose: Defines the Class Visit
- ***********************************************************************/
 package project.domain;
 
-import java.util.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 
-/** @pdOid 9157b952-3450-4a01-a635-a6c2b0c4eff6 */
+@Entity
 public class Visit {
-   /** @pdOid fa40c633-8a4b-4875-b2c7-8005d508b7ee */
-   public long idVisit;
-   
-   /** @pdRoleInfo migr=no name=Rating assc=rating mult=0..1 */
- //  public Rating rating;
-   /** @pdRoleInfo migr=no name=VisitHistory assc=visits mult=0..1 side=A */
-   public VisitHistory visitHistory;
-   /** @pdRoleInfo migr=no name=Reservation assc=reserved mult=0..1 side=A */
-   public Reservation reservation;
-   /** @pdRoleInfo migr=no name=Invite assc=visited mult=0..1 side=A */
-   public Invite invite;
-   
-   
-   /** @pdGenerated default parent getter */
-   public VisitHistory getVisitHistory() {
-      return visitHistory;
-   }
-   
-   /** @pdGenerated default parent setter
-     * @param newVisitHistory */
-   public void setVisitHistory(VisitHistory newVisitHistory) {
-      if (this.visitHistory == null || !this.visitHistory.equals(newVisitHistory))
-      {
-         if (this.visitHistory != null)
-         {
-            VisitHistory oldVisitHistory = this.visitHistory;
-            this.visitHistory = null;
-            oldVisitHistory.removeVisits(this);
-         }
-         if (newVisitHistory != null)
-         {
-            this.visitHistory = newVisitHistory;
-            this.visitHistory.addVisits(this);
-         }
-      }
-   }
 
+	@Id
+	@GeneratedValue
+	@Column(name="visit_id", nullable = false)
+    private Long id;
+
+    //public Rating rating;
+
+	@ManyToOne
+	@JoinColumn(name="history_id")
+    private VisitHistory history;
+
+	@OneToOne
+	@JoinColumn(name="ord_id")
+    private RestOrder order;
+
+    //public Invite invite;
+   
+    public Visit() {}	
+	
+	public Long getId() {
+		return id;
+	}
+
+	public void setId(Long id) {
+		this.id = id;
+	}
+
+	public VisitHistory getHistory() {
+		return history;
+	}
+
+	public void setHistory(VisitHistory history) {
+		this.history = history;
+	}
+
+	public RestOrder getOrder() {
+		return order;
+	}
+	
+	public void setOrder(RestOrder order) {
+		this.order = order;
+	}
+   
+   
+   
 }

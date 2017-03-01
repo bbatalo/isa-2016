@@ -10,6 +10,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
@@ -63,6 +64,10 @@ public class RestOrder {
 	@JoinColumn(name="ord_customer",  referencedColumnName="usr_id")
     private Customer customer;
    
+    @OneToOne
+    @JsonIgnore
+    private Visit visit;
+    
     public RestOrder() {}
 
 	public Long getId() {
@@ -135,6 +140,14 @@ public class RestOrder {
 
 	public void setOnArrival(boolean onArrival) {
 		this.onArrival = onArrival;
+	}
+
+	public Visit getVisit() {
+		return visit;
+	}
+
+	public void setVisit(Visit visit) {
+		this.visit = visit;
 	}
     
     

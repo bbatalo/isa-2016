@@ -1,8 +1,3 @@
-/***********************************************************************
- * Module:  Online.java
- * Author:  Bojan
- * Purpose: Defines the Class Online
- ***********************************************************************/
 package project.domain;
 
 import javax.persistence.Column;
