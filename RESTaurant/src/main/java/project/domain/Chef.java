@@ -4,14 +4,16 @@ import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.OneToMany;
+import javax.persistence.FetchType;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
 public class Chef extends Employee {
 
-	private static final long serialVersionUID = -8112031432823488140L;
 	
 	@Column(name = "chf_type", nullable = false)
     private DishType type;
@@ -33,7 +35,9 @@ public class Chef extends Employee {
    public java.util.Collection<Shift> shifts;
    
    */
-	@OneToMany(mappedBy="chef")
+	
+	
+	@ManyToMany(mappedBy="chef")
 	@JsonIgnore
     private List<DishOrder> dishOrders;
 

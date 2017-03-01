@@ -18,7 +18,11 @@ public class DishOrderServiceImpl implements DishOrderService {
 	public DishOrder save(DishOrder dishOrder) {
 		return repository.save(dishOrder);
 	}
-
+	
+	@Override
+	public void deleteDishOrderById(Long id){
+		repository.removeById(id);
+	}
 	@Override
 	public DishOrder getDishById(Long id) {
 		return repository.findDishOrderById(id);

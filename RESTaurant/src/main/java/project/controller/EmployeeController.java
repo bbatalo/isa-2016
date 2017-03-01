@@ -49,7 +49,6 @@ public class EmployeeController {
 			consumes = MediaType.TEXT_PLAIN,
 			produces = MediaType.APPLICATION_JSON)
 	public ResponseEntity<List<Employee>> getByRole(@Context HttpServletRequest request, @RequestBody String employee) {
-		System.out.println(employee);
 		EmployeeRole number;
 		if (employee != null) {
 			if(employee.equals("Chef")){

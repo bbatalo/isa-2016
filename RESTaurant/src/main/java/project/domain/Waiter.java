@@ -1,7 +1,12 @@
 package project.domain;
 
+import java.util.List;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.OneToMany;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
 public class Waiter extends Employee {
@@ -10,6 +15,18 @@ public class Waiter extends Employee {
 	
 	@Column(name = "wtr_trial", nullable = false)
     public boolean trial = false;
+
+	@OneToMany(mappedBy="waiter")
+	@JsonIgnore
+	public List<RestOrder> currentlyServing;
+
+	public List<RestOrder> getCurrentlyServing() {
+		return currentlyServing;
+	}
+
+	public void setCurrentlyServing(List<RestOrder> currentlyServing) {
+		this.currentlyServing = currentlyServing;
+	}
 
 	public boolean isTrial() {
 		return trial;

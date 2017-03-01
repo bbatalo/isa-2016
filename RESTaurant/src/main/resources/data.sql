@@ -97,8 +97,8 @@ insert into employee (emp_name, emp_surname, emp_role, emp_pass_changed, emp_dat
 insert into employee (emp_name, emp_surname, emp_role, emp_pass_changed, emp_date_birth, emp_size_cloth, emp_size_shoes, usr_id, rst_id) values ('Marija', 'Kovačević', '0', false, '1995-5-5', '38', '36', '9', 1)
 	
 insert into waiter (wtr_trial, usr_id) values (true, '7')
-insert into bartender (bar_cocktails, usr_id) values (true, '8')
-insert into chef (chf_type, usr_id) values ('4', '9')
+insert into bartender (bar_cocktails, usr_id) values (true, '9')
+insert into chef (chf_type, usr_id) values ('4', '8')
 
 insert into friends (usr_id, frd_id) values ('1', '2')
 insert into friends (usr_id, frd_id) values ('1', '3')

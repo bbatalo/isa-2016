@@ -1,11 +1,18 @@
 package project.domain;
 
+import java.util.Set;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
 public class DishOrder {
@@ -18,9 +25,12 @@ public class DishOrder {
 	@Column(name = "odr_status", nullable = false)
     private String status;
 
-	@ManyToOne(optional = true)
-	@JoinColumn(name="odr_chef",  referencedColumnName="usr_id")
-    private Chef chef;
+	
+	@ManyToMany(fetch = FetchType.LAZY)
+	@JoinTable(name="ChefsOnDuty",
+	joinColumns=@JoinColumn(name="odr_id"),
+	inverseJoinColumns=@JoinColumn(name="usr_id"))
+    private Set<Chef> chef;
 
 	@ManyToOne(optional = false)
 	@JoinColumn(name="odr_dish",  referencedColumnName="dish_id")
@@ -48,11 +58,11 @@ public class DishOrder {
 		this.status = status;
 	}
 
-	public Chef getChef() {
+	public Set<Chef> getChef() {
 		return chef;
 	}
 
-	public void setChef(Chef chef) {
+	public void setChef(Set<Chef> chef) {
 		this.chef = chef;
 	}
 

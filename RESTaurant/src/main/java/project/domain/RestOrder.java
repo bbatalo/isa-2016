@@ -44,7 +44,19 @@ public class RestOrder {
 	@JoinColumn(name="ord_table",  referencedColumnName="table_id")
     private RestTable table;
     
-    @Column(name = "ord_arrival", nullable = false)
+    @ManyToOne(optional = true)
+	@JoinColumn(name="ord_waiter",  referencedColumnName="usr_id")
+    private Waiter waiter;
+    
+    public Waiter getWaiter() {
+		return waiter;
+	}
+
+	public void setWaiter(Waiter waiter) {
+		this.waiter = waiter;
+	}
+
+	@Column(name = "ord_arrival", nullable = false)
     private boolean onArrival;
     
     @ManyToOne(optional = false)

@@ -7,6 +7,7 @@
 	app.service('employeeService', function() {
 		var restaurant = {};
 		var employee = {};
+		var shifts = [];
 		
 		var setEmployee = function(newEmployee) {
 			employee = newEmployee;
@@ -22,6 +23,18 @@
 		
 		var getRestaurant = function() {
 			return restaurant;
+		}
+		
+		var setShift = function(shift) {
+			shifts = shift;
+		}
+		
+		var getShift = function(){
+			return shifts;
+		}
+		
+		var getRestaurantSchedule = function(){
+			return restaurant.schedule;
 		}
 		
 		var getRestaurantSeating = function(){
@@ -75,13 +88,16 @@
 		    getRestaurant: getRestaurant,
 		    getRestaurantDetails: getRestaurantDetails,
 		    getRestaurantMenu: getRestaurantMenu,
-		    getRestaurantSeating: getRestaurantSeating
+		    getRestaurantSeating: getRestaurantSeating,
+		    getRestaurantSchedule: getRestaurantSchedule,
+		    getShift : getShift,
+		    setShift : setShift
 		  };
 	});
 	
 	
 	
-	app.controller('EmployeeController', ['$rootScope', '$http', '$window', 'employeeService', function($rootScope, $http, $window, employeeService) {
+	app.controller('EmployeeController', ['$rootScope', '$scope', '$http', '$window', 'employeeService', function($rootScope, $scope, $http, $window, employeeService) {
 		var radnik = {};
 		this.authorize = function() {
 			
@@ -115,6 +131,7 @@
 			}).then(function success(response) {
 				if (response.data.email != null) {
 					employeeService.setEmployee(response.data);
+					$scope.rola = response.data.role;
 					employeeService.setRestaurant(response.data.restaurant);
 					radnik = response.data;
 					$window.type = radnik.role;
@@ -127,9 +144,34 @@
 				}
 			});
 		}
+		
+		$scope.loadShift = function() {
+			$scope.shiftUnion = [];
+			$http.post('/restmanager/getShifts', employeeService.getRestaurantSchedule()).then(function success(response){
+				
+				for(it in response.data){
+					if (response.data[it].employee.role === employeeService.getEmployee().role){
+						var begin = new Date(response.data[it].shiftBegins);
+						var end = new Date(response.data[it].shiftEnds);
+						var current = new Date();
+						if( current > begin && current<end ){
+							$scope.shiftUnion.push(response.data[it].segment.label);
+						}
+					}
+				}
+				employeeService.setShift($scope.shiftUnion);
+			}), function error(response){
+			}
+		}
 				
 		this.authorize();
 		this.loadUser();
+		$scope.$watch('tabCtrl.tab', function(newValue) {
+			if(newValue == 2){
+				$scope.loadShift();
+			}
+		});
+		
 	}]);
 	
 	app.controller("TabController", ['$scope',function($scope){
@@ -313,7 +355,7 @@
 	
 	
 	
-	// GAGIJEVO SEATING SOKOCALO
+	// GAGIJEVO SEATING SOKOCALO POBOLJSANO HEHE
 	
 	app.controller('SeatingController', ['$scope', '$http', '$window', 'employeeService', function($scope, $http, $window, employeeService) {
 		var control = this;
@@ -323,6 +365,7 @@
 		control.result = "";
 		control.selectedSegment = {};
 		control.tables = {};
+		control.shifts = $scope.shiftUnion;
 
 		
 		//Instanciranje matrice stolova, stolovi su inicajlno prazni(nema stolova)
@@ -424,6 +467,454 @@
 	
 	// KRAJ GAGIJEVOG SOKOCALA
 	
+	
+	// PUNJENJE SMENAMA
+	app.controller("ShiftController", ['$scope', '$http', 'employeeService', function($scope, $http, employeeService){
+		var control = this;
+		
+		//----novi deo
+		control.shifts = [];
+		control.employee = {};
+		control.segment = {};
+		control.shiftBegins = new Date();
+		control.shiftEnds = new Date();
+		control.event = {
+			id: 0,
+			title: 'New shift.',
+	        startsAt: new Date(),
+	        endsAt: new Date(),
+	        draggable: false,
+	        resizable: false,
+		};
+		//---novi deo
+		
+		control.events = [];
+		
+		
+		
+		$scope.$watch('tabCtrl.tab', function(newValue) {
+				
+				if(newValue !== 1)
+					return;
+			
+				$http.post('/restmanager/getSegments', employeeService.getRestaurantSeating()).then(function success(response){
+					control.segments = response.data;
+				}), function error(response){
+					control.result = "Unknown error ocurred.";
+				}
+				
+				$http.post('/restmanager/getShifts', employeeService.getRestaurantSchedule()).then(function success(response){
+					control.shifts = response.data;
+					for(it in response.data){
+						if (response.data[it].employee.role === employeeService.getEmployee().role){
+							var word;
+							if(response.data[it].employee.role=="WAITER"){
+								word = response.data[it].employee.name + " " + response.data[it].employee.surname +" at "+response.data[it].segment.label
+							} else {
+								word = response.data[it].employee.name + " " + response.data[it].employee.surname;
+							}
+							event = {
+							        id: response.data[it].idShift,
+									title: word,
+							        startsAt: new Date(response.data[it].shiftBegins),
+							        endsAt: new Date(response.data[it].shiftEnds),
+							        draggable: true,
+							        resizable: true,
+							      }
+							
+							control.events.push(event);
+						}
+					}
+				}), function error(response){
+					control.result = "Unknown error ocurred.";
+				}
+		});
+		
+		
+		
+		
+	}]);
+	
+	// KONTROLER ZA SOKETE
+	
+	app.controller('OrderController', ['$scope', '$http', '$window', 'employeeService', function($scope, $http, $window, employeeService) { 
+		var control = this;
+		control.orders = [];
+		control.items = [];
+		
+		$scope.$watch('tabCtrl.tab', function(newValue) {
+			if (newValue == 3) {
+				
+				control.loadRequests()
+			}
+		});
+		
+		
+		control.loadRequests = function() {
+			control.incoming = [];
+			control.outcoming = [];
+			
+			$http({
+				method: 'GET',
+				url: '/reservations/loadOrders',
+			}).then(function success(response) {
+				if (response.data != null) {
+					control.orders = response.data;
+					for (var i=0; i<control.orders.length; i++){
+						var brt = control.orders[i];
+						var pr = {};
+						$http({
+							method: 'POST',
+							url: '/reservations/getDishOrder',
+							headers: {
+								   'Content-Type': 'application/json',	   
+								 },
+								 data: brt.id
+						}).then(function success(response) {
+							var lisnato = response.data;
+							for(var j=0; j<lisnato.length; j++){
+								pr = { name : lisnato[j].dish.label,
+										type: 'meal',
+										table : lisnato[j].order.table.tableCode,
+										ident: lisnato[j].id,
+										status: lisnato[j].status
+									  };
+								
+								control.items.push(pr);
+							}
+							
+							
+							
+						});
+						
+						$http({
+							method: 'POST',
+							url: '/reservations/getDrinkOrder',
+							headers: {
+								   'Content-Type': 'application/json',	   
+								 },
+								 data: brt.id
+						}).then(function success(response) {
+							var lisnato = response.data;
+							for(var j=0; j<lisnato.length; j++){
+								pr = { name : lisnato[j].drink.label,
+										type: 'drink',
+										table : lisnato[j].order.table.tableCode,
+										ident: lisnato[j].id,
+										status: lisnato[j].status
+									  };
+								
+								control.items.push(pr);
+							}
+						
+					});
+					}
+				
+				}
+			});
+		}
+		
+		
+		control.prepare = function(item) {
+			control.item = item;
+			if(item.type=='meal'){
+				$http({
+					method: 'POST',
+					url: '/reservations/sendMeal',
+					headers: {
+						   'Content-Type': 'application/json',	   
+						 },
+					data: item.ident
+				}).then(function success(response) {
+					toastr["success"]('...', "Sending Meal Request");
+				});
+			} else if (item.type=='drink'){
+
+					$http({
+						method: 'POST',
+						url: '/reservations/sendDrink',
+						headers: {
+							   'Content-Type': 'application/json',	   
+							 },
+						data: item.ident
+					}).then(function success(response) {
+						toastr["success"]('...', "Sending Drink Request");
+					});
+				
+			}
+			
+		}
+		
+		
+		control.delete = function(item) {
+			control.item = item;
+			if(item.type=='meal'){
+				$http({
+					method: 'POST',
+					url: '/reservations/deleteMeal',
+					headers: {
+						   'Content-Type': 'application/json',	   
+						 },
+					data: item.ident
+				}).then(function success(response) {
+					var index = control.items.indexOf(item);
+					control.items.splice(index, 1);
+					toastr["success"]('...', "Removing Meal Request");
+				});
+			} else if (item.type=='drink'){
+
+					$http({
+						method: 'POST',
+						url: '/reservations/deleteDrink',
+						headers: {
+							   'Content-Type': 'application/json',	   
+							 },
+						data: item.ident
+					}).then(function success(response) {
+						var index = control.items.indexOf(item);
+						control.items.splice(index, 1);
+						toastr["success"]('...', "Removing Drink Request");
+					});
+				
+			}
+			
+
+			
+			
+		}
+		
+		
+		control.setupWebsocket = function() {
+			var socket = new SockJS('/stomp');
+			var stompClient = Stomp.over(socket);
+			stompClient.connect({}, function(frame) {
+				var str = "ordersw?userID=" + employeeService.getEmployee().userID;
+				stompClient.subscribe("/topic/" + str, function(data) {
+					var message = data.body;
+					req = angular.fromJson(message);
+					id = employeeService.getEmployee().userID;
+						if (req.status == 'Fresh') {
+							control.orders.push(req);
+							var pr = {};
+							$http({
+								method: 'POST',
+								url: '/reservations/getDishOrder',
+								headers: {
+									   'Content-Type': 'application/json',	   
+									 },
+									 data: req.id
+							}).then(function success(response) {
+								var lisnato = response.data;
+								for(var j=0; j<lisnato.length; j++){
+									pr = { name : lisnato[j].dish.label,
+											type: 'meal',
+											table: lisnato[j].order.table.tableCode,
+											ident: lisnato[j].id,
+											status: lisnato[j].status};
+									
+									control.items.push(pr);
+								}
+							});
+							
+							$http({
+								method: 'POST',
+								url: '/reservations/getDrinkOrder',
+								headers: {
+									   'Content-Type': 'application/json',	   
+									 },
+									 data: req.id
+							}).then(function success(response) {
+								var lisnato = response.data;
+								for(var j=0; j<lisnato.length; j++){
+									pr = { name : lisnato[j].drink.label,
+											type: 'drink',
+											table : lisnato[j].order.table.tableCode,
+											ident: lisnato[j].id,
+											status: lisnato[j].status
+										  };
+									
+									control.items.push(pr);
+								}
+							
+						});
+							$scope.$apply();
+							toastr["info"]('You have received an order.');
+						} else if (req.status == 'Updated') {
+							for(var i=0; i<control.orders.length; i++){
+								if(control.orders[i].id==req.id){
+									control.orders[i]=req;
+									control.orders[i].status = 'Fresh';
+								}
+							}
+							
+							$scope.$apply();
+							toastr["info"]('Item successfully deleted.');
+							
+						}
+				})
+				
+				var str2 = "cooks?userID=" + employeeService.getEmployee().userID;
+				stompClient.subscribe("/topic/" + str2, function(data) {
+					var message = data.body;
+					req = angular.fromJson(message);
+					id = employeeService.getEmployee().userID;
+						if (req.status == 'Sent') {
+							for (var i = 0; i<control.items.length; i++){
+								if(control.items[i].ident==req.id && control.items[i].type=='meal'){
+									pr = { name : req.dish.label,
+											type: 'meal',
+											table: req.order.table.tableCode,
+											ident: req.id};
+									
+									control.items[i]=pr;
+							
+								}
+							}
+							$scope.$apply();
+							toastr["info"]('Meal request successfully sent.');
+						} 
+				})
+				
+				var str3 = "bars?userID=" + employeeService.getEmployee().userID;
+				stompClient.subscribe("/topic/" + str3, function(data) {
+					var message = data.body;
+					req = angular.fromJson(message);
+					id = employeeService.getEmployee().userID;
+						if (req.status == 'Sent') {
+							for (var i = 0; i<control.items.length; i++){
+								if(control.items[i].ident==req.id && control.items[i].type=='drink'){
+									pr = { name : req.drink.label,
+											type: 'drink',
+											table: req.order.table.tableCode,
+											ident: req.id};
+									
+									control.items[i]=pr;
+							
+								}
+							}
+							$scope.$apply();
+							toastr["info"]('Drink request successfully sent.');
+						} 
+				})
+			})
+		}
+		
+		this.setupWebsocket();
+	}]);
+	
+	
+	app.controller('CookingController', ['$scope', '$http', '$window', 'employeeService', function($scope, $http, $window, employeeService) { 
+		var control = this;
+		control.orders = [];
+		control.items = [];
+		
+		$scope.$watch('tabCtrl.tab', function(newValue) {
+			if (newValue == 4) {
+				
+				control.loadRequests()
+			}
+		});
+		
+		
+		control.loadRequests = function() {
+
+			
+			$http({
+				method: 'GET',
+				url: '/reservations/loadCookOrders',
+			}).then(function success(response) {
+				if (response.data != null) {
+					control.orders = response.data;
+					
+				
+				}
+			});
+		}
+		
+		
+		
+		
+		control.setupWebsocket = function() {
+			var socket = new SockJS('/stomp');
+			var stompClient = Stomp.over(socket);
+			stompClient.connect({}, function(frame) {
+				var str = "cooks?userID=" + employeeService.getEmployee().userID;
+				stompClient.subscribe("/topic/" + str, function(data) {
+					var message = data.body;
+					req = angular.fromJson(message);
+					id = employeeService.getEmployee().userID;
+						if (req.status == 'Sent') {
+							control.orders.push(req);
+							
+							$scope.$apply();
+							toastr["info"]('You have received a new cooking order.');
+						} 
+				})
+				
+				
+				
+			})
+		}
+		
+		this.setupWebsocket();
+	}]);
+	
+	
+	app.controller('DrinkingController', ['$scope', '$http', '$window', 'employeeService', function($scope, $http, $window, employeeService) { 
+		var control = this;
+		control.orders = [];
+		control.items = [];
+		
+		$scope.$watch('tabCtrl.tab', function(newValue) {
+			if (newValue == 5) {
+				
+				control.loadRequests()
+			}
+		});
+		
+		
+		control.loadRequests = function() {
+
+			
+			$http({
+				method: 'GET',
+				url: '/reservations/loadBarOrders',
+			}).then(function success(response) {
+				if (response.data != null) {
+					control.orders = response.data;
+					
+				
+				}
+			});
+		}
+		
+		
+		
+		
+		control.setupWebsocket = function() {
+			var socket = new SockJS('/stomp');
+			var stompClient = Stomp.over(socket);
+			stompClient.connect({}, function(frame) {
+				var str = "bars?userID=" + employeeService.getEmployee().userID;
+				stompClient.subscribe("/topic/" + str, function(data) {
+					var message = data.body;
+					req = angular.fromJson(message);
+					id = employeeService.getEmployee().userID;
+						if (req.status == 'Sent') {
+							control.orders.push(req);
+							
+							$scope.$apply();
+							toastr["info"]('You have received a new drink order.');
+						} 
+				})
+				
+				
+				
+			})
+		}
+		
+		this.setupWebsocket();
+	}]);
 	
 	
 })();
