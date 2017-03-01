@@ -20,7 +20,17 @@ public class CookMessenger {
 		this.template.convertAndSend("/topic/" + topic, ord);
 	}
 	
+	public void sendRequestTo(Waiter dto, DishOrder ord) {
+		String topic = "cooks?userID=" + dto.getUserID();
+		this.template.convertAndSend("/topic/" + topic, ord);
+	}
+	
 	public void sendUpdateTo(Waiter dto, DishOrder ord) {
+		String topic = "cooks?userID=" + dto.getUserID();
+		this.template.convertAndSend("/topic/" + topic, ord);
+	}
+	
+	public void sendUpdateTo(Chef dto, DishOrder ord) {
 		String topic = "cooks?userID=" + dto.getUserID();
 		this.template.convertAndSend("/topic/" + topic, ord);
 	}

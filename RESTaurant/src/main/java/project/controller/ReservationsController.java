@@ -696,14 +696,7 @@ public class ReservationsController {
 			cookMessenger.sendUpdateTo(w, dish);
 			return new ResponseEntity<String>("Success", HttpStatus.OK);
 			
-			//ODAVDE POSALJI STA HOCES KOME HOCES
-			//za referencu pogledaj metodu sendRequest u IndexControlleru
-			//u principu samo napravis Messenger klasu kao onu moju, samo sa cime ti hoces kao topicom
-			//i ovde pozoves njenu metodu da posaljes poruku, tipa
-			//messenger.sendToKonobar(konobar, order.getId());
-			//ili sta ti vec odgovara
-			//pocupaj konobara iz smena i tih sranja, to nisam gledao kako je implementirano...
-			
+
 			
 		} else {
 			return null;
@@ -753,15 +746,7 @@ public class ReservationsController {
 			
 			barMessenger.sendUpdateTo(w, drink);
 			return new ResponseEntity<String>("Success", HttpStatus.OK);
-			
-			//ODAVDE POSALJI STA HOCES KOME HOCES
-			//za referencu pogledaj metodu sendRequest u IndexControlleru
-			//u principu samo napravis Messenger klasu kao onu moju, samo sa cime ti hoces kao topicom
-			//i ovde pozoves njenu metodu da posaljes poruku, tipa
-			//messenger.sendToKonobar(konobar, order.getId());
-			//ili sta ti vec odgovara
-			//pocupaj konobara iz smena i tih sranja, to nisam gledao kako je implementirano...
-			
+
 			
 		} else {
 			return null;
@@ -781,8 +766,16 @@ public class ReservationsController {
 			
 			DrinkOrder drink = drinkOrderService.getDrinkOrderById(drinkID);
 			RestOrder order = orderService.getById(drink.getOrder().getId());
-			
-			order.getDrinkOrders().remove(drink);
+			order.setWaiter(null);
+			Waiter employee = (Waiter) employeeService.getEmployeeById(online.getUser().getUserID());
+			employee.getCurrentlyServing().remove(order);
+			DrinkOrder deletos=null;
+			for( int i=0; i<order.getDrinkOrders().size(); i++){
+				if(order.getDrinkOrders().get(i).getId()==drink.getId()){
+					deletos = order.getDrinkOrders().get(i);
+				}
+			}
+			order.getDrinkOrders().remove(deletos);
 			order.setStatus("Updated");
 			orderService.save(order);
 			drink.setStatus("Deleted");
@@ -812,15 +805,7 @@ public class ReservationsController {
 			orderMessenger.sendRequestTo(order,kelner);
 			orderMessenger.sendUpdateTo(kelner, order);
 			return new ResponseEntity<String>("Success", HttpStatus.OK);
-			
-			//ODAVDE POSALJI STA HOCES KOME HOCES
-			//za referencu pogledaj metodu sendRequest u IndexControlleru
-			//u principu samo napravis Messenger klasu kao onu moju, samo sa cime ti hoces kao topicom
-			//i ovde pozoves njenu metodu da posaljes poruku, tipa
-			//messenger.sendToKonobar(konobar, order.getId());
-			//ili sta ti vec odgovara
-			//pocupaj konobara iz smena i tih sranja, to nisam gledao kako je implementirano...
-			
+	
 			
 		} else {
 			return null;
@@ -840,7 +825,16 @@ public class ReservationsController {
 			
 			DishOrder meal = dishOrderService.getDishById(mealID);
 			RestOrder order = orderService.getById(meal.getOrder().getId());
-			order.getDishOrders().remove(meal);
+			Waiter employee = (Waiter) employeeService.getEmployeeById(online.getUser().getUserID());
+			employee.getCurrentlyServing().remove(order);
+			order.setWaiter(null);
+			DishOrder deletos=null;
+			for( int i=0; i<order.getDishOrders().size(); i++){
+				if(order.getDishOrders().get(i).getId()==meal.getId()){
+					deletos = order.getDishOrders().get(i);
+				}
+			}
+			order.getDishOrders().remove(deletos);
 			order.setStatus("Updated");
 			orderService.save(order);
 			meal.setStatus("Deleted");
@@ -873,14 +867,7 @@ public class ReservationsController {
 			orderMessenger.sendUpdateTo(kelner, order);
 			return new ResponseEntity<String>("Success", HttpStatus.OK);
 			
-			//ODAVDE POSALJI STA HOCES KOME HOCES
-			//za referencu pogledaj metodu sendRequest u IndexControlleru
-			//u principu samo napravis Messenger klasu kao onu moju, samo sa cime ti hoces kao topicom
-			//i ovde pozoves njenu metodu da posaljes poruku, tipa
-			//messenger.sendToKonobar(konobar, order.getId());
-			//ili sta ti vec odgovara
-			//pocupaj konobara iz smena i tih sranja, to nisam gledao kako je implementirano...
-			
+		
 			
 		} else {
 			return null;
@@ -923,7 +910,238 @@ public class ReservationsController {
 		} else {
 			return null;
 		}
+	}
+		
+		
+@Transactional(isolation=Isolation.SERIALIZABLE)
+		@RequestMapping(value = "/cookMeal",
+		method = RequestMethod.POST,
+		consumes = MediaType.APPLICATION_JSON,
+		produces = MediaType.TEXT_HTML)
+public ResponseEntity<String> cookMeal(@Context HttpServletRequest request, @RequestBody Long mealID) {
+	
+	Online online = (Online) request.getSession().getAttribute("user");
+	
+	if (online != null) {
+		
+		Chef employee = (Chef) employeeService.getEmployeeById(online.getUser().getUserID());
+		DishOrder dish = dishOrderService.getDishById(mealID);
+		dish.setStatus("Preparing");
+		dishOrderService.save(dish);
+		RestOrder order = orderService.getById(dish.getOrder().getId());
+		
+		Set<Chef> chefs = dish.getChef();
+		
+		for(Chef hef : chefs){
+			if(hef.getUserID()!=employee.getUserID())
+			{
+				dish.getChef().remove(hef);
+				dishOrderService.save(dish);
+				hef.getDishOrders().remove(dish);
+				chefService.save(hef);
+			}
+		}
+		dish.setStatus("Preparing");
+		dishOrderService.save(dish);
+		cookMessenger.sendRequestTo(employee,dish);
+
+		
+		cookMessenger.sendUpdateTo(employee, dish);
+		return new ResponseEntity<String>("Success", HttpStatus.OK);
+		
+	
+		
+	} else {
+		return null;
+	}
+}
+
+
+@Transactional(isolation=Isolation.SERIALIZABLE)
+@RequestMapping(value = "/pourDrink",
+		method = RequestMethod.POST,
+		consumes = MediaType.APPLICATION_JSON,
+		produces = MediaType.TEXT_HTML)
+public ResponseEntity<String> pourDrink(@Context HttpServletRequest request, @RequestBody Long drinkID) {
+	
+	Online online = (Online) request.getSession().getAttribute("user");
+	
+	if (online != null) {
+		
+		
+		Bartender employee = (Bartender) employeeService.getEmployeeById(online.getUser().getUserID());
+		DrinkOrder drink = drinkOrderService.getDrinkOrderById(drinkID);
+		drink.setStatus("Preparing");
+		drinkOrderService.save(drink);
+		RestOrder order = orderService.getById(drink.getOrder().getId());
+		
+		drink.setBartender(employee);
+		drinkOrderService.save(drink);
+		
+		
+		barMessenger.sendRequestTo(employee,drink);
+
+		
+		barMessenger.sendUpdateTo(employee, drink);
+		return new ResponseEntity<String>("Success", HttpStatus.OK);
+		
+	
+		
+	} else {
+		return null;
+	}
+}
+
+
+@Transactional(isolation=Isolation.SERIALIZABLE)
+@RequestMapping(value = "/finishMeal",
+		method = RequestMethod.POST,
+		consumes = MediaType.APPLICATION_JSON,
+		produces = MediaType.TEXT_HTML)
+public ResponseEntity<String> finishMeal(@Context HttpServletRequest request, @RequestBody Long mealID) {
+	
+	Online online = (Online) request.getSession().getAttribute("user");
+	
+	if (online != null) {
+		
+		
+		DishOrder dish = dishOrderService.getDishById(mealID);
+		dish.setStatus("Finished");
+		dishOrderService.save(dish);
+		RestOrder order = orderService.getById(dish.getOrder().getId());
+		
+		Chef employee = (Chef) employeeService.getEmployeeById(online.getUser().getUserID());
+		
+		for (int i=0; i<employee.getDishOrders().size(); i++){
+			if(employee.getDishOrders().get(i).getId()==dish.getId()){
+				employee.getDishOrders().set(i,dish);
+				chefService.save(employee);
+			}
+		}
+		
+		
+		Waiter w = order.getWaiter();
+		orderService.save(order);
+		
+		cookMessenger.sendUpdateTo(employee,dish);
+
+		
+		cookMessenger.sendRequestTo(w, dish);
+		return new ResponseEntity<String>("Success", HttpStatus.OK);
+		
+	
+	} else {
+		return null;
+	}
+}
+
+
+@Transactional(isolation=Isolation.SERIALIZABLE)
+@RequestMapping(value = "/finishDrink",
+		method = RequestMethod.POST,
+		consumes = MediaType.APPLICATION_JSON,
+		produces = MediaType.TEXT_HTML)
+public ResponseEntity<String> finishDrink(@Context HttpServletRequest request, @RequestBody Long drinkID) {
+	
+	Online online = (Online) request.getSession().getAttribute("user");
+	
+	if (online != null) {
 		
 
+		DrinkOrder drink = drinkOrderService.getDrinkOrderById(drinkID);
+		drink.setStatus("Finished");
+		drinkOrderService.save(drink);
+		RestOrder order = orderService.getById(drink.getOrder().getId());
+		
+		Bartender employee = (Bartender) employeeService.getEmployeeById(online.getUser().getUserID());
+		
+		for (int i=0; i<employee.getDrinkOrder().size(); i++){
+			if(employee.getDrinkOrder().get(i).getId()==drink.getId()){
+				employee.getDrinkOrder().set(i,drink);
+			}
+		}
+		
+		drinkOrderService.save(drink);
+		Waiter w = order.getWaiter();
+		orderService.save(order);
+		
+		barMessenger.sendUpdateTo(employee,drink);
+
+		
+		barMessenger.sendRequestTo(w, drink);
+		return new ResponseEntity<String>("Success", HttpStatus.OK);
+
+		
+	} else {
+		return null;
 	}
+}
+
+
+@Transactional(isolation=Isolation.SERIALIZABLE)
+@RequestMapping(value = "/checkOut",
+		method = RequestMethod.POST,
+		produces = MediaType.TEXT_HTML)
+public ResponseEntity<String> checkOut(@Context HttpServletRequest request, @RequestBody Long drinkID) {
+	
+	Online online = (Online) request.getSession().getAttribute("user");
+	
+	if (online != null) {
+		
+		//DATI MU GA MALO PO
+		RestOrder order = orderService.getById(drinkID);
+		
+		boolean finished = true;
+		List<DrinkOrder> drinkOrders = order.getDrinkOrders();
+		List<DishOrder> dishOrders = order.getDishOrders();
+		
+		for(DrinkOrder drink : drinkOrders){
+			if(drink.getStatus()!="Finished"){
+				if(drink.getStatus()!="Deleted"){
+					finished = false;
+				}
+			}
+		}
+		Waiter kelner = null;
+		RestTable sto = order.getTable();
+		Segment seg = sto.getSegment();
+		Set<Shift> smene = seg.getShifts();
+		for(Shift s : smene){
+			Date pocetak = s.getShiftBegins();
+			Date kraj = s.getShiftEnds();
+			Date trenutak = new Date();
+			if( trenutak.before(kraj) && trenutak.after(pocetak) ){
+				if(s.getEmployee().getRole()==EmployeeRole.WAITER){
+					kelner = (Waiter) s.getEmployee();
+					break;
+				}
+			}
+		}
+		
+		order.setWaiter(kelner);
+		
+		for(DishOrder dish : dishOrders){
+			if(dish.getStatus()!="Finished"){
+				if(dish.getStatus()!="Deleted"){
+					finished=false;
+				}
+			}
+		}
+		
+		if(finished){
+			order.setStatus("Finished");
+			orderService.save(order);
+			
+			orderMessenger.sendRequestTo(order,kelner);
+			orderMessenger.sendUpdateTo(kelner, order);
+		}
+		
+		
+		return new ResponseEntity<String>("Success", HttpStatus.OK);
+				
+	} else {
+		return null;
+	}
+}
+
 }

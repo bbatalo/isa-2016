@@ -238,10 +238,15 @@
 							 },
 							 data: requestData
 					}).then(function success(response) {
-						proba = 1;
-						control.form.currentPass = "";
-						control.form.newPass = "";
-						control.form.repeatPass = "";
+						
+						if(response.data!="Invalid password"){
+							proba = 1;
+						} else {
+							window.alert(response.data);
+						}
+							control.form.currentPass = "";
+							control.form.newPass = "";
+							control.form.repeatPass = "";
 					});
 				} else {
 					control.form.newPass = "";
@@ -559,6 +564,7 @@
 				url: '/reservations/loadOrders',
 			}).then(function success(response) {
 				if (response.data != null) {
+					control.items = [];
 					control.orders = response.data;
 					for (var i=0; i<control.orders.length; i++){
 						var brt = control.orders[i];
@@ -608,6 +614,8 @@
 							}
 						
 					});
+						
+						control.checkOut(control.orders[i]);
 					}
 				
 				}
@@ -645,8 +653,20 @@
 			
 		}
 		
+		control.checkOut = function(item){
+			$http({
+				method: 'POST',
+				url: '/reservations/checkOut',
+				headers: {
+					   'Content-Type': 'application/json',	   
+					 },
+				data: item.id
+			}).then(function success(response) {
+
+			});
+		}
 		
-		control.delete = function(item) {
+		control.del = function(item) {
 			control.item = item;
 			if(item.type=='meal'){
 				$http({
@@ -657,8 +677,7 @@
 						 },
 					data: item.ident
 				}).then(function success(response) {
-					var index = control.items.indexOf(item);
-					control.items.splice(index, 1);
+					$window.location.reload();
 					toastr["success"]('...', "Removing Meal Request");
 				});
 			} else if (item.type=='drink'){
@@ -671,8 +690,7 @@
 							 },
 						data: item.ident
 					}).then(function success(response) {
-						var index = control.items.indexOf(item);
-						control.items.splice(index, 1);
+						$window.location.reload();
 						toastr["success"]('...', "Removing Drink Request");
 					});
 				
@@ -694,7 +712,15 @@
 					req = angular.fromJson(message);
 					id = employeeService.getEmployee().userID;
 						if (req.status == 'Fresh') {
-							control.orders.push(req);
+							control.truth = 1;
+							for(var i=0; i<control.orders.length; i++){
+								if(control.orders[i].id==req.id){
+									control.truth = 0;
+								}
+							}
+							if(control.truth==1){
+								control.orders.push(req);
+							}
 							var pr = {};
 							$http({
 								method: 'POST',
@@ -743,10 +769,10 @@
 							for(var i=0; i<control.orders.length; i++){
 								if(control.orders[i].id==req.id){
 									control.orders[i]=req;
-									control.orders[i].status = 'Fresh';
+
 								}
 							}
-							
+							control.checkOut(req.order);
 							$scope.$apply();
 							toastr["info"]('Item successfully deleted.');
 							
@@ -772,7 +798,9 @@
 							}
 							$scope.$apply();
 							toastr["info"]('Meal request successfully sent.');
-						} 
+						} else if (req.status == 'Finished'){
+							control.checkOut(req.order);
+						}
 				})
 				
 				var str3 = "bars?userID=" + employeeService.getEmployee().userID;
@@ -831,6 +859,43 @@
 			});
 		}
 		
+		control.cook = function(item) {
+			control.item = item;
+
+				$http({
+					method: 'POST',
+					url: '/reservations/cookMeal',
+					headers: {
+						   'Content-Type': 'application/json',	   
+						 },
+					data: item.id
+				}).then(function success(response) {
+					toastr["success"]("Preparing for cooking");
+				});
+
+
+				
+
+			
+		}
+		
+		
+		control.finish = function(item) {
+			control.item = item;
+				$http({
+					method: 'POST',
+					url: '/reservations/finishMeal',
+					headers: {
+						   'Content-Type': 'application/json',	   
+						 },
+					data: item.id
+				}).then(function success(response) {
+					toastr["success"]('...', "Finishing Meal Request");
+				});
+				
+			
+		}
+		
 		
 		
 		
@@ -848,7 +913,25 @@
 							
 							$scope.$apply();
 							toastr["info"]('You have received a new cooking order.');
-						} 
+						} else if (req.status == 'Preparing'){
+							for(var i=0; i<control.orders.length; i++){
+								if(req.id==control.orders[i].id){
+									control.orders[i]=req;
+								}
+							}
+							
+							$scope.$apply();
+							toastr["info"]('Dish preparation has begun.');
+						} else if (req.status == 'Finished'){
+							for(var i=0; i<control.orders.length; i++){
+								if(req.id==control.orders[i].id){
+									control.orders[i]=req;
+								}
+							}
+							
+							$scope.$apply();
+							toastr["info"]('Dish has been finished.');
+						}
 				})
 				
 				
@@ -888,6 +971,42 @@
 			});
 		}
 		
+		control.pour = function(item) {
+			control.item = item;
+
+				$http({
+					method: 'POST',
+					url: '/reservations/pourDrink',
+					headers: {
+						   'Content-Type': 'application/json',	   
+						 },
+					data: item.id
+				}).then(function success(response) {
+					toastr["success"]("Preparing for pouring");
+				});
+
+
+				
+
+			
+		}
+		
+		control.finish = function(item) {
+			control.item = item;
+				$http({
+					method: 'POST',
+					url: '/reservations/finishDrink',
+					headers: {
+						   'Content-Type': 'application/json',	   
+						 },
+					data: item.id
+				}).then(function success(response) {
+					toastr["success"]('...', "Finishing Drink Request");
+				});
+				
+			
+		}
+		
 		
 		
 		
@@ -905,7 +1024,25 @@
 							
 							$scope.$apply();
 							toastr["info"]('You have received a new drink order.');
-						} 
+						} else if (req.status == 'Preparing'){
+							for(var i=0; i<control.orders.length; i++){
+								if(req.id==control.orders[i].id){
+									control.orders[i]=req;
+								}
+							}
+							
+							$scope.$apply();
+							toastr["info"]('Drink pouring has begun.');
+						} else if (req.status == 'Finished'){
+							for(var i=0; i<control.orders.length; i++){
+								if(req.id==control.orders[i].id){
+									control.orders[i]=req;
+								}
+							}
+							
+							$scope.$apply();
+							toastr["info"]('Drink pouring has been finished.');
+						}
 				})
 				
 				
